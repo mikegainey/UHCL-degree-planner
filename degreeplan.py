@@ -7,8 +7,8 @@
 # I will only take courses during the regular school year (not summers).
 
 # TODO: Debug the course unlock logic (I think it works on the computer at my parents' house).
-# TODO-0: Remove the Linux-specific terminal color output commands
-# TODO-1: Generalize this program for any UHCL CS student.
+# TODO: Remove the Linux-specific terminal color output commands
+# TODO: Generalize this program for any UHCL CS student.
 
 
 import sys
