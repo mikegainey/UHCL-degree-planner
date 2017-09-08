@@ -1,10 +1,15 @@
 #!/usr/bin/python3
 
-# This program is a personalized degree planner (course selection helper) for me, Mike Gainey
-# It knows what courses I've already taken, which courses I still need to take, the prerequisite
-# requirements of each course, whether a course is in the CS lower or upper level core, etc.
-# It also knows that I'm a half-time student and only plan to take 2 courses per term and that
+# This program is a personalized degree planner (course selection helper) for me, Mike Gainey.
+# It knows which courses I've already taken, which courses I still need to take, the prerequisite
+# requirements for each course, whether a course is in the CS lower or upper level core, etc.
+# It also knows that I'm a half-time student and  plan to take only 2 courses per term and that
 # I will only take courses during the regular school year (not summers).
+
+# TODO: Debug the course unlock logic (I think it works on the computer at my parents' house).
+# TODO-0: Remove the Linux-specific terminal color output commands
+# TODO-1: Generalize this program for any UHCL CS student.
+
 
 import sys
 RED    = "\033[1;31m"  
