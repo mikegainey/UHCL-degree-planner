@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# This is the Linux version (with terminal color output codes)
+
 # This program is a personalized degree planner (course selection helper) for me, Mike Gainey.
 # It knows which courses I've already taken, which courses I still need to take, the prerequisite
 # requirements for each course, whether a course is in the CS lower or upper level core, etc.
