@@ -1,0 +1,36 @@
+Fall 2017    CSCI 1470 Computer Science I (LLC)
+Fall 2017    PHYS 2325 University Physics I (LLC)
+
+Spring 2018  CSCI 1471 Computer Science II (LLC)
+Spring 2018  PHYS 2326 University Physics II (LLC)
+
+Fall 2018    CSCI 2315 Data Structures (LLC)
+Fall 2018    MATH 2305 Discrete Math (LLC)
+
+Spring 2019  CENG 3312 Digital Circuits & Lab
+Spring 2019  CSCI 3331 Computer Organization & Assembly Language
+
+Fall 2019    MATH 2318 Linear Algebra
+Fall 2019    STAT 3334 Probability & Statistics ...
+
+Spring 2020  CSCI 3352 Advanced Data Structures
+Spring 2020  SWEN 4342 Software Engineering
+
+Fall 2020    CSCI 3321 Numerical Methods
+Fall 2020    WRIT 3315 Technical Writing
+
+Spring 2021  CSCI 4333 Design of Database Systems
+Spring 2021  CENG 3331 Intro to Telecom and Neworks & Lab
+
+Fall 2021    CSCI 4354 Operating Systems (take with CENG 3351)
+Fall 2021    CENG 3351 Computer Architecture & Lab (take with CSCI 4354)
+
+Spring 2022  CSCI 4320 (elective) Web Application Development
+Spring 2022  CSCI 4323 (elective) Computer Security
+
+Fall 2022    CSCI 4350 (elective) Computer Graphics and Interface Design
+Fall 2022    CSCI 4362 (elective) Computer Game Programming: Theory and Practice
+
+Spring 2023  CSCI 4388 Senior Project in Computer Science
+
+
