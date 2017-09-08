@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+# This program is a personalized degree planner (course selection helper) for me, Mike Gainey
+# It knows what courses I've already taken, which courses I still need to take, the prerequisite
+# requirements of each course, whether a course is in the CS lower or upper level core, etc.
+# It also knows that I'm a half-time student and only plan to take 2 courses per term and that
+# I will only take courses during the regular school year (not summers).
+
 import sys
 RED    = "\033[1;31m"  
 BLUE   = "\033[1;34m"
