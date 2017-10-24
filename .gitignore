@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/emacs,python,libreoffice
 
+# Emacs etags
+TAGS
+
 ### Emacs ###
 # -*- mode: gitignore; -*-
 *~
