@@ -90,7 +90,7 @@ while True:
     choices = []
     for c,d in coursesneeded.items():
         prereqComplete = len(d[1] - coursestaken) == 0
-        LLCtest = not (d[2] == 'CSULC' and LLCcomplete == False)
+        LLCtest = not (d[2] == 'CSULC' and LLCcomplete == False) # what does this do?
         if prereqComplete and LLCtest:
             pre = prereq(c)
             if pre > 0:
