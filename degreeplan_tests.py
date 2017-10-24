@@ -6,9 +6,12 @@ from degreeplan_functions import * # import the functions
 
 class TestFunctions(unittest.TestCase):
 
-    def prerequisites_met
+    def test_possibilities(self):
+        
+    
+    # def prerequisites_met
 
-    def test_update_coursesneeded(self):
+    # def test_update_coursesneeded(self):
         coursesneeded = {'a', 'b', 'c'}
         coursestaken = {'b'}
         
