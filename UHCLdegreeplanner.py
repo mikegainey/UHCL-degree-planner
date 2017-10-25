@@ -42,8 +42,8 @@ coursecatalog = {
     "MATH 2413": ("Calculus I", set()),
 
     # Life and Physical Sciences (6 hours)
-    "PHYS 2325": ("University Physics I and Lab (PHYS 2125) (LLC)", {"MATH 2413"}),
-    "PHYS 2326": ("University Physics II and Lab (PHYS 2126) (LLC)", {"MATH 2414", "PHYS 2325"}),
+    "PHYS 2325": ("University Physics I and Lab (PHYS 2125)", {"MATH 2413"}),
+    "PHYS 2326": ("University Physics II and Lab (PHYS 2126)", {"MATH 2414", "PHYS 2325"}),
 
     # Language, Philosophy and Culture (3 hours)
     "HUMN 1301": ("Humanities", set()),
@@ -67,7 +67,7 @@ coursecatalog = {
     # Social and Behavioral Sciences (3 hours)
     "ANTH 2346": ("General Anthropology", set()),
     "CRIM 1301": ("Introduction to Criminal Justice", set()),
-    "ECON 2301": ("Principles of Macroeconomics ", set()),
+    "ECON 2301": ("Principles of Macroeconomics", set()),
     "ECON 2302": ("Principles of Microeconomics", set()),
     "GEOG 1303": ("World Regional Geography", set()),
     "PSYC 2301": ("Introduction to Psychology", set()),
@@ -79,21 +79,21 @@ coursecatalog = {
 
     # Major Requirements (67 hours)
     "CHEM 1311": ("General Chemistry I and Lab (CHEM 1111)", set()),
-    "MATH 2305": ("Discrete Math (LLC)", {"MATH 2413"}),
+    "MATH 2305": ("Discrete Math", {"MATH 2413"}),
     "MATH 2318": ("Linear Algebra", {"MATH 2413"}),
     "MATH 2414": ("Calculus II", {"MATH 2413"}),
     "MATH 2320": ("Differential Equations", {"MATH 2414"}),
     "STAT 3334": ("Probability & Statistics ...", {"MATH 2413", "MATH 2414"}),
-    "CSCI 1470": ("Computer Science I (LLC)", set()),
-    "CSCI 1471": ("Computer Science II (LLC)", {"CSCI 1470", "MATH 2413"}),
+    "CSCI 1470": ("Computer Science I", set()),
+    "CSCI 1471": ("Computer Science II", {"CSCI 1470", "MATH 2413"}),
     "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414", 
                                                                 "PHYS 2325",  "PHYS 2326"}),
-    "CSCI 2315": ("Data Structures (LLC)", {"CSCI 1471"}),
+    "CSCI 2315": ("Data Structures", {"CSCI 1471"}),
     "CSCI 3352": ("Advanced Data Structures", {"CSCI 2315", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
     "CSCI 4333": ("Design of Database Systems", {"CSCI 2315"}),
     "CSCI 3321": ("Numerical Methods", {"MATH 2318", "MATH 2320", "CSCI 1471"}),
-    "CSCI 4354": ("Operating Systems (take with CENG 3351)", {"CSCI 2315", "CSCI 3331", "MATH 2305",
-                                                              "MATH 2414", "PHYS 2325", "PHYS 2326"}),
+    "CSCI 4354": ("Operating Systems                       (take with CENG 3351)",
+                  {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
 
     "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
     "CENG 3331": ("Intro to Telecom and Neworks & Lab (CENG 3131)",  {"CENG 3312"}),
@@ -172,10 +172,9 @@ def possibilities(coursestaken=coursestaken,
     
     # remove courses if prerequisitives have not been met
     possibilities = {p for p in possibilities if prerequisites_met(p, coursestaken)}
-    print("After removing courses with unmet prerequisities:\n{}".format(possibilities))
     
     # remove ULC if LLC not complete
-    if not LLCcomplete:      # if LLC is not complete
+    if not LLCcomplete(coursestaken, LLC):
         possibilities -= ULC # remove ULC
 
     # if langPhilCulture requirement met (3 hours), remove all langPhilCulture courses from possibilities
@@ -202,7 +201,7 @@ def getCoursesTaken():
     print("\nList courses by rubric (like CSCI 1470) that you have successfully completed.  Press <Enter> when finished.\n")
 
     while True:
-        course = input("  Enter a course rubric (like CSCI 1470): ")
+        course = input("  Enter a course rubric: ")
 
         if course == '':         # the sentinel
             print()
@@ -222,8 +221,8 @@ def getTerm():
        getTerm() -> str'''
 
     seasons = ["placeholder", "Fall", "Spring", "Summer"]
-    print("\nEnter your starting term: 1) Fall  2) Spring or  3) Summer")
-    season = int(input("  Enter 1, 2, or 3: ")) # check the input first
+    print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
+    season = int(input("\n  Enter 1, 2, or 3: ")) # check the input first
     season = seasons[season]
     
     year = input("\n  Enter your starting 2-digit year: ") # check the input
@@ -253,35 +252,147 @@ def incTerm(term):
 
 
 def displayChoices(term, courseSet):
-    '''Given an unordered set of course possibilities, display and return a sorted list
-       displayChoices(term : str, courseSet : set) -> [str]
+    '''Given an unordered set of course possibilities, display and return a choice dictionary
+       displayChoices(term : str, courseSet : set) -> {index: course}
     '''
+    print("{}\n{} choices:\n{}".format('=' * 80, term, '=' * 80))
 
-    print("{}\n{} choices\n{}".format("=" * 40, term, "=" * 40))
+    choiceDict = {} # a dictionary with key = choice number, value = course rubric
+    index = 1
     
-    for i, c in enumerate(courseList):
-        print("{:2}) {} {}".format(i, c, coursecatalog[c][0]))
+    # display UCore LangPhilCult
+    print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
+    for c in sorted(list(courseSet & langPhilCulture)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= langPhilCulture
+
+    # display UCore Arts
+    print("\nCreative Arts (3 hours, choose one course)")
+    for c in sorted(list(courseSet & creativeArts)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= creativeArts
+
+    # display UCore Social Science
+    print("\nSocial/Behavioral Science (3 hours, choose one course)")
+    for c in sorted(list(courseSet & socialScience)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= socialScience
+
+    # display UCore corereq
+    print("\nOther University Core Requirements")
+    for c in sorted(list(courseSet & corereq)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= corereq
+    
+    # display CS LLC
+    print("\nComputer Science Lower-Level Core (LLC)")
+    for c in sorted(list(courseSet & LLC)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= LLC
+    
+    # display CS other major requirements
+    print("\nOther Computer Science Major Requirements")
+    for c in sorted(list(courseSet & majorreq)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= majorreq
+    
+    # display CS electives
+    
+    return choiceDict
 
 
+def chooseCourses(term, courseDict, coursestaken, degreeplan):
+    '''Let the user choose courses to take for the listed term; update coursestaken
+       chooseCourses(courseDict : dict, coursestaken : set) -> coursesChosen : [course: str]
+    '''
+    print()
+    
+    while True:
+        choice = input("Select a course by number.  Press <Enter> when finished: ")
+        if choice == '':
+            break
+
+        choice = int(choice)
+        course = courseDict[choice]
+        coursestaken.add(course) # this is not a pure function!
+
+        entry = (term, course, coursecatalog[course][0])
+        degreeplan.append(entry)
+
+    return degreeplan
+        
     
 def main():
 
+    degreeplan = []  # this will eventually hold the completed degree plan
+    
+    # let the user enter courses previously taken
+    coursestaken = getCoursesTaken()
+
+    # for testing purposes; TODO: allow reading from a file
+    coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'LITR 2341', 'ARTS 1303', 'HIST 1301', 'HIST 1302', 'POLS 2305',
+                    'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2414', 'MATH 2320'}
+
     term = getTerm() # let the user enter the starting term (like Fall 2017)
-    
-    coursestaken = getCoursesTaken() # let the user enter courses previously taken
-    
-    courseSet = possibilities(coursestaken) # a set of courses eligible to be taken
 
-    courseList = displayChoices(term, courseSet) # display a sorted list of course choices
-
-    print()
-    
-    # while True:
-    #     choice = input("Select a course or press <Enter> to continue: ")
+    while True:
         
+        # a set of courses eligible to be taken
+        courseSet = possibilities(coursestaken)
 
+        # are all courses completed?
+        if len(courseSet) == 0:
+            break
 
+        # display a sorted list of course choices
+        courseDict = displayChoices(term, courseSet) 
+
+        # choose courses for the term; update degreeplan; mutates coursestaken!
+        degreeplan = chooseCourses(term, courseDict, coursestaken, degreeplan)
+
+        term = incTerm(term)
+        print()
+
+    # print the summary degree plan
+    print("Your degree plan:")
+
+    insertSpace = ""
+    for c in degreeplan:
+
+        if insertSpace != c[0]: # a hack of a way to insert spaces between terms
+            print()
+
+        print("{:12} {:9} {}".format(c[0], c[1], c[2]))
+
+        insertSpace = c[0] # remember the term so a space can be inserted before a new term
+
+    # THE END
+        
 
 if __name__ == "__main__":
     # execute only if run as a script
     main()
+
+# TODO:
+# - test all functions
+# - re-decide default arguments in functions; they're causing tricky bugs
+# - look for ways to improve the logic of functions and the whole program
+# - comment everything before I forget how it works!
+# - unlock indicator
+# - allow coursestaken to be read from a file the user inputs
+# - add electives
+# - write the final degree plan to a file
+# - print nice intro and explanatory text here and there
+# - restate the courses just selected (like the first version of this program)
