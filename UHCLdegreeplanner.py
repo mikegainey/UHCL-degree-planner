@@ -195,13 +195,12 @@ def getCoursesTaken():
 
     coursestaken = set() # start from an empty set
     
-    print("\nList courses by rubric (like CSCI 1470) that you have successfully completed.  Press <Enter> when finished.\n")
+    print("\nList courses by rubric (like CSCI 1470) that you have previously completed.  Press <Enter> when finished.\n")
 
     while True:
         course = input("  Enter a course rubric: ")
 
         if course == '':         # the sentinel
-            print()
             return coursestaken # return coursestaken to main
         
         # validate input (improve this)
@@ -357,6 +356,9 @@ def chooseCourses(term, courseDict, coursestaken, degreeplan):
             break
 
         choice = int(choice)
+        if choice not in courseDict:
+            print("-- invalid entry --")
+            continue
         course = courseDict[choice]
         coursestaken.add(course) # this is not a pure function!
 
@@ -396,7 +398,7 @@ def main():
 
         term = incTerm(term)
         if term.startswith('Summer'):
-            summer = input("Do you want to take courses in {}? (y/N) ")
+            summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
             summer = summer or 'n'
             summer = summer[0].lower()
             if summer != 'y':
@@ -416,6 +418,8 @@ def main():
 
         insertSpace = c[0] # remember the term so a space can be inserted before a new term
 
+    print()
+    
     # THE END
         
 
