@@ -56,10 +56,10 @@ coursesneeded = {
         "CSCI 4354":("Operating Systems (take with CENG 3351)",{"CSCI 2315","CSCI 3331","MATH 2305","MATH 2414","PHYS 2325", 
                      "PHYS 2326"},'CSULC'),
         "CSCI 4388":("Senior Project in Computer Science",{"CSCI 3352","SWEN 4342"},'CSULC'),
-        "CSCI 4320":("(elective) Web Application Development",{"CSCI 2315"},'CSULC'),
-        "CSCI 4350":("(elective) Computer Graphics and Interface Design",{"MATH 2318", "MATH 2413"},'CSULC'),
-        "CSCI 4362":("(elective) Computer Game Programming: Theory and Practice",{"CSCI 1470"},'CSULC'),
-        "CSCI 4323":("(elective) Computer Security",{"CSCI 1471"},'CSULC')
+        # "CSCI 4320":("(elective) Web Application Development",{"CSCI 2315"},'CSULC'),
+        # "CSCI 4350":("(elective) Computer Graphics and Interface Design",{"MATH 2318", "MATH 2413"},'CSULC'),
+        # "CSCI 4362":("(elective) Computer Game Programming: Theory and Practice",{"CSCI 1470"},'CSULC'),
+        # "CSCI 4323":("(elective) Computer Security",{"CSCI 1471"},'CSULC')
         }
 
 coursestaken = {"MATH 2413","MATH 2414", "MATH 2320"}

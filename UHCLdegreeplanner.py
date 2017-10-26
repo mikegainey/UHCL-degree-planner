@@ -4,16 +4,13 @@
 # The 2-page Computer Science degreeplan can be found at:
 # https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf
 
-#############
-# User data #
-#############
-
-coursestaken = set() # is this needed? options should be terminal or file input
-
 
 ############################
 # Data used by the program #
 ############################
+
+coursestaken = set() # this needs to be defined early on to avoid a runtime error
+
 
 def isULC(course):
     '''Given a course return True if the course is an upper-level CSCI or CENG course.
@@ -251,7 +248,21 @@ def incTerm(term):
     return nextterm
 
 
-def displayChoices(term, courseSet):
+# given a course, return the number of courses that that course will unlock
+def unlocks(course, coursestaken):
+    coursesneeded = corereq | majorreq - coursestaken # this is a hack if it works at all
+    count = 0
+    for c in coursesneeded:
+        remainingPrerequisites = coursecatalog[c][1] - coursestaken
+        a = course in remainingPrerequisites
+        b = len(remainingPrerequisites) == 1
+        if a and b:
+            count += 1
+            #print("{} will be unlocked".format(c)) # as evidence that this works
+    return count
+
+
+def displayChoices(term, courseSet, coursestaken):
     '''Given an unordered set of course possibilities, display and return a choice dictionary
        displayChoices(term : str, courseSet : set) -> {index: course}
     '''
@@ -259,43 +270,63 @@ def displayChoices(term, courseSet):
 
     choiceDict = {} # a dictionary with key = choice number, value = course rubric
     index = 1
+
+    courseSet2 = courseSet.copy()  # a copy of courseSet that won't mutate during this function (find a better name!)
+                           # used for unlock logic
     
     # display UCore LangPhilCult
-    print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
-    for c in sorted(list(courseSet & langPhilCulture)):
+    courses = sorted(list(courseSet & langPhilCulture)) 
+    if len(courses) > 0:
+        print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
+    
+    for c in courses:
         print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= langPhilCulture
 
     # display UCore Arts
-    print("\nCreative Arts (3 hours, choose one course)")
-    for c in sorted(list(courseSet & creativeArts)):
+    courses = sorted(list(courseSet & creativeArts))
+    if len(courses) > 0:
+        print("\nCreative Arts (3 hours, choose one course)")
+
+    for c in courses:
         print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= creativeArts
 
     # display UCore Social Science
-    print("\nSocial/Behavioral Science (3 hours, choose one course)")
-    for c in sorted(list(courseSet & socialScience)):
+    courses = sorted(list(courseSet & socialScience))
+    if len(courses) > 0:
+        print("\nSocial/Behavioral Science (3 hours, choose one course)")
+        
+    for c in courses:
         print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= socialScience
 
     # display UCore corereq
-    print("\nOther University Core Requirements")
-    for c in sorted(list(courseSet & corereq)):
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+    courses = sorted(list(courseSet & corereq))
+    if len(courses) > 0:
+        print("\nOther University Core Requirements")
+        
+    for c in courses:
+        u = unlocks(c, coursestaken)
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= corereq
     
     # display CS LLC
-    print("\nComputer Science Lower-Level Core (LLC)")
-    for c in sorted(list(courseSet & LLC)):
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+    courses = sorted(list(courseSet & LLC))
+    if len(courses) > 0:
+        print("\nComputer Science Lower-Level Core (LLC)")
+        
+    for c in courses:
+        u = unlocks(c, coursestaken)
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= LLC
@@ -303,7 +334,8 @@ def displayChoices(term, courseSet):
     # display CS other major requirements
     print("\nOther Computer Science Major Requirements")
     for c in sorted(list(courseSet & majorreq)):
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        u = unlocks(c, coursestaken)
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= majorreq
@@ -342,8 +374,8 @@ def main():
     coursestaken = getCoursesTaken()
 
     # for testing purposes; TODO: allow reading from a file
-    coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'LITR 2341', 'ARTS 1303', 'HIST 1301', 'HIST 1302', 'POLS 2305',
-                    'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2414', 'MATH 2320'}
+    # coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'LITR 2341', 'ARTS 1303', 'HIST 1301', 'HIST 1302', 'POLS 2305',
+    #                 'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2414', 'MATH 2320'}
 
     term = getTerm() # let the user enter the starting term (like Fall 2017)
 
@@ -357,12 +389,18 @@ def main():
             break
 
         # display a sorted list of course choices
-        courseDict = displayChoices(term, courseSet) 
+        courseDict = displayChoices(term, courseSet, coursestaken) 
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
         degreeplan = chooseCourses(term, courseDict, coursestaken, degreeplan)
 
         term = incTerm(term)
+        if term.startswith('Summer'):
+            summer = input("Do you want to take courses in {}? (y/N) ")
+            summer = summer or 'n'
+            summer = summer[0].lower()
+            if summer != 'y':
+                term = incTerm(term)
         print()
 
     # print the summary degree plan
@@ -386,13 +424,12 @@ if __name__ == "__main__":
     main()
 
 # TODO:
+# - restate the courses just selected (like the first version of this program)
+# - add electives
 # - test all functions
 # - re-decide default arguments in functions; they're causing tricky bugs
 # - look for ways to improve the logic of functions and the whole program
 # - comment everything before I forget how it works!
-# - unlock indicator
 # - allow coursestaken to be read from a file the user inputs
-# - add electives
 # - write the final degree plan to a file
 # - print nice intro and explanatory text here and there
-# - restate the courses just selected (like the first version of this program)
