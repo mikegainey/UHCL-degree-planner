@@ -103,7 +103,13 @@ coursecatalog = {
     "CSCI 4320": ("(elective) Web Application Development", {"CSCI 2315"}),
     "CSCI 4350": ("(elective) Computer Graphics and Interface Design", {"MATH 2318",  "MATH 2413"}),
     "CSCI 4362": ("(elective) Computer Game Programming: Theory and Practice", {"CSCI 1470"}),
-    "CSCI 4323": ("(elective) Computer Security", {"CSCI 1471"})}
+    "CSCI 4323": ("(elective) Computer Security", {"CSCI 1471"}),
+
+    # CSCI/CINF Major Electives; taken junior or senior year
+    "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
+    "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
+    "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
+    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set())}
 
 # Language, Philosophy and Culture (3 hours required)
 langPhilCulture = {"HUMN 1301", "LITR 2341", "PHIL 1301", "WGST 1301"}
@@ -126,7 +132,7 @@ LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 24
 
 ULC = {c for c in majorreq if isULC(c)}
 
-CSelectives = set() # TODO: populate this set from the catalog
+CSelectives = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
 #################################
@@ -249,7 +255,7 @@ def incTerm(term):
 
 # given a course, return the number of courses that that course will unlock
 def unlocks(course, coursestaken):
-    coursesneeded = corereq | majorreq - coursestaken # this is a hack if it works at all
+    coursesneeded = corereq | majorreq | CSelectives - coursestaken # this is a hack if it works at all
     count = 0
     for c in coursesneeded:
         remainingPrerequisites = coursecatalog[c][1] - coursestaken
@@ -340,6 +346,12 @@ def displayChoices(term, courseSet, coursestaken):
     courseSet -= majorreq
     
     # display CS electives
+    print("\nComputer Science Major Electives (taken junior or senior year")
+    for c in sorted(list(courseSet & CSelectives)):
+        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        choiceDict[index] = c
+        index += 1
+    courseSet -= CSelectives
     
     return choiceDict
 
@@ -349,6 +361,7 @@ def chooseCourses(term, courseDict, coursestaken, degreeplan):
        chooseCourses(courseDict : dict, coursestaken : set) -> coursesChosen : [course: str]
     '''
     print()
+    minisummary = []
     
     while True:
         choice = input("Select a course by number.  Press <Enter> when finished: ")
@@ -363,8 +376,14 @@ def chooseCourses(term, courseDict, coursestaken, degreeplan):
         coursestaken.add(course) # this is not a pure function!
 
         entry = (term, course, coursecatalog[course][0])
-        degreeplan.append(entry)
+        degreeplan.append(entry) # try appending a space to make summary output easier
 
+        minisummary.append("{} --> {} {}".format(term, course, coursecatalog[course][0]))
+
+    print()
+    for c in minisummary:
+        print(c)
+        
     return degreeplan
         
     
@@ -406,7 +425,9 @@ def main():
         print()
 
     # print the summary degree plan
-    print("Your degree plan:")
+    print('=' * 80)
+    print("Your degree plan summary:")
+    print('=' * 80)
 
     insertSpace = ""
     for c in degreeplan:
@@ -428,11 +449,11 @@ if __name__ == "__main__":
     main()
 
 # TODO:
-# - restate the courses just selected (like the first version of this program)
-# - add electives
-# - test all functions
+# - improve variable names; settle on global variables and list them
 # - re-decide default arguments in functions; they're causing tricky bugs
+# - overlap with (corereq and majorreq) and LLC is creating problems
 # - look for ways to improve the logic of functions and the whole program
+# - test all functions
 # - comment everything before I forget how it works!
 # - allow coursestaken to be read from a file the user inputs
 # - write the final degree plan to a file
