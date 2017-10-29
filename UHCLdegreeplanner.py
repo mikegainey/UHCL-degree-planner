@@ -195,25 +195,84 @@ def possibilities(coursestaken=coursestaken,
     return possibilities
 
 
+def isRubric(rubric):
+    '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
+       isRubric(rubric : str) -> bool
+    '''
+    if len(rubric) != 9: # CSCI 1470 and other rubrics are always 9 characters
+        return False
+    
+    words = rubric.split()
+
+    if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+        return False
+
+    r1 = words[0]
+    if not (r1.isalpha() and len(r1) == 4): # should be 4 alphabetic characters: CSCI
+        return False
+
+    r2 = words[1]
+    if not (r2.isdecimal() and len(r2) == 4): # should be 4 decimal characters: 1470
+        return False
+
+    return True
+
+
+def extractRubrics(lines):
+    '''Given a list of lines from a file, return a list of valid rubrics.
+       extractRubrics(lines : [str]) -> [str]
+    '''
+    courses = []
+    for line in lines:
+
+        words = line.split()
+        if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+            continue
+
+        r1 = words[0]
+        if not (r1.isalpha() and len(r1) == 4): # should be 4 alphabetic characters: CSCI
+            continue
+
+        r2 = words[1]
+        if not (r2.isdecimal() and len(r2) == 4): # should be 4 decimal characters: 1470
+            continue
+
+        rubric = r1.upper() + ' ' + r2 # this should always be a well-formed rubric
+        courses.append(rubric)
+
+    return courses
+
+    
 def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
 
     coursestaken = set() # start from an empty set
     
-    print("\nList courses by rubric (like CSCI 1470) that you have previously completed.  Press <Enter> when finished.\n")
+    print("\nList courses by rubric (like CSCI 1470) that you have previously completed and/or file names of files containing course rubrics.\nPress <Enter> when finished.\n")
 
     while True:
-        course = input("  Enter a course rubric: ")
+        course = input("  Enter a course rubric or a file name: ")
 
         if course == '':         # the sentinel
             return coursestaken # return coursestaken to main
-        
-        # validate input (improve this)
-        if len(course) != 9: 
-            print("Use the format: CSCI 1470")
-            continue
 
+        # if not a valid rubric, see if it's a file name
+        if not isRubric(course): # course doesn't fit the rubric pattern
+            try: # check for a filename
+                with open(course, 'r') as file:
+                    lines = list(file)
+            except:
+                print("--That's not a rubric or a file name.")
+                continue
+
+            # valid filename; lines is populated; make a list of courses
+            courses = extractRubrics(lines)
+
+            # add the list of courses to coursestaken
+            coursestaken |= set(courses)
+            continue # don't add the filename to the set of rubrics!
+            
         course = course.upper()
         coursestaken.add(course)
 
@@ -250,6 +309,14 @@ def incTerm(term):
     nextseason = seasons[nextseasonx]
 
     nextterm = nextseason + ' ' + year
+
+    if nextterm.startswith('Summer'):
+        summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(nextterm[-4:]))
+        summer = summer or 'n'
+        summer = summer[0].lower()
+        if summer != 'y':
+            nextterm = incTerm(nextterm)
+            
     return nextterm
 
 
@@ -312,8 +379,8 @@ def displayChoices(term, courseSet, coursestaken):
         index += 1
     courseSet -= socialScience
 
-    # display UCore corereq
-    courses = sorted(list(courseSet & corereq))
+    # display UCore corereq (LLC in corereq moved to CS LLC)
+    courses = sorted(list(courseSet & corereq - LLC))
     if len(courses) > 0:
         print("\nOther University Core Requirements")
         
@@ -322,7 +389,7 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= corereq
+    courseSet -= corereq - LLC
     
     # display CS LLC
     courses = sorted(list(courseSet & LLC))
@@ -376,27 +443,54 @@ def chooseCourses(term, courseDict, coursestaken, degreeplan):
         coursestaken.add(course) # this is not a pure function!
 
         entry = (term, course, coursecatalog[course][0])
-        degreeplan.append(entry) # try appending a space to make summary output easier
+        degreeplan.append(entry)
 
         minisummary.append("{} --> {} {}".format(term, course, coursecatalog[course][0]))
 
     print()
     for c in minisummary:
         print(c)
-        
+
+    degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
     return degreeplan
+
+
+def printSummary(degreeplan):
+    '''Print the summary degree plan
+       printSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
+    '''
+    print('=' * 80)
+    print("Your degree plan summary:")
+    print('=' * 80)
+    print()
+
+    for c in degreeplan:
+        print("{:12} {:9} {}".format(c[0], c[1], c[2]))
         
-    
+
+def saveSummary(degreeplan, filename):
+    '''Save the summary degree plan to a file
+       saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
+    '''
+    try:
+        with open(filename, 'w') as file:
+            file.write("{}{}".format('=' * 80, '\n'))
+            file.write("Your degree plan summary:\n")
+            file.write("{}{}".format('=' * 80, '\n'))
+            file.write('\n')
+
+            for c in degreeplan:
+                file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
+    except:
+        print("Couldn't write to the file!")
+            
+        
 def main():
 
     degreeplan = []  # this will eventually hold the completed degree plan
     
     # let the user enter courses previously taken
     coursestaken = getCoursesTaken()
-
-    # for testing purposes; TODO: allow reading from a file
-    # coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'LITR 2341', 'ARTS 1303', 'HIST 1301', 'HIST 1302', 'POLS 2305',
-    #                 'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2414', 'MATH 2320'}
 
     term = getTerm() # let the user enter the starting term (like Fall 2017)
 
@@ -416,31 +510,16 @@ def main():
         degreeplan = chooseCourses(term, courseDict, coursestaken, degreeplan)
 
         term = incTerm(term)
-        if term.startswith('Summer'):
-            summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
-            summer = summer or 'n'
-            summer = summer[0].lower()
-            if summer != 'y':
-                term = incTerm(term)
+
         print()
 
-    # print the summary degree plan
-    print('=' * 80)
-    print("Your degree plan summary:")
-    print('=' * 80)
+    printSummary(degreeplan)
 
-    insertSpace = ""
-    for c in degreeplan:
-
-        if insertSpace != c[0]: # a hack of a way to insert spaces between terms
-            print()
-
-        print("{:12} {:9} {}".format(c[0], c[1], c[2]))
-
-        insertSpace = c[0] # remember the term so a space can be inserted before a new term
-
-    print()
-    
+    print("If you want to write this summary to a file, ", end="")
+    filename = input("enter a filename, otherwise just press <Enter> to quit: ")
+    if filename != '':
+        saveSummary(degreeplan, filename)
+            
     # THE END
         
 
@@ -451,10 +530,9 @@ if __name__ == "__main__":
 # TODO:
 # - improve variable names; settle on global variables and list them
 # - re-decide default arguments in functions; they're causing tricky bugs
-# - overlap with (corereq and majorreq) and LLC is creating problems
 # - look for ways to improve the logic of functions and the whole program
 # - test all functions
 # - comment everything before I forget how it works!
-# - allow coursestaken to be read from a file the user inputs
-# - write the final degree plan to a file
 # - print nice intro and explanatory text here and there
+
+# - detect and print a message if user-entered rubrics are not in the coursecatalog
