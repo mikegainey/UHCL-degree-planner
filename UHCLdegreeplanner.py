@@ -161,7 +161,9 @@ def LLCcomplete(coursestaken):
 
 
 def getChoices(coursestaken):
-    '''put a docstring here'''
+    '''Given the set of courses taken, return a set of choices of courses eligible to be taken
+       getChoices(coursestaken : set) -> set
+    '''
     global LANG_PHIL_CULTURE
     global CREATIVE_ARTS
     global SOCIAL_SCIENCE
@@ -346,9 +348,9 @@ def unlocks(course, coursestaken):
     return count
 
 
-def displayChoices(term, courseSet, coursestaken):
+def displayChoices(term, choices, coursestaken):
     '''Given an unordered set of course choices, display and return a choice dictionary
-       displayChoices(term : str, courseSet : set, coursetaken : set) -> {index: course}
+       displayChoices(term : str, choices : set, coursetaken : set) -> {index: course}
     '''
     global COURSECATALOG
     global LANG_PHIL_CULTURE
@@ -364,11 +366,11 @@ def displayChoices(term, courseSet, coursestaken):
     choiceDict = {} # a dictionary with key = choice number, value = course rubric
     index = 1
 
-    courseSet2 = courseSet.copy()  # a copy of courseSet that won't mutate during this function (find a better name!)
+    choices2 = choices.copy()  # a copy of choices that won't mutate during this function (find a better name!)
                            # used for unlock logic
     
     # display UCore LangPhilCult
-    courses = sorted(list(courseSet & LANG_PHIL_CULTURE)) 
+    courses = sorted(list(choices & LANG_PHIL_CULTURE)) 
     if len(courses) > 0:
         print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
     
@@ -376,10 +378,10 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= LANG_PHIL_CULTURE
+    choices -= LANG_PHIL_CULTURE
 
     # display UCore Arts
-    courses = sorted(list(courseSet & CREATIVE_ARTS))
+    courses = sorted(list(choices & CREATIVE_ARTS))
     if len(courses) > 0:
         print("\nCreative Arts (3 hours, choose one course)")
 
@@ -387,10 +389,10 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= CREATIVE_ARTS
+    choices -= CREATIVE_ARTS
 
     # display UCore Social Science
-    courses = sorted(list(courseSet & SOCIAL_SCIENCE))
+    courses = sorted(list(choices & SOCIAL_SCIENCE))
     if len(courses) > 0:
         print("\nSocial/Behavioral Science (3 hours, choose one course)")
         
@@ -398,10 +400,10 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= SOCIAL_SCIENCE
+    choices -= SOCIAL_SCIENCE
 
     # display UCore UNI_CORE (LLC in UNI_CORE moved to CS LLC)
-    courses = sorted(list(courseSet & UNI_CORE - LLC))
+    courses = sorted(list(choices & UNI_CORE - LLC))
     if len(courses) > 0:
         print("\nOther University Core Requirements")
         
@@ -410,10 +412,10 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= UNI_CORE - LLC
+    choices -= UNI_CORE - LLC
     
     # display CS LLC
-    courses = sorted(list(courseSet & LLC))
+    courses = sorted(list(choices & LLC))
     if len(courses) > 0:
         print("\nComputer Science Lower-Level Core (LLC)")
         
@@ -422,24 +424,24 @@ def displayChoices(term, courseSet, coursestaken):
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= LLC
+    choices -= LLC
     
     # display CS other major requirements
     print("\nOther Computer Science Major Requirements")
-    for c in sorted(list(courseSet & MAJOR_REQ)):
+    for c in sorted(list(choices & MAJOR_REQ)):
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= MAJOR_REQ
+    choices -= MAJOR_REQ
     
     # display CS electives
     print("\nComputer Science Major Electives (taken junior or senior year")
-    for c in sorted(list(courseSet & ELECTIVES)):
+    for c in sorted(list(choices & ELECTIVES)):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= ELECTIVES
+    choices -= ELECTIVES
     
     return choiceDict
 
@@ -520,14 +522,14 @@ def main():
     while True:
         
         # a set of courses eligible to be taken
-        courseSet = getChoices(coursestaken) # uses coursestaken : set
+        choices = getChoices(coursestaken) # uses coursestaken : set
 
         # are all courses completed?
-        if len(courseSet) == 0:
+        if len(choices) == 0:
             break
 
         # display a sorted list of course choices
-        courseDict = displayChoices(term, courseSet, coursestaken) # uses coursestaken : set
+        courseDict = displayChoices(term, choices, coursestaken) # uses coursestaken : set
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
         degreeplan = chooseCourses(term, courseDict, degreeplan, coursestaken) # uses coursestaken : set
