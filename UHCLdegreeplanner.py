@@ -1,3 +1,5 @@
+# Need help figuring out what courses to take and in what order?  Then, run this program!
+
 # Undergraduate Catalog 2017-2018, Computer Science B.S.
 # Degree Requirements: https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs
 
@@ -5,18 +7,12 @@
 # https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf
 
 
-############################
-# Data used by the program #
-############################
-
-coursestaken = set() # this needs to be defined early on to avoid a runtime error
-
-
+# This function has to be defined first in order for the constant ULC to be defined.
+# That's why it's not with the other function definitions.
 def isULC(course):
-    '''Given a course return True if the course is an upper-level CSCI or CENG course.
+    '''Given a course, return True if the course is an upper-level CSCI or CENG course.
        isULC(course : str) -> bool
        Used to build the set constant ULC
-       * informally tested: seems to work
     '''
     isCSCI = course[:4] == 'CSCI'   # CSCI course?
     isCENG = course[:4] == 'CENG'   # CENG course?
@@ -24,13 +20,18 @@ def isULC(course):
     return (isCSCI or isCENG) and isULC
 
 
-# coursecatalog is a dictionary
+####################
+# Global Constants #
+####################
+
+
+# COURSECATALOG is a dictionary where
 #   key:   is a course rubric, 'PHYS 2325'
 #   value: is a tuple, consisting of
-#     - the full title of the course, "University Physics I"
-#     - a set of prerequisites, {"MATH 2413"}
+#     - a string describing the full title of the course, "University Physics I"
+#     - a set of prerequisites : str, {"MATH 2413", "MATH 2414"}
 
-coursecatalog = {
+COURSECATALOG = {
     # Communication (6 hours)
     "WRIT 1301": ("Composition I", set()),
     "WRIT 1302": ("Composition II", {"WRIT 1301"}),
@@ -100,75 +101,78 @@ coursecatalog = {
     "WRIT 3315": ("Technical Writing", {"WRIT 1301", "WRIT 1302"}),
     "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}),
 
-    "CSCI 4320": ("(elective) Web Application Development", {"CSCI 2315"}),
-    "CSCI 4350": ("(elective) Computer Graphics and Interface Design", {"MATH 2318",  "MATH 2413"}),
-    "CSCI 4362": ("(elective) Computer Game Programming: Theory and Practice", {"CSCI 1470"}),
-    "CSCI 4323": ("(elective) Computer Security", {"CSCI 1471"}),
-
     # CSCI/CINF Major Electives; taken junior or senior year
     "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
     "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
     "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
-    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set())}
+    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set())
+}
 
 # Language, Philosophy and Culture (3 hours required)
-langPhilCulture = {"HUMN 1301", "LITR 2341", "PHIL 1301", "WGST 1301"}
+LANG_PHIL_CULTURE = {"HUMN 1301", "LITR 2341", "PHIL 1301", "WGST 1301"}
 
-# Creative Arts (3 Hours)
-creativeArts = {"ARTS 1303", "ARTS 1304", "ARTS 2379"}
+# Creative Arts (3 hours required)
+CREATIVE_ARTS = {"ARTS 1303", "ARTS 1304", "ARTS 2379"}
 
 # Social and Behavioral Sciences (3 hours required)
-socialScience = {"ANTH 2346", "CRIM 1301", "ECON 2301", "ECON 2302", "GEOG 1303", "PSYC 2301", "SOCI 1301"}
+SOCIAL_SCIENCE = {"ANTH 2346", "CRIM 1301", "ECON 2301", "ECON 2302", "GEOG 1303", "PSYC 2301", "SOCI 1301"}
 
 
-corereq = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302',
+UNI_CORE = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302',
            'POLS 2305', 'POLS 2306', 'COMM 1315', 'PSYC 1100'}
 
-majorreq = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
+MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
             'CSCI 1470', 'CSCI 1471', 'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321',
             'CSCI 4354', 'CENG 3312', 'CENG 3331', 'CENG 3351', 'SWEN 4342', 'WRIT 3315', 'CSCI 4388'}
 
+# There is some overlap with UNI_CORE
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
-ULC = {c for c in majorreq if isULC(c)}
+# after this constant is built, it doesn't mutate further
+ULC = {c for c in MAJOR_REQ if isULC(c)} 
 
-CSelectives = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
+ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
-#################################
-# Functions used by the program #
-#################################
+########################
+# Function Definitions #
+########################
 
-def prerequisites_met(course, coursestaken=coursestaken): # coursestaken could be removed because it is global
-    '''Given a proposed course and a list of courses taken, 
-       return True if the course's prerequisites have been met.
-       prerequisites_met(course : str, coursestaken : set) -> bool
+
+def prerequisites_met(course, coursestaken):
+    '''Given a proposed course, return True if the course's prerequisites have been met.
+       prerequisites_met(course, coursestaken : set) -> bool
        * Informally tested: seems to work
     '''
-    prerequisites = coursecatalog[course][1]     # get the set of prerequisites for the course
+    global COURSECATALOG
+    
+    prerequisites = COURSECATALOG[course][1]     # get the set of prerequisites for the course
 
-    for p in prerequisites:       # check each prerequistite
-        if p not in coursestaken: # if a prerequisite is not in coursestaken
-            return False          # return False
-
-    return True                   # all prerequisites were in coursestaken
+    return prerequisites.issubset(coursestaken)
 
 
-def LLCcomplete(coursestaken=coursestaken, LLC=LLC):
-    '''Given a set of coursestaken and the set of LLC, return True if the LLC is complete.
+def LLCcomplete(coursestaken):
+    '''Given the set of coursestaken and the set of LLC, return True if the LLC is complete.
        LLCcomplete(coursestaken : set, LLC : set) -> bool
     '''
-    return LLC <= coursestaken # True if every element of LLC issubset of coursestaken
+    global LLC
+    
+    return LLC.issubset(coursestaken) # True if every element of LLC issubset of coursestaken
 
 
-def possibilities(coursestaken=coursestaken,
-                  corereq=corereq, majorreq=majorreq,CSelectives=CSelectives,
-                  langPhilCulture=langPhilCulture, creativeArts=creativeArts,
-                  socialScience=socialScience):
+def possibilities(coursestaken):
+    '''put a docstring here'''
+    global LANG_PHIL_CULTURE
+    global CREATIVE_ARTS
+    global SOCIAL_SCIENCE
+    global UNI_CORE
+    global MAJOR_REQ
+    global ULC
+    global ELECTIVES
 
     # at the end of this function, possibilities will be the list of courses eligible to be taken
-    # start with: corereq | majorreq | langPhilCulture | creativeArts | socialScience | CSelectives
-    possibilities = corereq | majorreq | langPhilCulture | creativeArts | socialScience | CSelectives
+    # start with: UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
+    possibilities = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
 
     # remove coursestaken from possibilities
     possibilities -= coursestaken
@@ -177,20 +181,20 @@ def possibilities(coursestaken=coursestaken,
     possibilities = {p for p in possibilities if prerequisites_met(p, coursestaken)}
     
     # remove ULC if LLC not complete
-    if not LLCcomplete(coursestaken, LLC):
+    if not LLCcomplete(coursestaken):
         possibilities -= ULC # remove ULC
 
-    # if langPhilCulture requirement met (3 hours), remove all langPhilCulture courses from possibilities
-    if len(langPhilCulture & coursestaken) > 0: # if the intersection of langPhilCulture and coursestaken is greater than zero
-        possibilities -= langPhilCulture        # remove all langPhilCulture courses from the possibilities list
+    # if LANG_PHIL_CULTURE requirement met (3 hours), remove all LANG_PHIL_CULTURE courses from possibilities
+    if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE courses has already been taken
+        possibilities -= LANG_PHIL_CULTURE        # remove all LANG_PHIL_CULTURE courses from the possibilities list
 
-    # if creativeArts requirement met (3 hours), remove all creativeArts courses from possibilities
-    if len(creativeArts & coursestaken) > 0: # if the intersection of creativeArts and coursestaken is greater than zero
-        possibilities -= creativeArts        # remove all creativeArts courses from the possibilities list
+    # if CREATIVE_ARTS requirement met (3 hours), remove all CREATIVE_ARTS courses from possibilities
+    if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
+        possibilities -= CREATIVE_ARTS        # remove all CREATIVE_ARTS courses from the possibilities list
     
-    # if socialScience requirement met (3 hours), remove all socialScience courses from possibilities
-    if len(socialScience & coursestaken) > 0: # if the intersection of socialScience and coursestaken is greater than zero
-        possibilities -= socialScience        # remove all socialScience courses from the possibilities list
+    # if SOCIAL_SCIENCE requirement met (3 hours), remove all SOCIAL_SCIENCE courses from possibilities
+    if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
+        possibilities -= SOCIAL_SCIENCE        # remove all SOCIAL_SCIENCE courses from the possibilities list
 
     return possibilities
 
@@ -247,15 +251,15 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
 
-    coursestaken = set() # start from an empty set
-    
     print("\nList courses by rubric (like CSCI 1470) that you have previously completed and/or file names of files containing course rubrics.\nPress <Enter> when finished.\n")
 
+    coursestaken = set()
+    
     while True:
         course = input("  Enter a course rubric or a file name: ")
 
         if course == '':         # the sentinel
-            return coursestaken # return coursestaken to main
+            return coursestaken
 
         # if not a valid rubric, see if it's a file name
         if not isRubric(course): # course doesn't fit the rubric pattern
@@ -289,6 +293,7 @@ def getTerm():
     year = input("\n  Enter your starting 2-digit year: ") # check the input
 
     term = season + " 20" + year
+    print()
     return term
 
 
@@ -322,10 +327,17 @@ def incTerm(term):
 
 # given a course, return the number of courses that that course will unlock
 def unlocks(course, coursestaken):
-    coursesneeded = corereq | majorreq | CSelectives - coursestaken # this is a hack if it works at all
+    '''unlocks(course : str, coursestaken : set) -> int
+    '''
+    global COURSECATALOG
+    global UNI_CORE
+    global MAJOR_REQ
+    global ELECTIVES
+    
+    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # this is a hack if it works at all
     count = 0
     for c in coursesneeded:
-        remainingPrerequisites = coursecatalog[c][1] - coursestaken
+        remainingPrerequisites = COURSECATALOG[c][1] - coursestaken
         a = course in remainingPrerequisites
         b = len(remainingPrerequisites) == 1
         if a and b:
@@ -336,8 +348,17 @@ def unlocks(course, coursestaken):
 
 def displayChoices(term, courseSet, coursestaken):
     '''Given an unordered set of course possibilities, display and return a choice dictionary
-       displayChoices(term : str, courseSet : set) -> {index: course}
+       displayChoices(term : str, courseSet : set, coursetaken : set) -> {index: course}
     '''
+    global COURSECATALOG
+    global LANG_PHIL_CULTURE
+    global CREATIVE_ARTS
+    global SOCIAL_SCIENCE
+    global UNI_CORE
+    global MAJOR_REQ
+    global LLC
+    global ELECTIVES
+    
     print("{}\n{} choices:\n{}".format('=' * 80, term, '=' * 80))
 
     choiceDict = {} # a dictionary with key = choice number, value = course rubric
@@ -347,49 +368,49 @@ def displayChoices(term, courseSet, coursestaken):
                            # used for unlock logic
     
     # display UCore LangPhilCult
-    courses = sorted(list(courseSet & langPhilCulture)) 
+    courses = sorted(list(courseSet & LANG_PHIL_CULTURE)) 
     if len(courses) > 0:
         print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
     
     for c in courses:
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= langPhilCulture
+    courseSet -= LANG_PHIL_CULTURE
 
     # display UCore Arts
-    courses = sorted(list(courseSet & creativeArts))
+    courses = sorted(list(courseSet & CREATIVE_ARTS))
     if len(courses) > 0:
         print("\nCreative Arts (3 hours, choose one course)")
 
     for c in courses:
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= creativeArts
+    courseSet -= CREATIVE_ARTS
 
     # display UCore Social Science
-    courses = sorted(list(courseSet & socialScience))
+    courses = sorted(list(courseSet & SOCIAL_SCIENCE))
     if len(courses) > 0:
         print("\nSocial/Behavioral Science (3 hours, choose one course)")
         
     for c in courses:
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= socialScience
+    courseSet -= SOCIAL_SCIENCE
 
-    # display UCore corereq (LLC in corereq moved to CS LLC)
-    courses = sorted(list(courseSet & corereq - LLC))
+    # display UCore UNI_CORE (LLC in UNI_CORE moved to CS LLC)
+    courses = sorted(list(courseSet & UNI_CORE - LLC))
     if len(courses) > 0:
         print("\nOther University Core Requirements")
         
     for c in courses:
         u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= corereq - LLC
+    courseSet -= UNI_CORE - LLC
     
     # display CS LLC
     courses = sorted(list(courseSet & LLC))
@@ -398,35 +419,37 @@ def displayChoices(term, courseSet, coursestaken):
         
     for c in courses:
         u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
     courseSet -= LLC
     
     # display CS other major requirements
     print("\nOther Computer Science Major Requirements")
-    for c in sorted(list(courseSet & majorreq)):
+    for c in sorted(list(courseSet & MAJOR_REQ)):
         u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, coursecatalog[c][0]))
+        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= majorreq
+    courseSet -= MAJOR_REQ
     
     # display CS electives
     print("\nComputer Science Major Electives (taken junior or senior year")
-    for c in sorted(list(courseSet & CSelectives)):
-        print("{:4}) {} {}".format(index, c, coursecatalog[c][0]))
+    for c in sorted(list(courseSet & ELECTIVES)):
+        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         choiceDict[index] = c
         index += 1
-    courseSet -= CSelectives
+    courseSet -= ELECTIVES
     
     return choiceDict
 
 
-def chooseCourses(term, courseDict, coursestaken, degreeplan):
+def chooseCourses(term, courseDict, degreeplan, coursestaken):
     '''Let the user choose courses to take for the listed term; update coursestaken
        chooseCourses(courseDict : dict, coursestaken : set) -> coursesChosen : [course: str]
     '''
+    global COURSECATALOG
+    
     print()
     minisummary = []
     
@@ -442,10 +465,10 @@ def chooseCourses(term, courseDict, coursestaken, degreeplan):
         course = courseDict[choice]
         coursestaken.add(course) # this is not a pure function!
 
-        entry = (term, course, coursecatalog[course][0])
+        entry = (term, course, COURSECATALOG[course][0])
         degreeplan.append(entry)
 
-        minisummary.append("{} --> {} {}".format(term, course, coursecatalog[course][0]))
+        minisummary.append("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
 
     print()
     for c in minisummary:
@@ -497,17 +520,17 @@ def main():
     while True:
         
         # a set of courses eligible to be taken
-        courseSet = possibilities(coursestaken)
+        courseSet = possibilities(coursestaken) # uses coursestaken : set
 
         # are all courses completed?
         if len(courseSet) == 0:
             break
 
         # display a sorted list of course choices
-        courseDict = displayChoices(term, courseSet, coursestaken) 
+        courseDict = displayChoices(term, courseSet, coursestaken) # uses coursestaken : set
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
-        degreeplan = chooseCourses(term, courseDict, coursestaken, degreeplan)
+        degreeplan = chooseCourses(term, courseDict, degreeplan, coursestaken) # uses coursestaken : set
 
         term = incTerm(term)
 
@@ -527,6 +550,7 @@ if __name__ == "__main__":
     # execute only if run as a script
     main()
 
+
 # TODO:
 # - improve variable names; settle on global variables and list them
 # - re-decide default arguments in functions; they're causing tricky bugs
@@ -535,4 +559,5 @@ if __name__ == "__main__":
 # - comment everything before I forget how it works!
 # - print nice intro and explanatory text here and there
 
-# - detect and print a message if user-entered rubrics are not in the coursecatalog
+# - detect and print a message if user-entered rubrics are not in the COURSECATALOG
+# - use re module for isRubric function
