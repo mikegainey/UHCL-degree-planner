@@ -160,7 +160,7 @@ def LLCcomplete(coursestaken):
     return LLC.issubset(coursestaken) # True if every element of LLC issubset of coursestaken
 
 
-def possibilities(coursestaken):
+def getChoices(coursestaken):
     '''put a docstring here'''
     global LANG_PHIL_CULTURE
     global CREATIVE_ARTS
@@ -170,33 +170,33 @@ def possibilities(coursestaken):
     global ULC
     global ELECTIVES
 
-    # at the end of this function, possibilities will be the list of courses eligible to be taken
+    # at the end of this function, choices will be the list of courses eligible to be taken
     # start with: UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
-    possibilities = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
+    choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
 
-    # remove coursestaken from possibilities
-    possibilities -= coursestaken
+    # remove coursestaken from choices
+    choices -= coursestaken
     
     # remove courses if prerequisitives have not been met
-    possibilities = {p for p in possibilities if prerequisites_met(p, coursestaken)}
+    choices = {p for p in choices if prerequisites_met(p, coursestaken)}
     
     # remove ULC if LLC not complete
     if not LLCcomplete(coursestaken):
-        possibilities -= ULC # remove ULC
+        choices -= ULC # remove ULC
 
-    # if LANG_PHIL_CULTURE requirement met (3 hours), remove all LANG_PHIL_CULTURE courses from possibilities
+    # if LANG_PHIL_CULTURE requirement met (3 hours), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE courses has already been taken
-        possibilities -= LANG_PHIL_CULTURE        # remove all LANG_PHIL_CULTURE courses from the possibilities list
+        choices -= LANG_PHIL_CULTURE        # remove all LANG_PHIL_CULTURE courses from the choices list
 
-    # if CREATIVE_ARTS requirement met (3 hours), remove all CREATIVE_ARTS courses from possibilities
+    # if CREATIVE_ARTS requirement met (3 hours), remove all CREATIVE_ARTS courses from choices
     if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
-        possibilities -= CREATIVE_ARTS        # remove all CREATIVE_ARTS courses from the possibilities list
+        choices -= CREATIVE_ARTS        # remove all CREATIVE_ARTS courses from the choices list
     
-    # if SOCIAL_SCIENCE requirement met (3 hours), remove all SOCIAL_SCIENCE courses from possibilities
+    # if SOCIAL_SCIENCE requirement met (3 hours), remove all SOCIAL_SCIENCE courses from choices
     if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
-        possibilities -= SOCIAL_SCIENCE        # remove all SOCIAL_SCIENCE courses from the possibilities list
+        choices -= SOCIAL_SCIENCE        # remove all SOCIAL_SCIENCE courses from the choices list
 
-    return possibilities
+    return choices
 
 
 def isRubric(rubric):
@@ -347,7 +347,7 @@ def unlocks(course, coursestaken):
 
 
 def displayChoices(term, courseSet, coursestaken):
-    '''Given an unordered set of course possibilities, display and return a choice dictionary
+    '''Given an unordered set of course choices, display and return a choice dictionary
        displayChoices(term : str, courseSet : set, coursetaken : set) -> {index: course}
     '''
     global COURSECATALOG
@@ -520,7 +520,7 @@ def main():
     while True:
         
         # a set of courses eligible to be taken
-        courseSet = possibilities(coursestaken) # uses coursestaken : set
+        courseSet = getChoices(coursestaken) # uses coursestaken : set
 
         # are all courses completed?
         if len(courseSet) == 0:
