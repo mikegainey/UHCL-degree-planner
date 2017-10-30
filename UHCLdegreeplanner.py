@@ -363,7 +363,7 @@ def displayChoices(term, choices, coursestaken):
     
     print("{}\n{} choices:\n{}".format('=' * 80, term, '=' * 80))
 
-    choiceDict = {} # a dictionary with key = choice number, value = course rubric
+    courseMenu = {} # a dictionary with key = choice number, value = course rubric
     index = 1
 
     choices2 = choices.copy()  # a copy of choices that won't mutate during this function (find a better name!)
@@ -376,7 +376,7 @@ def displayChoices(term, choices, coursestaken):
     
     for c in courses:
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= LANG_PHIL_CULTURE
 
@@ -387,7 +387,7 @@ def displayChoices(term, choices, coursestaken):
 
     for c in courses:
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= CREATIVE_ARTS
 
@@ -398,7 +398,7 @@ def displayChoices(term, choices, coursestaken):
         
     for c in courses:
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= SOCIAL_SCIENCE
 
@@ -410,7 +410,7 @@ def displayChoices(term, choices, coursestaken):
     for c in courses:
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= UNI_CORE - LLC
     
@@ -422,7 +422,7 @@ def displayChoices(term, choices, coursestaken):
     for c in courses:
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= LLC
     
@@ -431,7 +431,7 @@ def displayChoices(term, choices, coursestaken):
     for c in sorted(list(choices & MAJOR_REQ)):
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= MAJOR_REQ
     
@@ -439,21 +439,21 @@ def displayChoices(term, choices, coursestaken):
     print("\nComputer Science Major Electives (taken junior or senior year")
     for c in sorted(list(choices & ELECTIVES)):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        choiceDict[index] = c
+        courseMenu[index] = c
         index += 1
     choices -= ELECTIVES
     
-    return choiceDict
+    return courseMenu
 
 
-def chooseCourses(term, courseDict, degreeplan, coursestaken):
+def chooseCourses(term, courseMenu, degreeplan, coursestaken):
     '''Let the user choose courses to take for the listed term; update coursestaken
-       chooseCourses(courseDict : dict, coursestaken : set) -> coursesChosen : [course: str]
+       chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
     '''
     global COURSECATALOG
     
     print()
-    minisummary = []
+    termSummary = []
     
     while True:
         choice = input("Select a course by number.  Press <Enter> when finished: ")
@@ -461,19 +461,19 @@ def chooseCourses(term, courseDict, degreeplan, coursestaken):
             break
 
         choice = int(choice)
-        if choice not in courseDict:
+        if choice not in courseMenu:
             print("-- invalid entry --")
             continue
-        course = courseDict[choice]
+        course = courseMenu[choice]
         coursestaken.add(course) # this is not a pure function!
 
         entry = (term, course, COURSECATALOG[course][0])
         degreeplan.append(entry)
 
-        minisummary.append("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
+        termSummary.append("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
 
     print()
-    for c in minisummary:
+    for c in termSummary:
         print(c)
 
     degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
@@ -529,10 +529,10 @@ def main():
             break
 
         # display a sorted list of course choices
-        courseDict = displayChoices(term, choices, coursestaken) # uses coursestaken : set
+        courseMenu = displayChoices(term, choices, coursestaken) # uses coursestaken : set
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
-        degreeplan = chooseCourses(term, courseDict, degreeplan, coursestaken) # uses coursestaken : set
+        degreeplan = chooseCourses(term, courseMenu, degreeplan, coursestaken) # uses coursestaken : set
 
         term = incTerm(term)
 
@@ -554,12 +554,11 @@ if __name__ == "__main__":
 
 
 # TODO:
-# - improve variable names; settle on global variables and list them
-# - re-decide default arguments in functions; they're causing tricky bugs
 # - look for ways to improve the logic of functions and the whole program
 # - test all functions
 # - comment everything before I forget how it works!
 # - print nice intro and explanatory text here and there
 
 # - detect and print a message if user-entered rubrics are not in the COURSECATALOG
+# - don't ask if you want to take summer courses if there are no courses left to take!
 # - use re module for isRubric function
