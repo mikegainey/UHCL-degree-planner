@@ -173,7 +173,6 @@ def getChoices(coursestaken):
     global ELECTIVES
 
     # at the end of this function, choices will be the list of courses eligible to be taken
-    # start with: UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
     choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
 
     # remove coursestaken from choices
@@ -333,23 +332,21 @@ def incTerm(term):
 
 
 # given a course, return the number of courses that that course will unlock
-def unlocks(course, coursestaken):
-    '''unlocks(course : str, coursestaken : set) -> int
+def prereqFor(course, coursestaken):
+    '''prereqFor(course : str, coursestaken : set) -> int
     '''
     global COURSECATALOG
     global UNI_CORE
     global MAJOR_REQ
     global ELECTIVES
 
-    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # this is a hack if it works at all
+    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # this is a hack; improve this
     count = 0
     for c in coursesneeded:
-        remainingPrerequisites = COURSECATALOG[c][1] - coursestaken
-        a = course in remainingPrerequisites
-        b = len(remainingPrerequisites) == 1
-        if a and b:
+        prerequisites = COURSECATALOG[c][1]
+        if course in prerequisites:
             count += 1
-            #print("{} will be unlocked".format(c)) # as evidence that this works
+
     return count
 
 
@@ -413,8 +410,8 @@ def displayChoices(term, choices, coursestaken):
         print("\nOther University Core Requirements")
 
     for c in courses:
-        u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
+        u = prereqFor(c, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
         index += 1
     choices -= UNI_CORE - LLC
@@ -425,8 +422,8 @@ def displayChoices(term, choices, coursestaken):
         print("\nComputer Science Lower-Level Core (LLC)")
 
     for c in courses:
-        u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
+        u = prereqFor(c, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
         index += 1
     choices -= LLC
@@ -434,8 +431,8 @@ def displayChoices(term, choices, coursestaken):
     # display CS other major requirements
     print("\nOther Computer Science Major Requirements")
     for c in sorted(list(choices & MAJOR_REQ)):
-        u = unlocks(c, coursestaken)
-        print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
+        u = prereqFor(c, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
         index += 1
     choices -= MAJOR_REQ
@@ -566,4 +563,3 @@ if __name__ == "__main__":
 
 # - don't ask if you want to take summer courses if there are no courses left to take!
 # - use regex module for isRubric and extractRubrics function
-# - change unlock to just for each course, showing that it is a prereq to # courses left to take (prereq for ##)
