@@ -61,7 +61,7 @@ COURSECATALOG = {
     # Government/Political Science (6 hours)
     "POLS 2305": ("Federal Government", set()),
     "POLS 2306": ("Texas Government", set()),
-    
+
     # Social and Behavioral Sciences (3 hours)
     "ANTH 2346": ("General Anthropology", set()),
     "CRIM 1301": ("Introduction to Criminal Justice", set()),
@@ -84,7 +84,7 @@ COURSECATALOG = {
     "STAT 3334": ("Probability & Statistics ...", {"MATH 2413", "MATH 2414"}),
     "CSCI 1470": ("Computer Science I", set()),
     "CSCI 1471": ("Computer Science II", {"CSCI 1470", "MATH 2413"}),
-    "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414", 
+    "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414",
                                                                 "PHYS 2325",  "PHYS 2326"}),
     "CSCI 2315": ("Data Structures", {"CSCI 1471"}),
     "CSCI 3352": ("Advanced Data Structures", {"CSCI 2315", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
@@ -96,7 +96,7 @@ COURSECATALOG = {
     "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
     "CENG 3331": ("Intro to Telecom and Neworks & Lab (CENG 3131)",  {"CENG 3312"}),
     "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3312"}),
-    
+
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}),
     "WRIT 3315": ("Technical Writing", {"WRIT 1301", "WRIT 1302"}),
     "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}),
@@ -129,7 +129,7 @@ MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'S
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
 # after this constant is built, it doesn't mutate further
-ULC = {c for c in MAJOR_REQ if isULC(c)} 
+ULC = {c for c in MAJOR_REQ if isULC(c)}
 
 ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
@@ -145,7 +145,7 @@ def prerequisites_met(course, coursestaken):
        * Informally tested: seems to work
     '''
     global COURSECATALOG
-    
+
     prerequisites = COURSECATALOG[course][1]     # get the set of prerequisites for the course
 
     return prerequisites.issubset(coursestaken)
@@ -156,7 +156,7 @@ def LLCcomplete(coursestaken):
        LLCcomplete(coursestaken : set, LLC : set) -> bool
     '''
     global LLC
-    
+
     return LLC.issubset(coursestaken) # True if every element of LLC issubset of coursestaken
 
 
@@ -178,10 +178,10 @@ def getChoices(coursestaken):
 
     # remove coursestaken from choices
     choices -= coursestaken
-    
+
     # remove courses if prerequisitives have not been met
     choices = {p for p in choices if prerequisites_met(p, coursestaken)}
-    
+
     # remove ULC if LLC not complete
     if not LLCcomplete(coursestaken):
         choices -= ULC # remove ULC
@@ -193,7 +193,7 @@ def getChoices(coursestaken):
     # if CREATIVE_ARTS requirement met (3 hours), remove all CREATIVE_ARTS courses from choices
     if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
         choices -= CREATIVE_ARTS        # remove all CREATIVE_ARTS courses from the choices list
-    
+
     # if SOCIAL_SCIENCE requirement met (3 hours), remove all SOCIAL_SCIENCE courses from choices
     if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
         choices -= SOCIAL_SCIENCE        # remove all SOCIAL_SCIENCE courses from the choices list
@@ -207,7 +207,7 @@ def isRubric(rubric):
     '''
     if len(rubric) != 9: # CSCI 1470 and other rubrics are always 9 characters
         return False
-    
+
     words = rubric.split()
 
     if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
@@ -246,9 +246,14 @@ def extractRubrics(lines):
         rubric = r1.upper() + ' ' + r2 # this should always be a well-formed rubric
         courses.append(rubric)
 
+        if rubric in COURSECATALOG:
+            print("added {} {}".format(rubric, COURSECATALOG[rubric][0]))
+        else:
+            print("----- {} not recognized by this computer program".format(rubric))
+
     return courses
 
-    
+
 def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
@@ -256,7 +261,7 @@ def getCoursesTaken():
     print("\nList courses by rubric (like CSCI 1470) that you have previously completed and/or file names of files containing course rubrics.\nPress <Enter> when finished.\n")
 
     coursestaken = set()
-    
+
     while True:
         course = input("  Enter a course rubric or a file name: ")
 
@@ -278,7 +283,7 @@ def getCoursesTaken():
             # add the list of courses to coursestaken
             coursestaken |= set(courses)
             continue # don't add the filename to the set of rubrics!
-            
+
         course = course.upper()
         coursestaken.add(course)
 
@@ -291,7 +296,7 @@ def getTerm():
     print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
     season = int(input("\n  Enter 1, 2, or 3: ")) # check the input first
     season = seasons[season]
-    
+
     year = input("\n  Enter your starting 2-digit year: ") # check the input
 
     term = season + " 20" + year
@@ -304,13 +309,13 @@ def incTerm(term):
        incTerm(term : str) -> str
     '''
     seasons = ["Fall", "Spring", "Summer"]
-    
+
     season, year = term.split()
 
     if season == 'Fall':
         year = int(year) + 1
         year = str(year)
-    
+
     seasonx = seasons.index(season) # this will fail easily
     nextseasonx = (seasonx + 1) % 3
     nextseason = seasons[nextseasonx]
@@ -323,7 +328,7 @@ def incTerm(term):
         summer = summer[0].lower()
         if summer != 'y':
             nextterm = incTerm(nextterm)
-            
+
     return nextterm
 
 
@@ -335,7 +340,7 @@ def unlocks(course, coursestaken):
     global UNI_CORE
     global MAJOR_REQ
     global ELECTIVES
-    
+
     coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # this is a hack if it works at all
     count = 0
     for c in coursesneeded:
@@ -360,7 +365,7 @@ def displayChoices(term, choices, coursestaken):
     global MAJOR_REQ
     global LLC
     global ELECTIVES
-    
+
     print("{}\n{} choices:\n{}".format('=' * 80, term, '=' * 80))
 
     courseMenu = {} # a dictionary with key = choice number, value = course rubric
@@ -368,12 +373,12 @@ def displayChoices(term, choices, coursestaken):
 
     choices2 = choices.copy()  # a copy of choices that won't mutate during this function (find a better name!)
                            # used for unlock logic
-    
+
     # display UCore LangPhilCult
-    courses = sorted(list(choices & LANG_PHIL_CULTURE)) 
+    courses = sorted(list(choices & LANG_PHIL_CULTURE))
     if len(courses) > 0:
         print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
-    
+
     for c in courses:
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
@@ -395,7 +400,7 @@ def displayChoices(term, choices, coursestaken):
     courses = sorted(list(choices & SOCIAL_SCIENCE))
     if len(courses) > 0:
         print("\nSocial/Behavioral Science (3 hours, choose one course)")
-        
+
     for c in courses:
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
@@ -406,26 +411,26 @@ def displayChoices(term, choices, coursestaken):
     courses = sorted(list(choices & UNI_CORE - LLC))
     if len(courses) > 0:
         print("\nOther University Core Requirements")
-        
+
     for c in courses:
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
         index += 1
     choices -= UNI_CORE - LLC
-    
+
     # display CS LLC
     courses = sorted(list(choices & LLC))
     if len(courses) > 0:
         print("\nComputer Science Lower-Level Core (LLC)")
-        
+
     for c in courses:
         u = unlocks(c, coursestaken)
         print("{:4}) (unlocks {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
         index += 1
     choices -= LLC
-    
+
     # display CS other major requirements
     print("\nOther Computer Science Major Requirements")
     for c in sorted(list(choices & MAJOR_REQ)):
@@ -434,7 +439,7 @@ def displayChoices(term, choices, coursestaken):
         courseMenu[index] = c
         index += 1
     choices -= MAJOR_REQ
-    
+
     # display CS electives
     print("\nComputer Science Major Electives (taken junior or senior year")
     for c in sorted(list(choices & ELECTIVES)):
@@ -442,7 +447,7 @@ def displayChoices(term, choices, coursestaken):
         courseMenu[index] = c
         index += 1
     choices -= ELECTIVES
-    
+
     return courseMenu
 
 
@@ -451,10 +456,10 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
     '''
     global COURSECATALOG
-    
+
     print()
     termSummary = []
-    
+
     while True:
         choice = input("Select a course by number.  Press <Enter> when finished: ")
         if choice == '':
@@ -491,7 +496,7 @@ def printSummary(degreeplan):
 
     for c in degreeplan:
         print("{:12} {:9} {}".format(c[0], c[1], c[2]))
-        
+
 
 def saveSummary(degreeplan, filename):
     '''Save the summary degree plan to a file
@@ -508,19 +513,19 @@ def saveSummary(degreeplan, filename):
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
     except:
         print("Couldn't write to the file!")
-            
-        
+
+
 def main():
 
     degreeplan = []  # this will eventually hold the completed degree plan
-    
+
     # let the user enter courses previously taken
     coursestaken = getCoursesTaken()
 
     term = getTerm() # let the user enter the starting term (like Fall 2017)
 
     while True:
-        
+
         # a set of courses eligible to be taken
         choices = getChoices(coursestaken) # uses coursestaken : set
 
@@ -544,9 +549,9 @@ def main():
     filename = input("enter a filename, otherwise just press <Enter> to quit: ")
     if filename != '':
         saveSummary(degreeplan, filename)
-            
+
     # THE END
-        
+
 
 if __name__ == "__main__":
     # execute only if run as a script
@@ -559,6 +564,6 @@ if __name__ == "__main__":
 # - comment everything before I forget how it works!
 # - print nice intro and explanatory text here and there
 
-# - detect and print a message if user-entered rubrics are not in the COURSECATALOG
 # - don't ask if you want to take summer courses if there are no courses left to take!
-# - use re module for isRubric function
+# - use regex module for isRubric and extractRubrics function
+# - change unlock to just for each course, showing that it is a prereq to # courses left to take (prereq for ##)
