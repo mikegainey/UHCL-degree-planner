@@ -230,20 +230,17 @@ def extractRubrics(lines):
     courses = []
     for line in lines:
 
-        words = line.split()
-        if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+        if len(line) < 9: # the line is too short to contain a rubric
             continue
 
-        r1 = words[0]
-        if not (r1.isalpha() and len(r1) == 4): # should be 4 alphabetic characters: CSCI
+        maybeRubric = line[:9] # the part of the line to check
+        
+        if not isRubric(maybeRubric): # if not a rubric, loop back
             continue
 
-        r2 = words[1]
-        if not (r2.isdecimal() and len(r2) == 4): # should be 4 decimal characters: 1470
-            continue
-
-        rubric = r1.upper() + ' ' + r2 # this should always be a well-formed rubric
-        courses.append(rubric)
+        rubric = maybeRubric # at this point, rubric is confirmed
+        
+        courses.append(rubric) # or put this after checking the COURSECATALOG
 
         if rubric in COURSECATALOG:
             print("added {} {}".format(rubric, COURSECATALOG[rubric][0]))
@@ -277,7 +274,9 @@ def getCoursesTaken():
                 continue
 
             # valid filename; lines is populated; make a list of courses
+            print()
             courses = extractRubrics(lines)
+            print()
 
             # add the list of courses to coursestaken
             coursestaken |= set(courses)
@@ -524,17 +523,18 @@ def main():
     while True:
 
         # a set of courses eligible to be taken
-        choices = getChoices(coursestaken) # uses coursestaken : set
+        choices = getChoices(coursestaken)
 
         # are all courses completed?
         if len(choices) == 0:
             break
 
         # display a sorted list of course choices
-        courseMenu = displayChoices(term, choices, coursestaken) # uses coursestaken : set
+        # courseMenu is a dictionary with key = choice number, value = course rubric
+        courseMenu = displayChoices(term, choices, coursestaken)
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
-        degreeplan = chooseCourses(term, courseMenu, degreeplan, coursestaken) # uses coursestaken : set
+        degreeplan = chooseCourses(term, courseMenu, degreeplan, coursestaken)
 
         term = incTerm(term)
 
