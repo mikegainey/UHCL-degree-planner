@@ -140,20 +140,19 @@ ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
 def prerequisites_met(course, coursestaken):
-    '''Given a proposed course, return True if the course's prerequisites have been met.
-       prerequisites_met(course, coursestaken : set) -> bool
-       * Informally tested: seems to work
+    '''Given a course, return True if the course's prerequisites have been met.
+       prerequisites_met(course : str, coursestaken : set) -> bool
     '''
     global COURSECATALOG
 
-    prerequisites = COURSECATALOG[course][1]     # get the set of prerequisites for the course
+    prerequisites = COURSECATALOG[course][1] # get the set of prerequisites for the course
 
-    return prerequisites.issubset(coursestaken)
+    return prerequisites.issubset(coursestaken) # True if every element of prerequisities in coursestaken
 
 
 def LLCcomplete(coursestaken):
-    '''Given the set of coursestaken and the set of LLC, return True if the LLC is complete.
-       LLCcomplete(coursestaken : set, LLC : set) -> bool
+    '''Given the set of coursestaken, return True if the CS LLC is complete.
+       LLCcomplete(coursestaken : set) -> bool
     '''
     global LLC
 
