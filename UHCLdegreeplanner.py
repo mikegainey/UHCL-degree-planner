@@ -320,13 +320,6 @@ def incTerm(term):
 
     nextterm = nextseason + ' ' + year
 
-    if nextterm.startswith('Summer'):
-        summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(nextterm[-4:]))
-        summer = summer or 'n'
-        summer = summer[0].lower()
-        if summer != 'y':
-            nextterm = incTerm(nextterm)
-
     return nextterm
 
 
@@ -437,7 +430,10 @@ def displayChoices(term, choices, coursestaken):
     choices -= MAJOR_REQ
 
     # display CS electives
-    print("\nComputer Science Major Electives (taken junior or senior year")
+    courses = choices & ELECTIVES
+    if len(courses) > 0:
+        print("\nComputer Science Major Electives (taken junior or senior year)")
+
     for c in sorted(list(choices & ELECTIVES)):
         print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
         courseMenu[index] = c
@@ -529,6 +525,13 @@ def main():
         if len(choices) == 0:
             break
 
+        if term.startswith('Summer'):
+            summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
+            summer = summer or 'n'
+            summer = summer[0].lower()
+            if summer != 'y':
+                term = incTerm(term)
+
         # display a sorted list of course choices
         # courseMenu is a dictionary with key = choice number, value = course rubric
         courseMenu = displayChoices(term, choices, coursestaken)
@@ -550,16 +553,16 @@ def main():
     # THE END
 
 
+# this allows this program to be imported (without executing) into a unittest script for testing
 if __name__ == "__main__":
-    # execute only if run as a script
     main()
 
 
 # TODO:
 # - look for ways to improve the logic of functions and the whole program
-# - test all functions
-# - comment everything before I forget how it works!
 # - print nice intro and explanatory text here and there
 
-# - don't ask if you want to take summer courses if there are no courses left to take!
+# - test all functions
+# - comment everything before I forget how it works!
+
 # - use regex module for isRubric and extractRubrics function
