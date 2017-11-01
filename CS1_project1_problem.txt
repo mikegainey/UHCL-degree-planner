@@ -1,0 +1,7 @@
+1. A problem statement of what your project accomplishes. 3-4 statements
+   due: October 31, Tuesday 11:59pm to Blackboard
+
+
+My project will help UHCL Computer Science B.S. students choose courses to take in the next term.  It will present a list of only the courses that the student is eligible to take.  It will also help the student map out their degree plan through graduation.
+
+This process is confusing for some students because many courses have prerequisites.  Upper-level CSCI and CENG courses can't be taken until the lower-level core is complete.  The lists of courses that satisfy requirements for language, philosophy, and culture; creative arts; and social/behavioral science are not listed on the two-page degree plan and might be hard to find for students not used to reading university course catalogs.
