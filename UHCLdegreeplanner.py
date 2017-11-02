@@ -308,13 +308,24 @@ def getTerm():
     '''
     seasons = ["placeholder", "Fall", "Spring", "Summer"]
 
-    print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
-    season = int(input("\n  Enter 1, 2, or 3: ")) # check the input first
-    season = seasons[season]
+    while True:
+        print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
+        season = input("  Enter 1, 2, or 3: ")
+        if season.isdecimal():
+            season = int(season)
+            season = seasons[season]
+            break
+        else:
+            print("-- Just enter the number.")
 
-    year = input("\n  Enter your starting 2-digit year: ") # check the input
-
-    term = season + " 20" + year
+    while True:
+        year = input("\n  Enter your starting 2-digit year: ") # check the input
+        if year.isdecimal() and len(year) == 2:
+            term = season + " 20" + year
+            break
+        else:
+            print("-- Just enter two digits.")
+            
     print()
     return term
 
