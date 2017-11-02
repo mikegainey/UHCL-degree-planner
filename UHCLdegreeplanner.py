@@ -26,8 +26,8 @@ def isULC(course):
 
 
 # COURSECATALOG is a dictionary where
-#   key:   is a course rubric, 'PHYS 2325'
-#   value: is a tuple, consisting of
+#   key:   is a string representing a course rubric, like 'PHYS 2325'
+#   value: is a tuple consisting of
 #     - a string describing the full title of the course, "University Physics I"
 #     - a set of prerequisites : str, {"MATH 2413", "MATH 2414"}
 
@@ -117,20 +117,22 @@ CREATIVE_ARTS = {"ARTS 1303", "ARTS 1304", "ARTS 2379"}
 # Social and Behavioral Sciences (3 hours required)
 SOCIAL_SCIENCE = {"ANTH 2346", "CRIM 1301", "ECON 2301", "ECON 2302", "GEOG 1303", "PSYC 2301", "SOCI 1301"}
 
-
+# University Core 
 UNI_CORE = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302',
            'POLS 2305', 'POLS 2306', 'COMM 1315', 'PSYC 1100'}
 
+# Major Requirements
 MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
             'CSCI 1470', 'CSCI 1471', 'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321',
             'CSCI 4354', 'CENG 3312', 'CENG 3331', 'CENG 3351', 'SWEN 4342', 'WRIT 3315', 'CSCI 4388'}
 
-# There is some overlap with UNI_CORE
+# CS lower-level core; there is some overlap with UNI_CORE
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
-# after this constant is built, it doesn't mutate further
+# CS upper-level core; after this constant is built, it doesn't change
 ULC = {c for c in MAJOR_REQ if isULC(c)}
 
+# Major electives; modified the last digit because rubrics must be unique
 ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
@@ -147,11 +149,11 @@ def prerequisites_met(course, coursestaken):
 
     prerequisites = COURSECATALOG[course][1] # get the set of prerequisites for the course
 
-    return prerequisites.issubset(coursestaken) # True if every element of prerequisities in coursestaken
+    return prerequisites.issubset(coursestaken) # True if every element of prerequisities is in coursestaken
 
 
 def LLCcomplete(coursestaken):
-    '''Given the set of coursestaken, return True if the CS LLC is complete.
+    '''Given the set of courses taken, return True if the CS LLC is complete.
        LLCcomplete(coursestaken : set) -> bool
     '''
     global LLC
@@ -160,7 +162,7 @@ def LLCcomplete(coursestaken):
 
 
 def getChoices(coursestaken):
-    '''Given the set of courses taken, return a set of choices of courses eligible to be taken
+    '''Given the set of courses taken, return the set of courses eligible to be taken (choices)
        getChoices(coursestaken : set) -> set
     '''
     global LANG_PHIL_CULTURE
@@ -180,21 +182,21 @@ def getChoices(coursestaken):
     # remove courses if prerequisitives have not been met
     choices = {p for p in choices if prerequisites_met(p, coursestaken)}
 
-    # remove ULC if LLC not complete
+    # remove ULC and ELECTIVES if LLC not complete
     if not LLCcomplete(coursestaken):
-        choices -= ULC # remove ULC
+        choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
 
-    # if LANG_PHIL_CULTURE requirement met (3 hours), remove all LANG_PHIL_CULTURE courses from choices
-    if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE courses has already been taken
-        choices -= LANG_PHIL_CULTURE        # remove all LANG_PHIL_CULTURE courses from the choices list
+    # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
+    if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
+        choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
 
-    # if CREATIVE_ARTS requirement met (3 hours), remove all CREATIVE_ARTS courses from choices
+    # if CREATIVE_ARTS requirement met (1 course), remove all CREATIVE_ARTS courses from choices
     if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
-        choices -= CREATIVE_ARTS        # remove all CREATIVE_ARTS courses from the choices list
+        choices -= CREATIVE_ARTS              # remove all CREATIVE_ARTS courses from the choices list
 
-    # if SOCIAL_SCIENCE requirement met (3 hours), remove all SOCIAL_SCIENCE courses from choices
+    # if SOCIAL_SCIENCE requirement met (1 course), remove all SOCIAL_SCIENCE courses from choices
     if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
-        choices -= SOCIAL_SCIENCE        # remove all SOCIAL_SCIENCE courses from the choices list
+        choices -= SOCIAL_SCIENCE              # remove all SOCIAL_SCIENCE courses from the choices list
 
     return choices
 
@@ -202,8 +204,9 @@ def getChoices(coursestaken):
 def isRubric(rubric):
     '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
        isRubric(rubric : str) -> bool
+       the alpha part can be uppercase or lowercase
     '''
-    if len(rubric) != 9: # CSCI 1470 and other rubrics are always 9 characters
+    if len(rubric) != 9: # rubrics are always 9 characters (like 'CSCI 1470')
         return False
 
     words = rubric.split()
@@ -211,12 +214,12 @@ def isRubric(rubric):
     if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
         return False
 
-    r1 = words[0]
-    if not (r1.isalpha() and len(r1) == 4): # should be 4 alphabetic characters: CSCI
+    part1 = words[0]
+    if not (part1.isalpha() and len(part1) == 4): # should be 4 alphabetic characters: CSCI
         return False
 
-    r2 = words[1]
-    if not (r2.isdecimal() and len(r2) == 4): # should be 4 decimal characters: 1470
+    part2 = words[1]
+    if not (part2.isdecimal() and len(part2) == 4): # should be 4 decimal characters: 1470
         return False
 
     return True
@@ -226,7 +229,7 @@ def extractRubrics(lines):
     '''Given a list of lines from a file, return a list of valid rubrics.
        extractRubrics(lines : [str]) -> [str]
     '''
-    courses = []
+    courses = [] # why can't this be a set?
     for line in lines:
 
         if len(line) < 9: # the line is too short to contain a rubric
@@ -239,12 +242,14 @@ def extractRubrics(lines):
 
         rubric = maybeRubric # at this point, rubric is confirmed
         
-        courses.append(rubric) # or put this after checking the COURSECATALOG
-
         if rubric in COURSECATALOG:
+
+            courses.append(rubric)
             print("added {} {}".format(rubric, COURSECATALOG[rubric][0]))
+
         else:
-            print("----- {} not recognized by this computer program".format(rubric))
+
+            print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(rubric))
 
     return courses
 
@@ -253,23 +258,24 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
 
-    print("\nList courses by rubric (like CSCI 1470) that you have previously completed and/or file names of files containing course rubrics.\nPress <Enter> when finished.\n")
+    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or names of files containing course rubrics.\nPress <Enter> when finished.\n")
 
     coursestaken = set()
 
     while True:
         course = input("  Enter a course rubric or a file name: ")
 
-        if course == '':         # the sentinel
+        # the sentinel
+        if course == '':         
             return coursestaken
 
-        # if not a valid rubric, see if it's a file name
+        # if not a valid rubric, treat as a file name
         if not isRubric(course): # course doesn't fit the rubric pattern
-            try: # check for a filename
+            try:                 # check for a file name
                 with open(course, 'r') as file:
-                    lines = list(file)
+                    lines = list(file) # a list of lines in the file
             except:
-                print("--That's not a rubric or a file name.")
+                print("--That's not a rubric or a file name.\n")
                 continue
 
             # valid filename; lines is populated; make a list of courses
@@ -281,15 +287,26 @@ def getCoursesTaken():
             coursestaken |= set(courses)
             continue # don't add the filename to the set of rubrics!
 
-        course = course.upper()
-        coursestaken.add(course)
+        else: # isRubric(course) == True
 
+            course = course.upper()
+            if course in COURSECATALOG:
 
+                coursestaken.add(course)
+                print("added {} {}".format(course, COURSECATALOG[course][0]))
+
+            else:
+                print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
+
+            print()
+
+            
 def getTerm():
     '''Prompt the user to enter the starting term (like Fall 2017)
-       getTerm() -> str'''
-
+       getTerm() -> str
+    '''
     seasons = ["placeholder", "Fall", "Spring", "Summer"]
+
     print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
     season = int(input("\n  Enter 1, 2, or 3: ")) # check the input first
     season = seasons[season]
@@ -324,7 +341,8 @@ def incTerm(term):
 
 # given a course, return the number of courses that that course will unlock
 def prereqFor(course, coursestaken):
-    '''prereqFor(course : str, coursestaken : set) -> int
+    '''Given (the parameters), return the number of other needed courses that the given course is a prerequisite for
+      prereqFor(course : str, coursestaken : set) -> int
     '''
     global COURSECATALOG
     global UNI_CORE
@@ -486,6 +504,7 @@ def printSummary(degreeplan):
     print()
 
     for c in degreeplan:
+        # c[0] = term, c[1] = course rubric, c[2] = course title
         print("{:12} {:9} {}".format(c[0], c[1], c[2]))
 
 
@@ -501,6 +520,7 @@ def saveSummary(degreeplan, filename):
             file.write('\n')
 
             for c in degreeplan:
+                # c[0] = term, c[1] = course rubric, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
     except:
         print("Couldn't write to the file!")
@@ -565,3 +585,22 @@ if __name__ == "__main__":
 # - comment everything before I forget how it works!
 
 # - use regex module for isRubric and extractRubrics function
+# - extractRubrics: change courses from a list to a set?
+# - getCoursesTaken is sloppy
+
+# Functions:
+#   isULC(course):
+#   prerequisites_met(course, coursestaken):
+#   LLCcomplete(coursestaken):
+#   getChoices(coursestaken):
+#   isRubric(rubric):
+#   extractRubrics(lines):
+#   getCoursesTaken():
+#   getTerm():
+#   incTerm(term):
+#   prereqFor(course, coursestaken):
+#   displayChoices(term, choices, coursestaken):
+#   chooseCourses(term, courseMenu, degreeplan, coursestaken):
+#   printSummary(degreeplan):
+#   saveSummary(degreeplan, filename):
+#   main()
