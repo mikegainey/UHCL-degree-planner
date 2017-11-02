@@ -1,6 +1,12 @@
--- Michael Gainey's completed courses list
+Note on the format of input files:
+- list rubrics one-on-a-line, at the beginning of the line
+- anything on the line after a rubric is ignored
+- any line starting with a non-rubric is ignored
 
-from UHCL
+
+Michael Gainey's completed courses list
+
+-- from UHCL
 ECON 2301 Macroeconomics
 POLS 2306 Texas Government
 abcd 1234 this is a test
@@ -9,7 +15,7 @@ abcd 1234 this is a test
 WRIT 1301
 WRIT 1302
 LITR 2341
-ARTS 1303
+ARTS 1303 I have never taken an art class, but I have a music degree
 HIST 1301
 HIST 1302
 POLS 2305
@@ -18,7 +24,7 @@ PSYC 1100
 CHEM 1311
 
 -- from San Jacinto College
-MATH 2413
-MATH 2414
+MATH 2413 Calculus I
+MATH 2414 Calculus II
 MATH 2320 Differential equations; I took it, but don't remember anything
 

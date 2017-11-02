@@ -256,7 +256,7 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
 
-    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or names of files containing course rubrics.\nPress <Enter> when finished.\n")
+    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\nPress <Enter> when finished.\n")
 
     coursestaken = set()
 
@@ -267,36 +267,39 @@ def getCoursesTaken():
         if course == '':
             return coursestaken
 
-        # if not a valid rubric, treat as a file name
-        if not isRubric(course): # course doesn't fit the rubric pattern
-            try:                 # check for a file name
-                with open(course, 'r') as file:
-                    lines = list(file) # a list of lines in the file
-            except:
-                print("--That's not a rubric or a file name.\n")
-                continue
-
-            # valid filename; lines is populated; make a list of courses
-            print()
-            courses = extractRubrics(lines)
-            print()
-
-            # add the list of courses to coursestaken
-            coursestaken |= courses
-            continue # don't add the filename to the set of rubrics!
-
-        else: # isRubric(course) == True
-
+        # the input string is a rubric
+        if isRubric(course):
             course = course.upper()
+
+            # see if it's part of the CS BS degree
             if course in COURSECATALOG:
 
+                # if so, add it to coursestaken
                 coursestaken.add(course)
                 print("added {} {}".format(course, COURSECATALOG[course][0]))
 
             else:
                 print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
 
+        # the input string is not a rubric; see if it's a file name
+        else:    
+            try:
+                with open(course, 'r') as file:
+                    lines = list(file) # a list of lines in the file
+            except:
+                print("--That's not a rubric or a file name.\n")
+                continue
+
+            # valid filename; lines is populated; get the set of courses
             print()
+            courses = extractRubrics(lines) # this also prints the courses
+            print()
+
+            # add the list of courses to coursestaken
+            coursestaken |= courses
+            continue # don't add the filename to the set of rubrics!
+
+        print()
 
 
 def getTerm():
@@ -597,8 +600,8 @@ if __name__ == "__main__":
 # good  LLCcomplete(coursestaken):
 # good  getChoices(coursestaken):
 # good  isRubric(rubric):
-# good  extractRubrics(lines):
-#       getCoursesTaken():
+# good  extractRubrics(lines):    # reconsider division of responsibilities
+#       getCoursesTaken():        # between these functions; maybe add another helper function
 #       getTerm():
 #       incTerm(term):
 # ok    prereqFor(course, coursestaken):
