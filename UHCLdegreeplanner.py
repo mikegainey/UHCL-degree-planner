@@ -117,7 +117,7 @@ CREATIVE_ARTS = {"ARTS 1303", "ARTS 1304", "ARTS 2379"}
 # Social and Behavioral Sciences (3 hours required)
 SOCIAL_SCIENCE = {"ANTH 2346", "CRIM 1301", "ECON 2301", "ECON 2302", "GEOG 1303", "PSYC 2301", "SOCI 1301"}
 
-# University Core 
+# University Core
 UNI_CORE = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302',
            'POLS 2305', 'POLS 2306', 'COMM 1315', 'PSYC 1100'}
 
@@ -142,7 +142,7 @@ ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
 def prerequisites_met(course, coursestaken):
-    '''Given a course, return True if the course's prerequisites have been met.
+    '''Given a course and courses taken, return True if the course's prerequisites have been met.
        prerequisites_met(course : str, coursestaken : set) -> bool
     '''
     global COURSECATALOG
@@ -179,8 +179,8 @@ def getChoices(coursestaken):
     # remove coursestaken from choices
     choices -= coursestaken
 
-    # remove courses if prerequisitives have not been met
-    choices = {p for p in choices if prerequisites_met(p, coursestaken)}
+    # remove courses where prerequisitives have not been met
+    choices = {course for course in choices if prerequisites_met(course, coursestaken)}
 
     # remove ULC and ELECTIVES if LLC not complete
     if not LLCcomplete(coursestaken):
@@ -201,15 +201,15 @@ def getChoices(coursestaken):
     return choices
 
 
-def isRubric(rubric):
+def isRubric(maybeRubric):
     '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
-       isRubric(rubric : str) -> bool
-       the alpha part can be uppercase or lowercase
+       isRubric(maybeRubric : str) -> bool
+       the alpha characters can be uppercase or lowercase
     '''
-    if len(rubric) != 9: # rubrics are always 9 characters (like 'CSCI 1470')
+    if len(maybeRubric) != 9: # rubrics are always 9 characters (like 'CSCI 1470')
         return False
 
-    words = rubric.split()
+    words = maybeRubric.split()
 
     if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
         return False
@@ -226,29 +226,27 @@ def isRubric(rubric):
 
 
 def extractRubrics(lines):
-    '''Given a list of lines from a file, return a list of valid rubrics.
-       extractRubrics(lines : [str]) -> [str]
+    '''Given a list of lines from a file, return a set of valid rubrics.
+       extractRubrics(lines : [str]) -> {str}
     '''
-    courses = [] # why can't this be a set?
+    courses = set()
     for line in lines:
 
         if len(line) < 9: # the line is too short to contain a rubric
             continue
 
         maybeRubric = line[:9] # the part of the line to check
-        
+
         if not isRubric(maybeRubric): # if not a rubric, loop back
             continue
 
-        rubric = maybeRubric # at this point, rubric is confirmed
-        
-        if rubric in COURSECATALOG:
+        rubric = maybeRubric # at this point, it's a confirmed rubric (format)
 
-            courses.append(rubric)
+        if rubric in COURSECATALOG:
+            courses.add(rubric)
             print("added {} {}".format(rubric, COURSECATALOG[rubric][0]))
 
         else:
-
             print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(rubric))
 
     return courses
@@ -266,7 +264,7 @@ def getCoursesTaken():
         course = input("  Enter a course rubric or a file name: ")
 
         # the sentinel
-        if course == '':         
+        if course == '':
             return coursestaken
 
         # if not a valid rubric, treat as a file name
@@ -284,7 +282,7 @@ def getCoursesTaken():
             print()
 
             # add the list of courses to coursestaken
-            coursestaken |= set(courses)
+            coursestaken |= courses
             continue # don't add the filename to the set of rubrics!
 
         else: # isRubric(course) == True
@@ -300,7 +298,7 @@ def getCoursesTaken():
 
             print()
 
-            
+
 def getTerm():
     '''Prompt the user to enter the starting term (like Fall 2017)
        getTerm() -> str
@@ -339,9 +337,8 @@ def incTerm(term):
     return nextterm
 
 
-# given a course, return the number of courses that that course will unlock
 def prereqFor(course, coursestaken):
-    '''Given (the parameters), return the number of other needed courses that the given course is a prerequisite for
+    '''Given (the parameters), return the number of needed courses for which that course is a prerequisite
       prereqFor(course : str, coursestaken : set) -> int
     '''
     global COURSECATALOG
@@ -349,7 +346,14 @@ def prereqFor(course, coursestaken):
     global MAJOR_REQ
     global ELECTIVES
 
-    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # this is a hack; improve this
+    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken
+
+    # because WRIT 1301 is a prerequisite for LITR 2341 (in LANG_PHIL_CULTURE)
+    if len(LANG_PHIL_CULTURE & coursestaken) == 0: # if the lang/phil/culture requirement is not complete
+        coursesneeded |= LANG_PHIL_CULTURE         # add it to courses needed
+
+    # CREATIVE_ARTS and SOCIAL_SCIENCE don't have to be here because thoses courses don't have prerequisites
+
     count = 0
     for c in coursesneeded:
         prerequisites = COURSECATALOG[c][1]
@@ -360,7 +364,7 @@ def prereqFor(course, coursestaken):
 
 
 def displayChoices(term, choices, coursestaken):
-    '''Given an unordered set of course choices, display and return a choice dictionary
+    '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursetaken : set) -> {index: course}
     '''
     global COURSECATALOG
@@ -378,7 +382,7 @@ def displayChoices(term, choices, coursestaken):
     index = 1
 
     choices2 = choices.copy()  # a copy of choices that won't mutate during this function (find a better name!)
-                           # used for unlock logic
+                               # used for unlock logic
 
     # display UCore LangPhilCult
     courses = sorted(list(choices & LANG_PHIL_CULTURE))
@@ -474,10 +478,11 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
         if choice == '':
             break
 
-        choice = int(choice)
+        choice = int(choice) # possible runtime error
         if choice not in courseMenu:
             print("-- invalid entry --")
             continue
+
         course = courseMenu[choice]
         coursestaken.add(course) # this is not a pure function!
 
@@ -495,7 +500,7 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
 
 
 def printSummary(degreeplan):
-    '''Print the summary degree plan
+    '''Print the degree plan summary, the final output
        printSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
     print('=' * 80)
@@ -509,7 +514,7 @@ def printSummary(degreeplan):
 
 
 def saveSummary(degreeplan, filename):
-    '''Save the summary degree plan to a file
+    '''Save the degree plan summary to a file
        saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
     try:
@@ -528,22 +533,25 @@ def saveSummary(degreeplan, filename):
 
 def main():
 
-    degreeplan = []  # this will eventually hold the completed degree plan
+    # this will eventually hold the completed degree plan
+    degreeplan = []
 
     # let the user enter courses previously taken
     coursestaken = getCoursesTaken()
 
-    term = getTerm() # let the user enter the starting term (like Fall 2017)
+    # let the user enter the starting term (like Fall 2017)
+    term = getTerm()
 
     while True:
 
         # a set of courses eligible to be taken
         choices = getChoices(coursestaken)
 
-        # are all courses completed?
+        # are all courses completed? If so, print the final degree plan summary
         if len(choices) == 0:
             break
 
+        # ask about taking summer courses, default = no
         if term.startswith('Summer'):
             summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
             summer = summer or 'n'
@@ -551,7 +559,7 @@ def main():
             if summer != 'y':
                 term = incTerm(term)
 
-        # display a sorted list of course choices
+        # display a menu of course choices for the term
         # courseMenu is a dictionary with key = choice number, value = course rubric
         courseMenu = displayChoices(term, choices, coursestaken)
 
@@ -579,28 +587,23 @@ if __name__ == "__main__":
 
 # TODO:
 # - look for ways to improve the logic of functions and the whole program
-# - print nice intro and explanatory text here and there
+# - print a nice intro and explanatory text here and there
 
 # - test all functions
-# - comment everything before I forget how it works!
-
-# - use regex module for isRubric and extractRubrics function
-# - extractRubrics: change courses from a list to a set?
-# - getCoursesTaken is sloppy
 
 # Functions:
-#   isULC(course):
-#   prerequisites_met(course, coursestaken):
-#   LLCcomplete(coursestaken):
-#   getChoices(coursestaken):
-#   isRubric(rubric):
-#   extractRubrics(lines):
-#   getCoursesTaken():
-#   getTerm():
-#   incTerm(term):
-#   prereqFor(course, coursestaken):
-#   displayChoices(term, choices, coursestaken):
-#   chooseCourses(term, courseMenu, degreeplan, coursestaken):
-#   printSummary(degreeplan):
-#   saveSummary(degreeplan, filename):
-#   main()
+# good  isULC(course):
+# good  prerequisites_met(course, coursestaken):
+# good  LLCcomplete(coursestaken):
+# good  getChoices(coursestaken):
+# good  isRubric(rubric):
+# good  extractRubrics(lines):
+#       getCoursesTaken():
+#       getTerm():
+#       incTerm(term):
+# ok    prereqFor(course, coursestaken):
+#       displayChoices(term, choices, coursestaken):
+#       chooseCourses(term, courseMenu, degreeplan, coursestaken):
+# good  printSummary(degreeplan):
+# good  saveSummary(degreeplan, filename):
+# ok    main()
