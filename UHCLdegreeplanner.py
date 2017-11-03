@@ -228,6 +228,7 @@ def isRubric(maybeRubric):
 def extractRubrics(lines):
     '''Given a list of lines from a file, return a set of valid rubrics.
        extractRubrics(lines : [str]) -> {str}
+       These rubrics might not apply to the CS BS degree
     '''
     courses = set()
     for line in lines:
@@ -242,18 +243,29 @@ def extractRubrics(lines):
 
         rubric = maybeRubric # at this point, it's a confirmed rubric (format)
 
-        if rubric in COURSECATALOG:
-            courses.add(rubric)
-            print("added {} {}".format(rubric, COURSECATALOG[rubric][0]))
-
-        else:
-            print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(rubric))
-
+        courses.add(rubric) # add the rubric to the output set
+                    
     return courses
 
 
+def add2CoursesTaken(course, coursestaken):
+    '''Add a course to coursestaken only if it applies to the CS BS degree
+       add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken)
+       used twice in getCoursesTaken (so this function prevents code duplication)
+    '''
+    global COURSECATALOG
+    
+    if course in COURSECATALOG:
+
+        coursestaken.add(course)
+        print("added {} {}".format(course, COURSECATALOG[course][0]))
+
+    else:
+        print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
+    
+
 def getCoursesTaken():
-    '''Prompt the user to enter courses previously completed.
+    '''Prompt the user to enter courses previously completed and/or load courses from file(s).
        getCoursesTaken() -> set'''
 
     print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\n")
@@ -271,16 +283,9 @@ def getCoursesTaken():
         if isRubric(course):
             course = course.upper()
 
-            # see if it's part of the CS BS degree
-            if course in COURSECATALOG:
-
-                # if so, add it to coursestaken
-                coursestaken.add(course)
-                print("added {} {}".format(course, COURSECATALOG[course][0]))
-
-            else:
-                print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
-
+            # add to coursestaken only if the course applies to the CS BS degree
+            add2CoursesTaken(course, coursestaken)
+            
         # the input string is not a rubric; see if it's a file name
         else:
             try:
@@ -291,13 +296,12 @@ def getCoursesTaken():
                 continue
 
             # valid filename; lines is populated; get the set of courses
-            print()
-            courses = extractRubrics(lines) # this also prints the courses
+            courses = extractRubrics(lines)
             print()
 
-            # add the list of courses to coursestaken
-            coursestaken |= courses
-            continue # don't add the filename to the set of rubrics!
+            # add the list of courses to coursestaken if it applies to the CS BS degree
+            for course in courses:
+                add2CoursesTaken(course, coursestaken)
 
         print()
 
@@ -660,8 +664,9 @@ if __name__ == "__main__":
 # good  LLCcomplete(coursestaken):
 # good  getChoices(coursestaken):
 # good  isRubric(rubric):
-# ok    extractRubrics(lines):    # these two functions have duplicate code
-# ok    getCoursesTaken():        # create a helper function to eliminate it
+# good  extractRubrics(lines):
+# good  add2CoursesTaken(course, coursestaken):
+# good  getCoursesTaken():
 # good  getTerm():
 # good  incTerm(term):
 # good  summerTerm(term)
