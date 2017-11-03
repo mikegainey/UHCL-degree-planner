@@ -311,44 +311,57 @@ def getTerm():
     while True:
         print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
         season = input("  Enter 1, 2, or 3: ")
-        if season.isdecimal():
-            season = int(season)
-            season = seasons[season]
-            break
-        else:
-            print("-- Just enter the number.")
+
+        if not season.isdecimal(): # season has non-decimal characters
+            print("-- Just the number, please.")
+            continue
+
+        season = int(season)
+        if season < 1 or season > 3: # season is out of range
+            print("-- 1, 2, or 3, please.")
+            continue
+
+        # season has been validated
+        season = seasons[season] # season = Fall, Spring, or Summer
+        break
 
     while True:
-        year = input("\n  Enter your starting 2-digit year: ") # check the input
-        if year.isdecimal() and len(year) == 2:
-            term = season + " 20" + year
-            break
-        else:
+        year = input("\n  Enter your starting 2-digit year: ")
+
+        if not (year.isdecimal() and len(year) == 2):
             print("-- Just enter two digits.")
-            
+            continue
+
+        # year has been validated
+        break
+
+    term = season + " 20" + year
+
     print()
     return term
 
 
-def incTerm(term):
-    '''Given a term, return the next term
-       incTerm(term : str) -> str
+def incTerm(currentTerm):
+    '''Given a current term, return the next term
+       incTerm(currentTerm : str) -> str
+       This function will produce a runtime error
+         if term's fist word is not in seasons (but that should never happen).
     '''
     seasons = ["Fall", "Spring", "Summer"]
 
-    season, year = term.split()
+    season, year = currentTerm.split()
 
     if season == 'Fall':
         year = int(year) + 1
         year = str(year)
 
-    seasonx = seasons.index(season) # this will fail easily
-    nextseasonx = (seasonx + 1) % 3
-    nextseason = seasons[nextseasonx]
+    seasonx = seasons.index(season)
+    nextSeasonx = (seasonx + 1) % 3
+    nextSeason = seasons[nextSeasonx]
 
-    nextterm = nextseason + ' ' + year
+    nextTerm = nextSeason + ' ' + year
 
-    return nextterm
+    return nextTerm
 
 
 def prereqFor(course, coursestaken):
@@ -613,8 +626,8 @@ if __name__ == "__main__":
 # good  isRubric(rubric):
 # good  extractRubrics(lines):    # reconsider division of responsibilities
 #       getCoursesTaken():        # between these functions; maybe add another helper function
-#       getTerm():
-#       incTerm(term):
+# good  getTerm():
+# good  incTerm(term):
 # ok    prereqFor(course, coursestaken):
 #       displayChoices(term, choices, coursestaken):
 #       chooseCourses(term, courseMenu, degreeplan, coursestaken):
