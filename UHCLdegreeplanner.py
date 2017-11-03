@@ -664,9 +664,10 @@ if __name__ == "__main__":
 # ok    getCoursesTaken():        # create a helper function to eliminate it
 # good  getTerm():
 # good  incTerm(term):
+# good  summerTerm(term)
 # good  prereqFor(course, coursestaken):
 # good  displayChoices(term, choices, coursestaken):
 # good  chooseCourses(term, courseMenu, degreeplan, coursestaken):
 # good  printSummary(degreeplan):
 # good  saveSummary(degreeplan, filename):
-# good  main() # make summer question into a helper function; put save question into printSummary function
+# good  main()
