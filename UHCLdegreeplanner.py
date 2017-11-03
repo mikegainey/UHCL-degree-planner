@@ -570,10 +570,19 @@ def printSummary(degreeplan):
     print()
 
 
-def saveSummary(degreeplan, filename):
+def saveSummary(degreeplan):
     '''Save the degree plan summary to a file
        saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
+    # ask user if he/she wants to save degreeplan summary to a file
+    print("If you want to save this summary to a file, ", end="")
+    filename = input("enter a filename, otherwise just press <Enter> to quit: ")
+
+    # just return if user presses <Enter>
+    if filename == '':
+        return
+
+    # a file name was given; write to the file
     try:
         with open(filename, 'w') as file:
             file.write("{}{}".format('=' * 80, '\n'))
@@ -585,8 +594,12 @@ def saveSummary(degreeplan, filename):
                 # c[0] = term, c[1] = course rubric, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
             file.write("{}{}".format('=' * 80, '\n'))
+
+        print("{} contains your degree plan summary!\n".format(filename))
+
     except:
         print("Couldn't write to the file!")
+    # return without doing anything
 
 
 def main():
@@ -611,7 +624,7 @@ def main():
 
         # if term is summer, ask if user wants to take classes in the summer; if not, do incTerm
         term = summerTerm(term)
-        
+
         # display a menu of course choices for the term
         courseMenu = displayChoices(term, choices, coursestaken)
 
@@ -622,12 +635,11 @@ def main():
 
         print()
 
+    # prints degree plan summary to the screen
     printSummary(degreeplan)
 
-    print("If you want to write this summary to a file, ", end="")
-    filename = input("enter a filename, otherwise just press <Enter> to quit: ")
-    if filename != '':
-        saveSummary(degreeplan, filename)
+    # saves degree plan summary to a file if the user gives a file name
+    saveSummary(degreeplan)
 
     # THE END
 
@@ -657,4 +669,4 @@ if __name__ == "__main__":
 # good  chooseCourses(term, courseMenu, degreeplan, coursestaken):
 # good  printSummary(degreeplan):
 # good  saveSummary(degreeplan, filename):
-# ok    main() # make summer question into a helper function; put save question into printSummary function
+# good  main() # make summer question into a helper function; put save question into printSummary function
