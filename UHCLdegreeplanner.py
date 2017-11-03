@@ -403,88 +403,91 @@ def displayChoices(term, choices, coursestaken):
     global LLC
     global ELECTIVES
 
-    print("{}\n{} choices:\n{}".format('=' * 80, term, '=' * 80))
+    print('=' * 80)
+    print("{} choices:".format(term))
+    print('=' * 80)
 
-    courseMenu = {} # a dictionary with key = choice number, value = course rubric
-    index = 1
+    courseMenu = {} # a dictionary with key = menu number, value = course rubric
+    index = 1       # the menu numbers
 
-    choices2 = choices.copy()  # a copy of choices that won't mutate during this function (find a better name!)
-                               # used for unlock logic
-
-    # display UCore LangPhilCult
-    courses = sorted(list(choices & LANG_PHIL_CULTURE))
-    if len(courses) > 0:
+    # display Language, Philosophy, Culture courses
+    categoryChoices = sorted(list(choices & LANG_PHIL_CULTURE))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
 
-    for c in courses:
-        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= LANG_PHIL_CULTURE
 
-    # display UCore Arts
-    courses = sorted(list(choices & CREATIVE_ARTS))
-    if len(courses) > 0:
+    # display Creative Arts courses
+    categoryChoices = sorted(list(choices & CREATIVE_ARTS))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nCreative Arts (3 hours, choose one course)")
 
-    for c in courses:
-        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= CREATIVE_ARTS
 
-    # display UCore Social Science
-    courses = sorted(list(choices & SOCIAL_SCIENCE))
-    if len(courses) > 0:
+    # display Social Science courses
+    categoryChoices = sorted(list(choices & SOCIAL_SCIENCE))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nSocial/Behavioral Science (3 hours, choose one course)")
 
-    for c in courses:
-        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= SOCIAL_SCIENCE
 
-    # display UCore UNI_CORE (LLC in UNI_CORE moved to CS LLC)
-    courses = sorted(list(choices & UNI_CORE - LLC))
-    if len(courses) > 0:
+    # display UCore UNI_CORE choices (LLC in UNI_CORE is listed in CS LLC)
+    categoryChoices = sorted(list(choices & UNI_CORE - LLC))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nOther University Core Requirements")
 
-    for c in courses:
-        u = prereqFor(c, coursestaken)
-        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        isPrereqFor = prereqFor(course, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= UNI_CORE - LLC
 
-    # display CS LLC
-    courses = sorted(list(choices & LLC))
-    if len(courses) > 0:
+    # display CS LLC choices
+    categoryChoices = sorted(list(choices & LLC))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Lower-Level Core (LLC)")
 
-    for c in courses:
-        u = prereqFor(c, coursestaken)
-        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        isPrereqFor = prereqFor(course, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= LLC
 
-    # display CS other major requirements
-    print("\nOther Computer Science Major Requirements")
-    for c in sorted(list(choices & MAJOR_REQ)):
-        u = prereqFor(c, coursestaken)
-        print("{:4}) (prereq for {} courses) {} {}".format(index, u, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    # display CS other major requirements choices
+    categoryChoices = sorted(list(choices & MAJOR_REQ))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
+        print("\nOther Computer Science Major Requirements")
+
+    for course in categoryChoices:
+        isPrereqFor = prereqFor(course, coursestaken)
+        print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= MAJOR_REQ
 
     # display CS electives
-    courses = choices & ELECTIVES
-    if len(courses) > 0:
+    categoryChoices = sorted(list(choices & ELECTIVES))
+    if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Major Electives (taken junior or senior year)")
 
-    for c in sorted(list(choices & ELECTIVES)):
-        print("{:4}) {} {}".format(index, c, COURSECATALOG[c][0]))
-        courseMenu[index] = c
+    for course in categoryChoices:
+        # assuming CS electives aren't going to be prerequisites for anything else
+        print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
+        courseMenu[index] = course # build the course menu
         index += 1
     choices -= ELECTIVES
 
@@ -629,7 +632,7 @@ if __name__ == "__main__":
 # good  getTerm():
 # good  incTerm(term):
 # ok    prereqFor(course, coursestaken):
-#       displayChoices(term, choices, coursestaken):
+# good  displayChoices(term, choices, coursestaken):
 #       chooseCourses(term, courseMenu, degreeplan, coursestaken):
 # good  printSummary(degreeplan):
 # good  saveSummary(degreeplan, filename):
