@@ -2,49 +2,36 @@
 Your degree plan summary:
 ================================================================================
 
-Fall 2017    CSCI 1470 Computer Science I
-Fall 2017    MATH 2413 Calculus I
-Fall 2017    WRIT 1301 Composition I
-Fall 2017    PHIL 1301 Introduction to Philosophy
-Fall 2017    ARTS 1303 World Art Survey I
-                       
 Spring 2018  CSCI 1471 Computer Science II
-Spring 2018  MATH 2414 Calculus II
-Spring 2018  PHYS 2325 University Physics I and Lab (PHYS 2125)
-Spring 2018  ECON 2301 Principles of Macroeconomics
-Spring 2018  COMM 1315 Public Speaking
+Spring 2018  PHYS 2326 University Physics II and Lab (PHYS 2126)
                        
 Fall 2018    CSCI 2315 Data Structures
 Fall 2018    MATH 2305 Discrete Math
-Fall 2018    PHYS 2326 University Physics II and Lab (PHYS 2126)
-Fall 2018    WRIT 1302 Composition II
-Fall 2018    PSYC 1100 Learning Frameworks
                        
 Spring 2019  CENG 3312 Digital Circuits & Lab (CENG 3112)
 Spring 2019  CSCI 3331 Computer Organization & Assembly Language
-Spring 2019  SWEN 4342 Software Engineering
-Spring 2019  HIST 1301 U.S. History I
-Spring 2019  HIST 1302 U.S. History II
                        
 Fall 2019    CSCI 3352 Advanced Data Structures
-Fall 2019    MATH 2318 Linear Algebra
-Fall 2019    MATH 2320 Differential Equations
-Fall 2019    POLS 2305 Federal Government
-Fall 2019    POLS 2306 Texas Government
+Fall 2019    SWEN 4342 Software Engineering
                        
-Spring 2020  CENG 3331 Intro to Telecom and Neworks & Lab (CENG 3131)
-Spring 2020  CSCI 4333 Design of Database Systems
-Spring 2020  CENG 3351 Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)
-Spring 2020  CSCI 4354 Operating Systems                       (take with CENG 3351)
-Spring 2020  CHEM 1311 General Chemistry I and Lab (CHEM 1111)
+Spring 2020  MATH 2318 Linear Algebra
+Spring 2020  STAT 3334 Probability & Statistics for Scientists and Engineers
                        
-Fall 2020    CSCI 3321 Numerical Methods
-Fall 2020    STAT 3334 Probability & Statistics ...
 Fall 2020    WRIT 3315 Technical Writing
-Fall 2020    CSCI 32xx CSCI/CINF 32xx or 42xx upper level elective
+Fall 2020    CSCI 3321 Numerical Methods
                        
-Spring 2021  CSCI 33x1 CSCI/CINF 33xx or 43xx upper level elective
-Spring 2021  CSCI 33x2 CSCI/CINF 33xx or 43xx upper level elective
-Spring 2021  CSCI 33x3 CSCI/CINF 33xx or 43xx upper level elective
-Spring 2021  CSCI 4388 Senior Project in Computer Science
+Spring 2021  CENG 3351 Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)
+Spring 2021  CSCI 4354 Operating Systems                       (take with CENG 3351)
                        
+Fall 2021    CENG 3331 Intro to Telecom and Neworks & Lab (CENG 3131)
+Fall 2021    CSCI 4333 Design of Database Systems
+                       
+Spring 2022  CSCI 32xx CSCI/CINF 32xx or 42xx upper level elective
+Spring 2022  CSCI 33x1 CSCI/CINF 33xx or 43xx upper level elective
+                       
+Fall 2022    CSCI 33x2 CSCI/CINF 33xx or 43xx upper level elective
+Fall 2022    CSCI 33x3 CSCI/CINF 33xx or 43xx upper level elective
+                       
+Spring 2023  CSCI 4388 Senior Project in Computer Science
+                       
+================================================================================

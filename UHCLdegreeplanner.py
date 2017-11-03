@@ -81,7 +81,7 @@ COURSECATALOG = {
     "MATH 2318": ("Linear Algebra", {"MATH 2413"}),
     "MATH 2414": ("Calculus II", {"MATH 2413"}),
     "MATH 2320": ("Differential Equations", {"MATH 2414"}),
-    "STAT 3334": ("Probability & Statistics ...", {"MATH 2413", "MATH 2414"}),
+    "STAT 3334": ("Probability & Statistics for Scientists and Engineers", {"MATH 2413", "MATH 2414"}),
     "CSCI 1470": ("Computer Science I", set()),
     "CSCI 1471": ("Computer Science II", {"CSCI 1470", "MATH 2413"}),
     "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414",
@@ -261,7 +261,7 @@ def getCoursesTaken():
     coursestaken = set()
 
     while True:
-        course = input("  Enter a course rubric or a file name: ")
+        course = input("Enter a course rubric or a file name: ")
 
         # the sentinel
         if course == '':
@@ -282,12 +282,12 @@ def getCoursesTaken():
                 print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
 
         # the input string is not a rubric; see if it's a file name
-        else:    
+        else:
             try:
                 with open(course, 'r') as file:
                     lines = list(file) # a list of lines in the file
             except:
-                print("--That's not a rubric or a file name.\n")
+                print("----- That's not a rubric or a file name.\n")
                 continue
 
             # valid filename; lines is populated; get the set of courses
@@ -309,16 +309,16 @@ def getTerm():
     seasons = ["placeholder", "Fall", "Spring", "Summer"]
 
     while True:
-        print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
-        season = input("  Enter 1, 2, or 3: ")
+        # print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
+        season = input("\nEnter your starting term (1=Fall, 2=Spring, 3=Summer): ")
 
         if not season.isdecimal(): # season has non-decimal characters
-            print("-- Just the number, please.")
+            print("----- Just the number, please.")
             continue
 
         season = int(season)
         if season < 1 or season > 3: # season is out of range
-            print("-- 1, 2, or 3, please.")
+            print("----- 1, 2, or 3, please.")
             continue
 
         # season has been validated
@@ -326,10 +326,10 @@ def getTerm():
         break
 
     while True:
-        year = input("\n  Enter your starting 2-digit year: ")
+        year = input("Enter your starting year (last 2 digits only): ")
 
         if not (year.isdecimal() and len(year) == 2):
-            print("-- Just enter two digits.")
+            print("----- Just enter two digits.")
             continue
 
         # year has been validated
@@ -365,7 +365,7 @@ def incTerm(currentTerm):
 
 
 def prereqFor(course, coursestaken):
-    '''Given (the parameters), return the number of needed courses for which that course is a prerequisite
+    '''Given a course, return the number of (still needed) courses for which that course is a prerequisite
       prereqFor(course : str, coursestaken : set) -> int
     '''
     global COURSECATALOG
@@ -505,20 +505,20 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
     termSummary = [] # a list of courses chosen for that term only
 
     while True: # the loop to collect chosen courses
-        
+
         choice = input("Select a course by number.  Press <Enter> when finished: ")
         if choice == '':
             break
 
         # check for non-decimal characters
         if not choice.isdecimal():
-            print("-- Enter the number only.")
+            print("----- Enter the number only.")
             continue
 
         # verify the choice is in the courseMenu
         choice = int(choice)
         if choice not in courseMenu:
-            print("-- Invalid entry.")
+            print("----- Invalid entry.")
             continue
 
         course = courseMenu[choice]
@@ -550,6 +550,9 @@ def printSummary(degreeplan):
         # c[0] = term, c[1] = course rubric, c[2] = course title
         print("{:12} {:9} {}".format(c[0], c[1], c[2]))
 
+    print('=' * 80)
+    print()
+
 
 def saveSummary(degreeplan, filename):
     '''Save the degree plan summary to a file
@@ -565,6 +568,7 @@ def saveSummary(degreeplan, filename):
             for c in degreeplan:
                 # c[0] = term, c[1] = course rubric, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
+            file.write("{}{}".format('=' * 80, '\n'))
     except:
         print("Couldn't write to the file!")
 
@@ -589,16 +593,16 @@ def main():
         if len(choices) == 0:
             break
 
-        # ask about taking summer courses, default = no
+        # ask about taking summer courses, default = no; make this into a helper function
         if term.startswith('Summer'):
-            summer = input("\nDo you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
+            summer = input("Do you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
+            print()
             summer = summer or 'n'
             summer = summer[0].lower()
             if summer != 'y':
                 term = incTerm(term)
 
         # display a menu of course choices for the term
-        # courseMenu is a dictionary with key = choice number, value = course rubric
         courseMenu = displayChoices(term, choices, coursestaken)
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
@@ -624,10 +628,9 @@ if __name__ == "__main__":
 
 
 # TODO:
-# - look for ways to improve the logic of functions and the whole program
 # - print a nice intro and explanatory text here and there
-
 # - test all functions
+# - see if a global coursesneeded variable is practical; certainly would be more efficient
 
 # Functions:
 # good  isULC(course):
@@ -635,13 +638,13 @@ if __name__ == "__main__":
 # good  LLCcomplete(coursestaken):
 # good  getChoices(coursestaken):
 # good  isRubric(rubric):
-# good  extractRubrics(lines):    # reconsider division of responsibilities
-#       getCoursesTaken():        # between these functions; maybe add another helper function
+# ok    extractRubrics(lines):    # these two functions have duplicate code
+# ok    getCoursesTaken():        # create a helper function to eliminate it
 # good  getTerm():
 # good  incTerm(term):
-# ok    prereqFor(course, coursestaken):
+# good  prereqFor(course, coursestaken):
 # good  displayChoices(term, choices, coursestaken):
-#       chooseCourses(term, courseMenu, degreeplan, coursestaken):
+# good  chooseCourses(term, courseMenu, degreeplan, coursestaken):
 # good  printSummary(degreeplan):
 # good  saveSummary(degreeplan, filename):
-# ok    main()
+# ok    main() # make summer question into a helper function; put save question into printSummary function
