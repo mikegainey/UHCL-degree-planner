@@ -256,12 +256,12 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed.
        getCoursesTaken() -> set'''
 
-    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\nPress <Enter> when finished.\n")
+    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\n")
 
     coursestaken = set()
 
     while True:
-        course = input("Enter a course rubric or a file name: ")
+        course = input("Enter a course rubric or a file name. Press <Enter> when finished: ")
 
         # the sentinel
         if course == '':
@@ -362,6 +362,22 @@ def incTerm(currentTerm):
     nextTerm = nextSeason + ' ' + year
 
     return nextTerm
+
+
+def summerTerm(term):
+    '''If current term is summer, ask if user wants to take summer courses; return next term
+       summerTerm(term : str) -> str
+       (default = no)
+    '''
+    if term.startswith('Summer'):
+        summer = input("Do you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
+        print()
+        summer = summer or 'n'
+        summer = summer[0].lower()
+        if summer != 'y':
+            term = incTerm(term)
+
+    return term
 
 
 def prereqFor(course, coursestaken):
@@ -593,15 +609,9 @@ def main():
         if len(choices) == 0:
             break
 
-        # ask about taking summer courses, default = no; make this into a helper function
-        if term.startswith('Summer'):
-            summer = input("Do you want to take courses in the summer of {}? (y/N) ".format(term[-4:]))
-            print()
-            summer = summer or 'n'
-            summer = summer[0].lower()
-            if summer != 'y':
-                term = incTerm(term)
-
+        # if term is summer, ask if user wants to take classes in the summer; if not, do incTerm
+        term = summerTerm(term)
+        
         # display a menu of course choices for the term
         courseMenu = displayChoices(term, choices, coursestaken)
 

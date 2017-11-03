@@ -17,14 +17,14 @@ Fall 2019    SWEN 4342 Software Engineering
 Spring 2020  MATH 2318 Linear Algebra
 Spring 2020  STAT 3334 Probability & Statistics for Scientists and Engineers
                        
-Fall 2020    WRIT 3315 Technical Writing
 Fall 2020    CSCI 3321 Numerical Methods
+Fall 2020    WRIT 3315 Technical Writing
                        
-Spring 2021  CENG 3351 Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)
-Spring 2021  CSCI 4354 Operating Systems                       (take with CENG 3351)
+Spring 2021  CENG 3331 Intro to Telecom and Neworks & Lab (CENG 3131)
+Spring 2021  CSCI 4333 Design of Database Systems
                        
-Fall 2021    CENG 3331 Intro to Telecom and Neworks & Lab (CENG 3131)
-Fall 2021    CSCI 4333 Design of Database Systems
+Fall 2021    CENG 3351 Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)
+Fall 2021    CSCI 4354 Operating Systems                       (take with CENG 3351)
                        
 Spring 2022  CSCI 32xx CSCI/CINF 32xx or 42xx upper level elective
 Spring 2022  CSCI 33x1 CSCI/CINF 33xx or 43xx upper level elective
