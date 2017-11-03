@@ -497,24 +497,32 @@ def displayChoices(term, choices, coursestaken):
 def chooseCourses(term, courseMenu, degreeplan, coursestaken):
     '''Let the user choose courses to take for the listed term; update coursestaken
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
+       ... and coursestaken is also updated
     '''
     global COURSECATALOG
 
     print()
-    termSummary = []
+    termSummary = [] # a list of courses chosen for that term only
 
-    while True:
+    while True: # the loop to collect chosen courses
+        
         choice = input("Select a course by number.  Press <Enter> when finished: ")
         if choice == '':
             break
 
-        choice = int(choice) # possible runtime error
+        # check for non-decimal characters
+        if not choice.isdecimal():
+            print("-- Enter the number only.")
+            continue
+
+        # verify the choice is in the courseMenu
+        choice = int(choice)
         if choice not in courseMenu:
-            print("-- invalid entry --")
+            print("-- Invalid entry.")
             continue
 
         course = courseMenu[choice]
-        coursestaken.add(course) # this is not a pure function!
+        coursestaken.add(course) # this mutates coursestaken globally!
 
         entry = (term, course, COURSECATALOG[course][0])
         degreeplan.append(entry)
