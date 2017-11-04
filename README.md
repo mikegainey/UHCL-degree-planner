@@ -10,11 +10,9 @@ This program will help UHCL Computer Science B.S. students select courses for th
 - After choosing courses for each term until all requirements are completed, students will be presented with a degree plan summary that can also be saved to a file.
 
 ## Details
-- The program file is UHCLdegreeplanner.py.  It is being developed using Python 3.5.3 on a computer running Ubuntu 17.04 GNU/Linux.
-- See input.txt for an example of a file containing completed courses to add.
-- See output.txt for an example of a degree plan summary.
-
-[Undergraduate Catalog 2017-2018, Computer Science B.S. Degree Requirements](https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs)
-
-[The 2-page Computer Science degree plan](https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf)
+- The program file is `UHCLdegreeplanner.py`.  It is being developed using Python 3.5.3 on a computer running Ubuntu 17.04 GNU/Linux.
+- See `input.txt` for an example of a file containing completed courses to add.
+- See `output.txt` for an example of a degree plan summary.
+- [Undergraduate Catalog 2017-2018, Computer Science B.S. Degree Requirements](https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs)
+- [The 2-page Computer Science degree plan](https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf)
 
