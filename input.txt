@@ -26,5 +26,5 @@ CHEM 1311
 -- from San Jacinto College
 MATH 2413 Calculus I
 MATH 2414 Calculus II
-MATH 2320 Differential equations; I took it, but don't remember anything
+MATH 2320 Differential equations; I took it in the early 1990s and don't remember anything
 

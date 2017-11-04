@@ -130,7 +130,7 @@ MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'S
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
 # CS upper-level core; after this constant is built, it doesn't change
-ULC = {c for c in MAJOR_REQ if isULC(c)}
+ULC = {course for course in MAJOR_REQ if isULC(course)}
 
 # Major electives; modified the last digit because rubrics must be unique
 ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
@@ -147,9 +147,11 @@ def prerequisites_met(course, coursestaken):
     '''
     global COURSECATALOG
 
-    prerequisites = COURSECATALOG[course][1] # get the set of prerequisites for the course
+    # get the set of prerequisites for the course
+    prerequisites = COURSECATALOG[course][1] 
 
-    return prerequisites.issubset(coursestaken) # True if every element of prerequisities is in coursestaken
+    # return True if every element of prerequisities is in coursestaken
+    return prerequisites.issubset(coursestaken) 
 
 
 def LLCcomplete(coursestaken):
@@ -158,7 +160,8 @@ def LLCcomplete(coursestaken):
     '''
     global LLC
 
-    return LLC.issubset(coursestaken) # True if every element of LLC issubset of coursestaken
+    # return True if every element of LLC issubset of coursestaken
+    return LLC.issubset(coursestaken) 
 
 
 def getChoices(coursestaken):
@@ -206,23 +209,27 @@ def isRubric(maybeRubric):
        isRubric(maybeRubric : str) -> bool
        the alpha characters can be uppercase or lowercase
     '''
-    if len(maybeRubric) != 9: # rubrics are always 9 characters (like 'CSCI 1470')
+    # rubrics are always 9 characters (like 'CSCI 1470')
+    if len(maybeRubric) != 9: 
         return False
 
     words = maybeRubric.split()
 
-    if len(words) < 2: # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+    # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+    if len(words) < 2: 
         return False
 
+    # first word should be 4 alphabetic characters: CSCI
     part1 = words[0]
-    if not (part1.isalpha() and len(part1) == 4): # should be 4 alphabetic characters: CSCI
+    if not (part1.isalpha() and len(part1) == 4): 
         return False
 
+    # second word should be 4 decimal characters: 1470
     part2 = words[1]
-    if not (part2.isdecimal() and len(part2) == 4): # should be 4 decimal characters: 1470
+    if not (part2.isdecimal() and len(part2) == 4): 
         return False
 
-    return True
+    return True # return True if above conditions are met
 
 
 def extractRubrics(lines):
@@ -233,18 +240,18 @@ def extractRubrics(lines):
     courses = set()
     for line in lines:
 
-        if len(line) < 9: # the line is too short to contain a rubric
+        if len(line) < 9:             # the line is too short to contain a rubric
             continue
 
-        maybeRubric = line[:9] # the part of the line to check
+        maybeRubric = line[:9]        # the part of the line to check
 
         if not isRubric(maybeRubric): # if not a rubric, loop back
             continue
 
-        rubric = maybeRubric # at this point, it's a confirmed rubric (format)
+        rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
 
-        courses.add(rubric) # add the rubric to the output set
-                    
+        courses.add(rubric)           # add the rubric to the output set
+
     return courses
 
 
@@ -254,7 +261,7 @@ def add2CoursesTaken(course, coursestaken):
        used twice in getCoursesTaken (so this function prevents code duplication)
     '''
     global COURSECATALOG
-    
+
     if course in COURSECATALOG:
 
         coursestaken.add(course)
@@ -262,7 +269,7 @@ def add2CoursesTaken(course, coursestaken):
 
     else:
         print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
-    
+
 
 def getCoursesTaken():
     '''Prompt the user to enter courses previously completed and/or load courses from file(s).
@@ -285,7 +292,7 @@ def getCoursesTaken():
 
             # add to coursestaken only if the course applies to the CS BS degree
             add2CoursesTaken(course, coursestaken)
-            
+
         # the input string is not a rubric; see if it's a file name
         else:
             try:
