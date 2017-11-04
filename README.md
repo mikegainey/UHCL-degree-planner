@@ -14,5 +14,5 @@ This program will help UHCL Computer Science B.S. students select courses for th
 - See `input.txt` for an example of a file containing completed courses to add.
 - See `output.txt` for an example of a degree plan summary.
 - [Undergraduate Catalog 2017-2018, Computer Science B.S. Degree Requirements](https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs)
-- [The 2-page Computer Science degree plan](https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf)
+- [The 2-page 2017-2018 Computer Science degree plan](https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf)
 
