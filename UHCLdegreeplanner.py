@@ -1,4 +1,18 @@
-# Need help figuring out what courses to take and in what order?  Then, run this program!
+###############################################################################
+#
+# Name: Michael Gainey
+#
+# Course: CSCI 1470
+#
+# Assignment: CS1 Project
+#
+# Pseudocode:
+#
+#
+#
+#
+#
+###############################################################################
 
 # Undergraduate Catalog 2017-2018, Computer Science B.S.
 # Degree Requirements: https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs
