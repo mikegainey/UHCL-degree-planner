@@ -8,13 +8,77 @@
 #
 # Pseudocode:
 #   Define a function isULC with a string parameter course
+#       Set isCSCI to True if the first four characters of course is 'CSCI'
+#       Set isCENG to True if the first four characters of course is 'CENG'
+#       Set isULC to True if the 6th character of course is either 3 or 4
+#       Return True isCSCI or isCENG is True and isULC is True
 #
 #
+#   Define a dictionary constant COURSECATALOG that contains information about all courses
+#   pertinent to the CS BS degree, where ...
+#       key   = a string representing a course ('CSCI 1471')
+#       value = a tuple consisting of
+#           [0] a string describng the full title of the course ('Computer Science II')
+#           [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
 #
+#   Define a set contant LANG_PHIL_CULTURE that contains courses satisfying the
+#     Language, Philosophy and Culture degree requirement
+#
+#   Define a set contant CREATIVE_ARTS that contains courses satisfying the
+#     Creative Arts degree requirement
+#
+#   Define a set contant SOCIAL_SCIENCE that contains courses satisfying the
+#     Social/Behavioral Science degree requirement
+#
+#   Define a set constant UNI_CORE that contains the University Core Requirements
+#
+#   Define a set constant MAJOR_REQ that contains the CS BS Major Requirements
+#
+#   Define a set constant LLC that contains the CS BS Lower Level Core courses
+#
+#   Set ULC to the set of courses from MAJOR_REQ that satisfy isULC
+#
+#   Define a set constant ELECTIVES to represent Major Elective courses
+#
+#
+#   Define a function prerequisites_met that takes parameters course and coursestaken:
+#       Declare that COURSECATALOG will refer to the global constant
+#       Set prerequisites to the set of the course's prerequisites found in COURSECATALOG
+#       Return True if prerequisites is a subset of coursestaken
+#
+#
+#   Define a function LLCcomplete that takes a parameter coursestaken:
+#       Declare that LLC will refer to the global constant
+#       Return True if LLC is a subset of coursestaken
+#
+#
+#   Define a function getChoices that takes a parameter coursestaken:
+#       Declare the following global constants that will be used: LANG_PHIL_CULTURE, CREATIVE_ARTS,
+#         SOCIAL_SCIENCE, UNI_CORE, MAJOR_REQ, ULC, and ELECTIVES.
+#       Set choices to the union of UNI_CORE, MAJOR_REQ, LANG_PHIL_CULTURE, CREATIVE_ARTS,
+#         SOCIAL_SCIENCE, and ELECTIVES.
+#       Remove coursestaken from choices.
+#       Remove courses with unmet prerequisites from choices.
+#       If LLC is not complete:
+#           remove ULC and ELECTIVES from choices.
+#       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is greater than zero:
+#           remove LANG_PHIL_CULTURE from chocies.
+#       If the length of the intersection of CREATIVE_ARTS and coursestaken is greater than zero:
+#           remove CREATIVE_ARTS from chocies.
+#       If the length of the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero:
+#           remove SOCIAL_SCIENCE from chocies.
+#       Return choies to the calling function/program.
+#
+#
+#   Define a function isRubric that takes a string parameter maybeRubric:
+#       If the length of maybeRubric is not 9, return False.
+#       Set words to a list made from splitting maybeRubric into words
+#       If the length of words is less than 2, return False.
+#       
 #
 ###############################################################################
 
-# Undergraduate Catalog 2017-2018, Computer Science B.S.
+# UNDERGRADUATE Catalog 2017-2018, Computer Science B.S.
 # Degree Requirements: https://catalog.uhcl.edu/current/undergraduate/degrees-and-programs/bachelors/computer-science-bs
 
 # The 2-page Computer Science degreeplan can be found at:
@@ -140,10 +204,10 @@ MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'S
             'CSCI 1470', 'CSCI 1471', 'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321',
             'CSCI 4354', 'CENG 3312', 'CENG 3331', 'CENG 3351', 'SWEN 4342', 'WRIT 3315', 'CSCI 4388'}
 
-# CS lower-level core; there is some overlap with UNI_CORE
+# CS Lower-Level Core; note there is some overlap with UNI_CORE
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
-# CS upper-level core; after this constant is built, it doesn't change
+# CS Upper-Level Core; after this constant is built, it doesn't change
 ULC = {course for course in MAJOR_REQ if isULC(course)}
 
 # Major electives; modified the last digit because rubrics must be unique
