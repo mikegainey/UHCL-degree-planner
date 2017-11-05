@@ -311,11 +311,11 @@ def isRubric(maybeRubric):
 
 
 def extractRubrics(lines):
-    '''Given a list of lines from a file, return a set of valid rubrics.
-       extractRubrics(lines : [str]) -> {str}
-       These rubrics might not apply to the CS BS degree
+    '''Given a list of lines from a file, return an ordered list of valid rubrics.
+       extractRubrics(lines : [str]) -> [str]
+       These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
     '''
-    courses = set()
+    courses = list()
     for line in lines:
 
         if len(line) < 9:             # the line is too short to contain a rubric
@@ -328,7 +328,7 @@ def extractRubrics(lines):
 
         rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
 
-        courses.add(rubric)           # add the rubric to the output set
+        courses.append(rubric)        # add the rubric to the output list
 
     return courses
 
