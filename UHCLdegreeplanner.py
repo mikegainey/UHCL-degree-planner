@@ -7,7 +7,7 @@
 # Assignment: CS1 Project
 #
 # Pseudocode:
-#
+#   Define a function isULC with a string parameter course
 #
 #
 #
