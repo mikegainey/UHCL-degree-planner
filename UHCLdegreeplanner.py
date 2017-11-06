@@ -31,13 +31,9 @@
 #     Social/Behavioral Science degree requirement
 #
 #   Define a set constant UNI_CORE that contains the University Core Requirements
-#
 #   Define a set constant MAJOR_REQ that contains the CS BS Major Requirements
-#
 #   Define a set constant LLC that contains the CS BS Lower Level Core courses
-#
 #   Set ULC to the set of courses from MAJOR_REQ that satisfy isULC
-#
 #   Define a set constant ELECTIVES to represent Major Elective courses
 #
 #
@@ -74,6 +70,115 @@
 #       If the length of maybeRubric is not 9, return False.
 #       Set words to a list made from splitting maybeRubric into words
 #       If the length of words is less than 2, return False.
+#       Set part1 to the first word of words.
+#       If part1 is either not all alphabetic or not of length 4, return False.
+#       Set part2 to the second word of words.
+#       If part2 is either not all decimal or not of length 4, return False.
+#       Return True
+#
+#
+#   Define a function extractRubrics that takes a parameter lines that is a list of strings
+#       Set courses to an empty list.
+#       Begin a loop iterating through the elements of lines using the lcv line
+#           If the length of line is less than 9, skip the rest of the loop
+#           Set meybeRubric to the first 9 characters of line
+#           If maybeRubric returns False when passed to isRubric, skip the rest of the loop
+#           Set rubric to maybeRubric
+#           Append rubric to courses
+#       Return courses to the calling program/function
+#
+#
+#   Define a function add2CoursesTaken with parameters course and coursestaken:
+#       Declare that COURSECATALOG will refer to the global constant
+#       If course is in COURSECATALOG:
+#           Add course to coursestaken
+#           Print a message that course was added
+#       Else, print a message saying the course is not recognized as a requirement for the CS BS degree
+#
+#
+#   Define a function getCoursesTaken:
+#       Prompt the user to enter courses (like CSCI 1470) previously completed or a file with a list of courses completed
+#       Set coursestaken to the empty set.
+#       Begin a loop to get user input.
+#           Set course to the user's input.
+#           If the user just pressed <Enter>, return coursestaken to the calling program/function.
+#           If isRubric returns True with course as the argument,
+#               convert course to all uppercase, and
+#               pass course and coursestaken to add2CoursesTaken.
+#           else,
+#               Try to open a file for reading named course
+#               If successful, set lines to the list of lines in the file
+#               Otherwise, print a message "That's not a course or a file name"
+#
+#               Set courses to the return value of extractRubrics with argument lines.
+#               Begin a loop iterating over courses:
+#                   Call add2CoursesTaken with arguments course and coursestaken
+#
+#
+#   define a function getTerm:
+#       Set seasons to the list ["placeholder", "Fall", Spring", "Summer"]
+#       Begin a loop to get user input:
+#           Set season by prompting the user to enter the starting term (1=Fall, 2=Spring, and 3=Summer)
+#           If season is not a decimal character,
+#               print an error message, "Just the number, please" and
+#               go back to the beginning of the loop.
+#           Cast season to an integer
+#           If season is not 1, 2, or 3,
+#               print an error message, "1, 2, or 3, please" and
+#               go back to the beginning of the loop.
+#           Set season to the element of seasons with index season and exit the loop
+#
+#       Begin a loop to get user input:
+#           Set year by prompting the user to enter the starting year (last 2 digits).
+#           If year is not decimal or year is not of length 2,
+#               Print an error message, "Just enter two digits" and
+#               go back to the beginning of the loop
+#           Exit the loop.
+#
+#       Set term to season + '20' + year
+#       Return term to the calling program/function
+#
+#
+#   Define a function incTerm with parameter currentTerm:
+#       Set seasons to the list ['Fall', Spring', 'Summer']
+#       Set season and year to the two words in currentTerm
+#       If season is Fall,
+#           Cast year to an int, add 1, and cast back to a string
+#
+#       Set seasonx to the index of season in seasons
+#       Set nextSeasonx to (seasonx + 1) mod 3
+#       Set nextSeason to the index of nextSeason in seasons
+#
+#       Set nextTerm to nextSeason, a space, and year
+#       Return nextTerm
+#
+#
+#   Define a function summerTerm with parameter term:
+#       If term starts with 'summer' ...
+#           Set summer by prompting the user "Do you want to take courses this summer?"
+#           If the user just pressed <Enter>, set summer to 'no'
+#           Convert summer to lowercase
+#           If summer is not 'y'
+#               Set term to the return value of incTerm with the argument term
+#           Return term to the calling program/function
+#
+#
+#   Define a function prereqFor with parameters course and coursestaken:
+#       Declare the following global constants that will be used: COURSECATALOG, UNI_CORE, MAJOR_REQ, and ELECTIVES
+#       Set coursesneeed to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
+#       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
+#           Add LANG_PHIL_CULTURE to coursesneeded
+#       Set count to zero
+#       Begin a loop iterating over coursesneeded with lcv c
+#           Set prerequisites to the set of prerequisites for c
+#           If the parameter course is in prerequisites, increment count
+#       Return count
+#
+#
+#   Define a function displayChoices with parameters term, choices, and coursestaken:
+#           
+#
+#
 #       
 #
 ###############################################################################
@@ -406,7 +511,7 @@ def getTerm():
             continue
 
         season = int(season)
-        if season < 1 or season > 3: # season is out of range
+        if season not in [1, 2, 3]: # season is out of range
             print("----- 1, 2, or 3, please.")
             continue
 
@@ -478,7 +583,7 @@ def prereqFor(course, coursestaken):
     global MAJOR_REQ
     global ELECTIVES
 
-    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken
+    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # remove ELECTIVES b/c only placeholders are used
 
     # because WRIT 1301 is a prerequisite for LITR 2341 (in LANG_PHIL_CULTURE)
     if len(LANG_PHIL_CULTURE & coursestaken) == 0: # if the lang/phil/culture requirement is not complete
