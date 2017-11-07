@@ -176,10 +176,133 @@
 #
 #
 #   Define a function displayChoices with parameters term, choices, and coursestaken:
-#           
+#       Declare the following global constants that will be used: COURSECATALOG, LANG_PHIL_CULTURE, CREATIVE_ARTS,
+#         SOCIAL_SCIENCE, UNI_CORE, MAJOR_REQ, LLC, and ELECTIVES
+#       Display a header for the term
+#       Set courseMeny to an empty dictionary
+#       Set index to 1
 #
+#       Set categoryChoices to a sorted list of the intersection of choices and LANG_PHIL_CULTURE
+#       If the length of categoryChoices is greater than zero, display a LANG_PHIL_CULTURE heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove LANG_PHIL_CULTURE from choices
 #
+#       Set categoryChoices to a sorted list of the intersection of choices and CREATIVE_ARTS
+#       If the length of categoryChoices is greater than zero, display a CREATIVE_ARTS heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove CREATIVE_ARTS from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and SOCIAL_SCIENCE
+#       If the length of categoryChoices is greater than zero, display a SOCIAL_SCIENCE heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove SOCIAL_SCIENCE from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and UNI_CORE minus LLC
+#       If the length of categoryChoices is greater than zero, display a University Core heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove UNI_CORE from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and LLC
+#       If the length of categoryChoices is greater than zero, display a CS Lower-Level Core heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove LLC from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and MAJOR_REQ
+#       If the length of categoryChoices is greater than zero, display a CS Major Requirements heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove MAJOR_REQ from choices
 #       
+#       Set categoryChoices to a sorted list of the intersection of choices and ELECTIVES
+#       If the length of categoryChoices is greater than zero, display a CS Major Electives heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove ELECTIVES from choices
+#
+#       Return courseMenu to the calling program/function
+#
+#
+#   Define a function chooseCourses with parameters term, courseMeny, degreeplan, and coursestaken:
+#       Declare that COURSECATALOG will refer to the global constant
+#       Set termSummary to the empty list
+#       Begin a loop to get user input:
+#           Set choice from a user prompt to select a course by number, pressing <Enter> when finished
+#           If the user just presses <Enter>, exit the loop
+#           If choice is not a decimal character,
+#               print an error message and go to the beginning of the loop
+#           Cast choice to an integer
+#           If choice is not in courseMenu,
+#               display an error message and go to the beginning of the loop
+#           Set course to courseMenu with index choice
+#           Add course to coursestaken
+#           Set entry to a tuple consisting of term, course, and the name of the course
+#           Append entry to degreeplan
+#           Append to termSummary: the term, course, and course name
+#
+#       Begin a loop of termSummary with lcv c
+#           Display c
+#       Append to degreeplan a tuple with three blanks to signal a blank line
+#       Return degreeplan to the calling program/function
+#
+#
+#   Define a function printSummary with parament degreeplan:
+#       Display a heading: "Your degree plan summary"
+#
+#       Begin a loop of degreeplan with lcv c:
+#           Display all three elements of c
+#
+#
+#   Define a function saveSummary with parameter degreeplan:
+#       Prompt the user to save the degree plan summary to a file
+#       Set filename to the user's input
+#       If the user just pressed <Enter>, return to the calling program/function
+#       Try to open filename for writing
+#           Write a heading, "Your degree plan summary"
+#           Begin a loop over degreeplan with lcv c:
+#               Write all three elements of c
+#           Display a message, filename "contains your degree plan summary"
+#       If unsuccessful, print a message, "couldn't write to the file"
+#
+#
+#   Define a function main:
+#       Set degreeplan to the empty list
+#       Set coursestaken to the return value of getCoursesTaken
+#       Set term to the return value of getTerm
+#       Begin a loop:
+#           Set choices to the return value of getChoices with argument coursestaken
+#           If the length of choices is zero, exit the loop
+#           Set term to the return value of summerTerm with argument term
+#           Set courseMenu to the return value of displayChoices with arguments term, choices, and coursestaken
+#           Set degreeplan to the return value of chooseCourses with arguments term, courseMenu, degreeplan, and coursestaken
+#           Set term to the return value of incTerm with argument term
+#       Call the printSummary function with argument degreeplan
+#       Call the saveSummary function with argument degreeplan
+#
+#
+#   If the name of the running module is '__main__' then call the main function
+#
 #
 ###############################################################################
 
@@ -663,7 +786,7 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= UNI_CORE - LLC
+    choices -= UNI_CORE - LLC # check this for correctness!
 
     # display CS LLC choices
     categoryChoices = sorted(list(choices & LLC))
@@ -849,20 +972,20 @@ if __name__ == "__main__":
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
 
 # Functions:
-# good  isULC(course):
-# good  prerequisites_met(course, coursestaken):
-# good  LLCcomplete(coursestaken):
-# good  getChoices(coursestaken):
-# good  isRubric(rubric):
-# good  extractRubrics(lines):
-# good  add2CoursesTaken(course, coursestaken):
-# good  getCoursesTaken():
-# good  getTerm():
-# good  incTerm(term):
+# good  isULC(course)
+# good  prerequisites_met(course, coursestaken)
+# good  LLCcomplete(coursestaken)
+# good  getChoices(coursestaken)
+# good  isRubric(rubric)
+# good  extractRubrics(lines)
+# good  add2CoursesTaken(course, coursestaken)
+# good  getCoursesTaken()
+# good  getTerm()
+# good  incTerm(term)
 # good  summerTerm(term)
-# good  prereqFor(course, coursestaken):
-# good  displayChoices(term, choices, coursestaken):
-# good  chooseCourses(term, courseMenu, degreeplan, coursestaken):
-# good  printSummary(degreeplan):
-# good  saveSummary(degreeplan, filename):
+# good  prereqFor(course, coursestaken)
+# good  displayChoices(term, choices, coursestaken)
+# good  chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# good  printSummary(degreeplan)
+# good  saveSummary(degreeplan, filename)
 # good  main()
