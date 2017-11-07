@@ -11,23 +11,23 @@
 #       Set isCSCI to True if the first four characters of course is 'CSCI'
 #       Set isCENG to True if the first four characters of course is 'CENG'
 #       Set isULC to True if the 6th character of course is either 3 or 4
-#       Return True isCSCI or isCENG is True and isULC is True
+#       Return True if isCSCI or isCENG is True and isULC is True
 #
 #
 #   Define a dictionary constant COURSECATALOG that contains information about all courses
 #   pertinent to the CS BS degree, where ...
 #       key   = a string representing a course ('CSCI 1471')
 #       value = a tuple consisting of
-#           [0] a string describng the full title of the course ('Computer Science II')
+#           [0] a string describing the full title of the course ('Computer Science II')
 #           [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
 #
-#   Define a set contant LANG_PHIL_CULTURE that contains courses satisfying the
+#   Define a set constant LANG_PHIL_CULTURE that contains courses satisfying the
 #     Language, Philosophy and Culture degree requirement
 #
-#   Define a set contant CREATIVE_ARTS that contains courses satisfying the
+#   Define a set content CREATIVE_ARTS that contains courses satisfying the
 #     Creative Arts degree requirement
 #
-#   Define a set contant SOCIAL_SCIENCE that contains courses satisfying the
+#   Define a set cont-ant SOCIAL_SCIENCE that contains courses satisfying the
 #     Social/Behavioral Science degree requirement
 #
 #   Define a set constant UNI_CORE that contains the University Core Requirements
@@ -58,12 +58,12 @@
 #       If LLC is not complete:
 #           remove ULC and ELECTIVES from choices.
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is greater than zero:
-#           remove LANG_PHIL_CULTURE from chocies.
+#           remove LANG_PHIL_CULTURE from choices.
 #       If the length of the intersection of CREATIVE_ARTS and coursestaken is greater than zero:
-#           remove CREATIVE_ARTS from chocies.
+#           remove CREATIVE_ARTS from choices.
 #       If the length of the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero:
-#           remove SOCIAL_SCIENCE from chocies.
-#       Return choies to the calling function/program.
+#           remove SOCIAL_SCIENCE from choices.
+#       Return choirs to the calling function/program.
 #
 #
 #   Define a function isRubric that takes a string parameter maybeRubric:
@@ -81,7 +81,7 @@
 #       Set courses to an empty list.
 #       Begin a loop iterating through the elements of lines using the lcv line
 #           If the length of line is less than 9, skip the rest of the loop
-#           Set meybeRubric to the first 9 characters of line
+#           Set maybeRubric to the first 9 characters of line
 #           If maybeRubric returns False when passed to isRubric, skip the rest of the loop
 #           Set rubric to maybeRubric
 #           Append rubric to courses
@@ -165,7 +165,7 @@
 #
 #   Define a function prereqFor with parameters course and coursestaken:
 #       Declare the following global constants that will be used: COURSECATALOG, UNI_CORE, MAJOR_REQ, and ELECTIVES
-#       Set coursesneeed to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
+#       Set coursesneeded to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
 #           Add LANG_PHIL_CULTURE to coursesneeded
 #       Set count to zero
@@ -179,7 +179,7 @@
 #       Declare the following global constants that will be used: COURSECATALOG, LANG_PHIL_CULTURE, CREATIVE_ARTS,
 #         SOCIAL_SCIENCE, UNI_CORE, MAJOR_REQ, LLC, and ELECTIVES
 #       Display a header for the term
-#       Set courseMeny to an empty dictionary
+#       Set courseMenu to an empty dictionary
 #       Set index to 1
 #
 #       Set categoryChoices to a sorted list of the intersection of choices and LANG_PHIL_CULTURE
@@ -244,7 +244,7 @@
 #       Return courseMenu to the calling program/function
 #
 #
-#   Define a function chooseCourses with parameters term, courseMeny, degreeplan, and coursestaken:
+#   Define a function chooseCourses with parameters term, courseMenu, degreeplan, and coursestaken:
 #       Declare that COURSECATALOG will refer to the global constant
 #       Set termSummary to the empty list
 #       Begin a loop to get user input:
@@ -267,7 +267,7 @@
 #       Return degreeplan to the calling program/function
 #
 #
-#   Define a function printSummary with parament degreeplan:
+#   Define a function printSummary with parameter degreeplan:
 #       Display a heading: "Your degree plan summary"
 #
 #       Begin a loop of degreeplan with lcv c:
@@ -400,7 +400,7 @@ COURSECATALOG = {
                   {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
 
     "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
-    "CENG 3331": ("Intro to Telecom and Neworks & Lab (CENG 3131)",  {"CENG 3312"}),
+    "CENG 3331": ("Intro to Telecom and Networks & Lab (CENG 3131)",  {"CENG 3312"}),
     "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3312"}),
 
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}),
@@ -456,7 +456,7 @@ def prerequisites_met(course, coursestaken):
     # get the set of prerequisites for the course
     prerequisites = COURSECATALOG[course][1] 
 
-    # return True if every element of prerequisities is in coursestaken
+    # return True if every element of prerequisites is in coursestaken
     return prerequisites.issubset(coursestaken) 
 
 
@@ -488,7 +488,7 @@ def getChoices(coursestaken):
     # remove coursestaken from choices
     choices -= coursestaken
 
-    # remove courses where prerequisitives have not been met
+    # remove courses where prerequisites have not been met
     choices = {course for course in choices if prerequisites_met(course, coursestaken)}
 
     # remove ULC and ELECTIVES if LLC not complete
@@ -712,7 +712,7 @@ def prereqFor(course, coursestaken):
     if len(LANG_PHIL_CULTURE & coursestaken) == 0: # if the lang/phil/culture requirement is not complete
         coursesneeded |= LANG_PHIL_CULTURE         # add it to courses needed
 
-    # CREATIVE_ARTS and SOCIAL_SCIENCE don't have to be here because thoses courses don't have prerequisites
+    # CREATIVE_ARTS and SOCIAL_SCIENCE don't have to be here because those courses don't have prerequisites
 
     count = 0
     for c in coursesneeded:
@@ -725,7 +725,7 @@ def prereqFor(course, coursestaken):
 
 def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
-       displayChoices(term : str, choices : set, coursetaken : set) -> {index: course}
+       displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
     '''
     global COURSECATALOG
     global LANG_PHIL_CULTURE
