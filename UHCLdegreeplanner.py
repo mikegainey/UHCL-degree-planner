@@ -24,10 +24,10 @@
 #   Define a set constant LANG_PHIL_CULTURE that contains courses satisfying the
 #     Language, Philosophy and Culture degree requirement
 #
-#   Define a set content CREATIVE_ARTS that contains courses satisfying the
+#   Define a set constant CREATIVE_ARTS that contains courses satisfying the
 #     Creative Arts degree requirement
 #
-#   Define a set cont-ant SOCIAL_SCIENCE that contains courses satisfying the
+#   Define a set constant SOCIAL_SCIENCE that contains courses satisfying the
 #     Social/Behavioral Science degree requirement
 #
 #   Define a set constant UNI_CORE that contains the University Core Requirements
@@ -786,7 +786,7 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= UNI_CORE - LLC # check this for correctness!
+    choices -= UNI_CORE - LLC # check this for correctness! I think it's right.
 
     # display CS LLC choices
     categoryChoices = sorted(list(choices & LLC))
