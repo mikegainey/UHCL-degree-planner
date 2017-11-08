@@ -318,7 +318,7 @@
 def isULC(course):
     '''Given a course, return True if the course is an upper-level CSCI or CENG course.
        isULC(course : str) -> bool
-       Used to build the set constant ULC
+       Used to build the set constant ULC.
     '''
     isCSCI = course[:4] == 'CSCI'   # CSCI course?
     isCENG = course[:4] == 'CENG'   # CENG course?
@@ -921,6 +921,9 @@ def saveSummary(degreeplan):
 
 def main():
 
+    # print a welcome message
+    # print("blah, blah, blah, ...")
+    
     # this will eventually hold the completed degree plan
     degreeplan = []
 
@@ -972,20 +975,20 @@ if __name__ == "__main__":
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
 
 # Functions:
-# good  isULC(course)
-# good  prerequisites_met(course, coursestaken)
-# good  LLCcomplete(coursestaken)
-# good  getChoices(coursestaken)
-# good  isRubric(rubric)
-# good  extractRubrics(lines)
-# good  add2CoursesTaken(course, coursestaken)
-# good  getCoursesTaken()
-# good  getTerm()
-# good  incTerm(term)
-# good  summerTerm(term)
-# good  prereqFor(course, coursestaken)
-# good  displayChoices(term, choices, coursestaken)
-# good  chooseCourses(term, courseMenu, degreeplan, coursestaken)
-# good  printSummary(degreeplan)
-# good  saveSummary(degreeplan, filename)
-# good  main()
+# good tested isULC(course)
+# good tested prerequisites_met(course, coursestaken)
+# good        LLCcomplete(coursestaken)
+# good        getChoices(coursestaken)
+# good        isRubric(rubric)
+# good        extractRubrics(lines)
+# good        add2CoursesTaken(course, coursestaken)
+# good        getCoursesTaken()
+# good        getTerm()
+# good        incTerm(term)
+# good        summerTerm(term)
+# good        prereqFor(course, coursestaken)
+# good        displayChoices(term, choices, coursestaken)
+# good        chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# good        printSummary(degreeplan)
+# good        saveSummary(degreeplan, filename)
+# good        main()
