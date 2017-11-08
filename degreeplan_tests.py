@@ -1,24 +1,29 @@
 import unittest
 
-from degreeplan_data import *      # imports catalog, corereq, and majorreq
-from degreeplan_functions import * # import the functions
-
+from UHCLdegreeplanner import *
 
 class TestFunctions(unittest.TestCase):
 
-    def test_possibilities(self):
-        
+    def test_isULC(self):
+        self.assertTrue(isULC('csci 3456'))
+        self.assertTrue(isULC('CSCI 4000'))
+        self.assertTrue(isULC('CENG 3000'))
+        self.assertTrue(isULC('CENG 4000'))
+        self.assertFalse(isULC('CSCI 2000'))
+        self.assertFalse(isULC('CSCI 5000'))
+        self.assertFalse(isULC('CENG 2000'))
+        self.assertFalse(isULC('CENG 1000'))
     
-    # def prerequisites_met
-
-    # def test_update_coursesneeded(self):
-        coursesneeded = {'a', 'b', 'c'}
-        coursestaken = {'b'}
         
-        result = update_coursesneeded(coursesneeded, coursestaken)
-        expectedresult = {'c', 'a'}
-        self.assertEqual(result, expectedresult)
-        
+# def isULC(course):
+#     '''Given a course, return True if the course is an upper-level CSCI or CENG course.
+#        isULC(course : str) -> bool
+#        Used to build the set constant ULC
+#     '''
+#     isCSCI = course[:4] == 'CSCI'   # CSCI course?
+#     isCENG = course[:4] == 'CENG'   # CENG course?
+#     isULC = course[5] in ['3', '4'] # 3000 or 4000 level course?
+#     return (isCSCI or isCENG) and isULC
 
 
 unittest.main()
