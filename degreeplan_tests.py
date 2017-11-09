@@ -149,35 +149,15 @@ class TestFunctions(unittest.TestCase):
         '''
         lines = ['CSCI 1470\n',
                  'CSCI 1471 Computer Science II\n',
-                 'phys 2325 lowercase rubrics are ok\n',
+                 'phys 2325 lowercase rubrics are ok\n', # lowercase is ok here
                  'qwer 1234 this is converted to upper but not filtered out yet (not until add2CoursesTaken)',
-                 'This is not a course and should be ignored\n']
-        expected = ['CSCI 1470', 'CSCI 1471', 'PHYRS 2325']
-        self.assertEqual(extractRubrics(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234'])
-        
-    # courses = list()
-    # for line in lines:
-
-    #     if len(line) < 9:             # the line is too short to contain a rubric
-    #         continue
-
-    #     maybeRubric = line[:9]        # the part of the line to check
-
-    #     if not isRubric(maybeRubric): # if not a rubric, loop back
-    #         continue
-
-    #     rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
-    #     rubric = rubric.upper()
-
-    #     courses.append(rubric)        # add the rubric to the output list
-
-    # return courses
-        
+                 'This is not a course and should be ignored\n',
+                 '\n', # a blank line
+                 'math 2314']
+        self.assertEqual(extractRubrics(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234', 'MATH 2314'])
 
 
         
-
-
 unittest.main()
 
 
