@@ -7,7 +7,7 @@ Note on the format of input files:
 Michael Gainey's completed courses list
 
 -- from UHCL
-ECON 2301 Macroeconomics
+econ 2301 Macroeconomics # lowercase rubrics should still be valid
 POLS 2306 Texas Government
 abcd 1234 this is a test
 

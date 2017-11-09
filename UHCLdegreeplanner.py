@@ -522,7 +522,7 @@ def isRubric(maybeRubric):
     words = maybeRubric.split()
 
     # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
-    if len(words) < 2: 
+    if len(words) != 2:
         return False
 
     # first word should be 4 alphabetic characters: CSCI
@@ -555,6 +555,7 @@ def extractRubrics(lines):
             continue
 
         rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
+        rubric = rubric.upper()
 
         courses.append(rubric)        # add the rubric to the output list
 
@@ -974,12 +975,18 @@ if __name__ == "__main__":
 # - test all functions
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
 
+# - I'm using the word "rubric" incorrectly.  An example of a rubric is "CSCI."  So what is "CSCI 1470," a course?
+#   - So then, "Computer Science I" would need to be consistently called a course name (and not a course).
+
+# - check and correct all rubrics in constants; they must be uppercase to correctly match keys in COURSECATALOG
+
+
 # Functions:
 # good tested isULC(course)
 # good tested prerequisites_met(course, coursestaken)
-# good        LLCcomplete(coursestaken)
-# good        getChoices(coursestaken)
-# good        isRubric(rubric)
+# good tested LLCcomplete(coursestaken)
+# good tested getChoices(coursestaken)
+# good tested isRubric(rubric)
 # good        extractRubrics(lines)
 # good        add2CoursesTaken(course, coursestaken)
 # good        getCoursesTaken()
