@@ -313,8 +313,11 @@
 # https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf
 
 
-# This function has to be defined first in order for the constant ULC to be defined.
-# That's why it's not with the other function definitions.
+########################
+# Function Definitions #
+########################
+
+
 def isULC(course):
     '''Given a course, return True if the course is an upper-level CSCI or CENG course.
        isULC(course : str) -> bool
@@ -324,6 +327,121 @@ def isULC(course):
     isCENG = course[:4] == 'CENG'   # CENG course?
     isULC = course[5] in ['3', '4'] # 3000 or 4000 level course?
     return (isCSCI or isCENG) and isULC
+
+
+def prerequisites_met(course, coursestaken):
+    '''Given a course and courses taken, return True if the course's prerequisites have been met.
+       prerequisites_met(course : str, coursestaken : set) -> bool
+    '''
+    global COURSECATALOG
+
+    # get the set of prerequisites for the course
+    prerequisites = COURSECATALOG[course][1] 
+
+    # return True if every element of prerequisites is in coursestaken
+    return prerequisites.issubset(coursestaken) 
+
+
+def LLCcomplete(coursestaken):
+    '''Given the set of courses taken, return True if the CS LLC is complete.
+       LLCcomplete(coursestaken : set) -> bool
+    '''
+    global LLC
+
+    # return True if every element of LLC issubset of coursestaken
+    return LLC.issubset(coursestaken) 
+
+
+def getChoices(coursestaken):
+    '''Given the set of courses taken, return the set of courses eligible to be taken (choices)
+       getChoices(coursestaken : set) -> set
+    '''
+    global LANG_PHIL_CULTURE
+    global CREATIVE_ARTS
+    global SOCIAL_SCIENCE
+    global UNI_CORE
+    global MAJOR_REQ
+    global ULC
+    global ELECTIVES
+
+    # at the end of this function, choices will be the list of courses eligible to be taken
+    choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
+
+    # remove coursestaken from choices
+    choices -= coursestaken
+
+    # remove courses where prerequisites have not been met
+    choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+
+    # remove ULC and ELECTIVES if LLC not complete
+    if not LLCcomplete(coursestaken):
+        choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
+
+    # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
+    if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
+        choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
+
+    # if CREATIVE_ARTS requirement met (1 course), remove all CREATIVE_ARTS courses from choices
+    if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
+        choices -= CREATIVE_ARTS              # remove all CREATIVE_ARTS courses from the choices list
+
+    # if SOCIAL_SCIENCE requirement met (1 course), remove all SOCIAL_SCIENCE courses from choices
+    if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
+        choices -= SOCIAL_SCIENCE              # remove all SOCIAL_SCIENCE courses from the choices list
+
+    return choices
+
+
+def isRubric(maybeRubric):
+    '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
+       isRubric(maybeRubric : str) -> bool
+       the alpha characters can be uppercase or lowercase
+    '''
+    # rubrics are always 9 characters (like 'CSCI 1470')
+    if len(maybeRubric) != 9: 
+        return False
+
+    words = maybeRubric.split()
+
+    # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
+    if len(words) != 2:
+        return False
+
+    # first word should be 4 alphabetic characters: CSCI
+    part1 = words[0]
+    if not (part1.isalpha() and len(part1) == 4): 
+        return False
+
+    # second word should be 4 decimal characters: 1470
+    part2 = words[1]
+    if not (part2.isdecimal() and len(part2) == 4): 
+        return False
+
+    return True # return True if above conditions are met
+
+
+def extractRubrics(lines):
+    '''Given a list of lines from a file, return an ordered list of valid rubrics.
+       extractRubrics(lines : [str]) -> [str]
+       These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
+    '''
+    courses = list()
+    for line in lines:
+
+        if len(line) < 9:             # the line is too short to contain a rubric
+            continue
+
+        maybeRubric = line[:9]        # the part of the line to check
+
+        if not isRubric(maybeRubric): # if not a rubric, loop back
+            continue
+
+        rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
+        rubric = rubric.upper()       # the rubric must be uppercase (used as a key in COURSECATALOG : dict)
+
+        courses.append(rubric)        # add the rubric to the output list
+
+    return courses
 
 
 ####################
@@ -447,119 +565,6 @@ ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 ########################
 
 
-def prerequisites_met(course, coursestaken):
-    '''Given a course and courses taken, return True if the course's prerequisites have been met.
-       prerequisites_met(course : str, coursestaken : set) -> bool
-    '''
-    global COURSECATALOG
-
-    # get the set of prerequisites for the course
-    prerequisites = COURSECATALOG[course][1] 
-
-    # return True if every element of prerequisites is in coursestaken
-    return prerequisites.issubset(coursestaken) 
-
-
-def LLCcomplete(coursestaken):
-    '''Given the set of courses taken, return True if the CS LLC is complete.
-       LLCcomplete(coursestaken : set) -> bool
-    '''
-    global LLC
-
-    # return True if every element of LLC issubset of coursestaken
-    return LLC.issubset(coursestaken) 
-
-
-def getChoices(coursestaken):
-    '''Given the set of courses taken, return the set of courses eligible to be taken (choices)
-       getChoices(coursestaken : set) -> set
-    '''
-    global LANG_PHIL_CULTURE
-    global CREATIVE_ARTS
-    global SOCIAL_SCIENCE
-    global UNI_CORE
-    global MAJOR_REQ
-    global ULC
-    global ELECTIVES
-
-    # at the end of this function, choices will be the list of courses eligible to be taken
-    choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
-
-    # remove coursestaken from choices
-    choices -= coursestaken
-
-    # remove courses where prerequisites have not been met
-    choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-
-    # remove ULC and ELECTIVES if LLC not complete
-    if not LLCcomplete(coursestaken):
-        choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
-
-    # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
-    if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
-        choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
-
-    # if CREATIVE_ARTS requirement met (1 course), remove all CREATIVE_ARTS courses from choices
-    if len(CREATIVE_ARTS & coursestaken) > 0: # if the intersection of CREATIVE_ARTS and coursestaken is greater than zero
-        choices -= CREATIVE_ARTS              # remove all CREATIVE_ARTS courses from the choices list
-
-    # if SOCIAL_SCIENCE requirement met (1 course), remove all SOCIAL_SCIENCE courses from choices
-    if len(SOCIAL_SCIENCE & coursestaken) > 0: # if the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero
-        choices -= SOCIAL_SCIENCE              # remove all SOCIAL_SCIENCE courses from the choices list
-
-    return choices
-
-
-def isRubric(maybeRubric):
-    '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
-       isRubric(maybeRubric : str) -> bool
-       the alpha characters can be uppercase or lowercase
-    '''
-    # rubrics are always 9 characters (like 'CSCI 1470')
-    if len(maybeRubric) != 9: 
-        return False
-
-    words = maybeRubric.split()
-
-    # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
-    if len(words) != 2:
-        return False
-
-    # first word should be 4 alphabetic characters: CSCI
-    part1 = words[0]
-    if not (part1.isalpha() and len(part1) == 4): 
-        return False
-
-    # second word should be 4 decimal characters: 1470
-    part2 = words[1]
-    if not (part2.isdecimal() and len(part2) == 4): 
-        return False
-
-    return True # return True if above conditions are met
-
-
-def extractRubrics(lines):
-    '''Given a list of lines from a file, return an ordered list of valid rubrics.
-       extractRubrics(lines : [str]) -> [str]
-       These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
-    '''
-    courses = list()
-    for line in lines:
-
-        if len(line) < 9:             # the line is too short to contain a rubric
-            continue
-
-        maybeRubric = line[:9]        # the part of the line to check
-
-        if not isRubric(maybeRubric): # if not a rubric, loop back
-            continue
-
-        rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
-        rubric = rubric.upper()
-
-        courses.append(rubric)        # add the rubric to the output list
-
-    return courses
 
 
 def add2CoursesTaken(course, coursestaken):
@@ -580,7 +585,7 @@ def add2CoursesTaken(course, coursestaken):
 
 def getCoursesTaken():
     '''Prompt the user to enter courses previously completed and/or load courses from file(s).
-       getCoursesTaken() -> set'''
+       getCoursesTaken() -> NoneType (+ calling add2CoursesTaken mutator function)'''
 
     print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\n")
 

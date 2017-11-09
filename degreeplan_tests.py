@@ -142,17 +142,38 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue(isRubric('asdf 1234')) # conforms to the correct format; 
 
 
-#     # first word should be 4 alphabetic characters: CSCI
-#     part1 = words[0]
-#     if not (part1.isalpha() and len(part1) == 4): 
-#         return False
+    def test_extractRubrics(self):
+        '''Given a list of lines from a file, return an ordered list of valid rubrics.
+        extractRubrics(lines : [str]) -> [str]
+        These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
+        '''
+        lines = ['CSCI 1470\n',
+                 'CSCI 1471 Computer Science II\n',
+                 'phys 2325 lowercase rubrics are ok\n',
+                 'qwer 1234 this is converted to upper but not filtered out yet (not until add2CoursesTaken)',
+                 'This is not a course and should be ignored\n']
+        expected = ['CSCI 1470', 'CSCI 1471', 'PHYRS 2325']
+        self.assertEqual(extractRubrics(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234'])
+        
+    # courses = list()
+    # for line in lines:
 
-#     # second word should be 4 decimal characters: 1470
-#     part2 = words[1]
-#     if not (part2.isdecimal() and len(part2) == 4): 
-#         return False
+    #     if len(line) < 9:             # the line is too short to contain a rubric
+    #         continue
 
-#     return True # return True if above conditions are met
+    #     maybeRubric = line[:9]        # the part of the line to check
+
+    #     if not isRubric(maybeRubric): # if not a rubric, loop back
+    #         continue
+
+    #     rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
+    #     rubric = rubric.upper()
+
+    #     courses.append(rubric)        # add the rubric to the output list
+
+    # return courses
+        
+
 
         
 
