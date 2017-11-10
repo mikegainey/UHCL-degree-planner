@@ -708,15 +708,15 @@ def prereqFor(course, coursestaken):
     global COURSECATALOG
     global UNI_CORE
     global MAJOR_REQ
-    global ELECTIVES
 
-    coursesneeded = UNI_CORE | MAJOR_REQ | ELECTIVES - coursestaken # remove ELECTIVES b/c only placeholders are used
-
+    coursesneeded = UNI_CORE | MAJOR_REQ
+    
     # because WRIT 1301 is a prerequisite for LITR 2341 (in LANG_PHIL_CULTURE)
     if len(LANG_PHIL_CULTURE & coursestaken) == 0: # if the lang/phil/culture requirement is not complete
         coursesneeded |= LANG_PHIL_CULTURE         # add it to courses needed
 
     # CREATIVE_ARTS and SOCIAL_SCIENCE don't have to be here because those courses don't have prerequisites
+    # Although electives may have prerequisites, my program doesn't have the catalog information to process them here
 
     count = 0
     for c in coursesneeded:
@@ -975,14 +975,16 @@ if __name__ == "__main__":
 
 # TODO:
 # - print a nice intro and explanatory text here and there
-# - test all functions
+# - verify COURSECATALOG data (prerequisites) against the online course catalog
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
+# - manually test void functions and functions that take user input; and the program as a whole (main)
+#   - create a test worksheet (document)
 
-# - I'm using the word "rubric" incorrectly.  An example of a rubric is "CSCI."  So what is "CSCI 1470," a course?
-#   - So then, "Computer Science I" would need to be consistently called a course name (and not a course).
+# - replace the term "rubric" with "course number" because I'm not using that term correctly.
+#   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
 
-# - check and correct all rubrics in constants; they must be uppercase to correctly match keys in COURSECATALOG
-
+# - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
+# - remove all un-needed global statements (most or all of them); only needed if the global will be mutated (right?)
 
 # Functions:
 # good tested isULC(course)
@@ -992,13 +994,13 @@ if __name__ == "__main__":
 # good tested isRubric(rubric)
 # good tested extractRubrics(lines)
 # good tested add2CoursesTaken(course, coursestaken)
-# good manual getCoursesTaken()
-# good manual getTerm()
+# good         getCoursesTaken()
+# good         getTerm()
 # good tested incTerm(term)
-# good manual summerTerm(term)
-# good        prereqFor(course, coursestaken)
-# good        displayChoices(term, choices, coursestaken)
-# good        chooseCourses(term, courseMenu, degreeplan, coursestaken)
-# good        printSummary(degreeplan)
-# good        saveSummary(degreeplan, filename)
-# good        main()
+# good         summerTerm(term)
+# good tested prereqFor(course, coursestaken)
+# good tested displayChoices(term, choices, coursestaken)
+# good         chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# good         printSummary(degreeplan)
+# good         saveSummary(degreeplan, filename)
+# good         main()

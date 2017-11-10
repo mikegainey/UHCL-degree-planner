@@ -189,24 +189,37 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(incTerm('Summer 2018'), 'Fall 2018') # Fall 2018 follows Summer 2018
         
 
+    def test_prereqFor(self):
+        '''Given a course, return the number of (still needed) courses for which that course is a prerequisite
+           prereqFor(course : str, coursestaken : set) -> int
+        '''
+        coursestaken = set()
+        self.assertEqual(prereqFor('MATH 2413', coursestaken), 6) # prereq for PHYS 2325, MATH 2305, MATH 2318,
+                                                                  #            MATH 2414, STAT 3334, CSCI 1471
 
+        self.assertEqual(prereqFor('WRIT 1301', coursestaken), 3) # prereq for WRIT 1302, LITR 2341, & WRIT 3315
+        coursestaken.add('PHIL 1301') # now LITR 2341 doesn't count as a course for which WRIT 1301 is a prerequisite
+        self.assertEqual(prereqFor('WRIT 1301', coursestaken), 2) # prereq for WRIT 1302 & WRIT 3315 (not LITR 2341)
+        # note: this is the only case where the prereqFor number will change
         
-unittest.main()
+
+    def test_displayChoices(self):
+        '''Given a set of course choices, display and return a choice dictionary (menu)
+           displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
+        '''
+        # the order of courseMenu is sorted by category, then by course number
+        term = 'Fall 2017'
+        coursestaken = set()
+        
+        choices = {'PHIL 1301', 'ARTS 1303', 'ECON 2301', }
+        choices |= {'PSYC 1100', 'WRIT 1302'} # uni_core
+        choices |= {'CSCI 1470', 'WRIT 1301'} # LLC
+        choices |= {'CHEM 1311', 'CSCI 4388'} # major_req
+        choices |= {'CSCI 32xx', 'CSCI 33x1'} # electives
+        menu = {1 : 'PHIL 1301', 2 : 'ARTS 1303', 3 : 'ECON 2301', 4 : 'PSYC 1100', 5 : 'WRIT 1302',
+                6 : 'CSCI 1470', 7 : 'WRIT 1301', 8 : 'CHEM 1311', 9 : 'CSCI 4388', 10 : 'CSCI 32xx', 11 : 'CSCI 33x1'}
+
+        self.assertEqual(displayChoices(term, choices, coursestaken), menu)
 
 
-# How to:
-# class TestStringMethods(unittest.TestCase):
-
-#     def test_upper(self):
-#         self.assertEqual('foo'.upper(), 'FOO')
-
-#     def test_isupper(self):
-#         self.assertTrue('FOO'.isupper())
-#         self.assertFalse('Foo'.isupper())
-
-#     def test_split(self):
-#         s = 'hello world'
-#         self.assertEqual(s.split(), ['hello', 'world'])
-#         # check that s.split fails when the separator is not a string
-#         with self.assertRaises(TypeError):
-#             s.split(2)
+unittest.main(buffer=True) # buffer=True suppresses output of print statements in functions
