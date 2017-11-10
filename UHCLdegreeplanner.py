@@ -565,8 +565,6 @@ ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 ########################
 
 
-
-
 def add2CoursesTaken(course, coursestaken):
     '''Add a course to coursestaken only if it applies to the CS BS degree
        add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken)
@@ -992,12 +990,12 @@ if __name__ == "__main__":
 # good tested LLCcomplete(coursestaken)
 # good tested getChoices(coursestaken)
 # good tested isRubric(rubric)
-# good        extractRubrics(lines)
-# good        add2CoursesTaken(course, coursestaken)
-# good        getCoursesTaken()
-# good        getTerm()
-# good        incTerm(term)
-# good        summerTerm(term)
+# good tested extractRubrics(lines)
+# good tested add2CoursesTaken(course, coursestaken)
+# good manual getCoursesTaken()
+# good manual getTerm()
+# good tested incTerm(term)
+# good manual summerTerm(term)
 # good        prereqFor(course, coursestaken)
 # good        displayChoices(term, choices, coursestaken)
 # good        chooseCourses(term, courseMenu, degreeplan, coursestaken)

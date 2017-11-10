@@ -157,6 +157,39 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(extractRubrics(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234', 'MATH 2314'])
 
 
+    def test_add2CoursesTaken(self):
+        '''Add a course to coursestaken only if it applies to the CS BS degree
+           add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken, screen output)
+           used twice in getCoursesTaken (so this function prevents code duplication)
+           the course parameter must be uppercase (done in extractRubrics and getCoursesTaken)
+        '''
+        coursestaken = set()
+
+        course = 'CSCI 1470' # valid course number and degree requirement
+        add2CoursesTaken(course, coursestaken) # try to add CSCI 1470 to coursestaken
+        self.assertTrue(course in coursestaken) # see if it worked (it should)
+
+        course = 'CSCI 1234' # valid course number but not a degree requirement
+        add2CoursesTaken(course, coursestaken) # try to add CSCI 1234 to coursestaken
+        self.assertFalse(course in coursestaken) # see if it worked (it should not)
+
+
+    # getCoursesTaken - test manually because of user input prompts
+    # getTerm - test manually because of user input prompts
+        
+
+    def test_incTerm(self):
+        '''Given a current term, return the next term
+           incTerm(currentTerm : str) -> str
+           This function will produce a runtime error
+           if term's fist word is not in seasons (but that should never happen).
+        '''
+        self.assertEqual(incTerm('Fall 2017'), 'Spring 2018') # Spring 2018 follows Fall 2017
+        self.assertEqual(incTerm('Spring 2018'), 'Summer 2018') # Summer 2018 follows Spring 2018
+        self.assertEqual(incTerm('Summer 2018'), 'Fall 2018') # Fall 2018 follows Summer 2018
+        
+
+
         
 unittest.main()
 
