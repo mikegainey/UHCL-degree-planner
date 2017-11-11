@@ -426,6 +426,9 @@ LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 24
 # needed for hours computation and classification determination
 HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
+# requires senior standing
+REQ_SENIOR = {'CSCI 4354'}
+
 # this function definition needs to come before the ULC definition below
 def isULC(course):
     '''Given a course, return True if the course is an upper-level CSCI or CENG course.
@@ -498,6 +501,15 @@ def getChoices(coursestaken):
     if not LLCcomplete(coursestaken):
         choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
 
+    # remove electives if not junior or senior standing
+    standing = classification(coursestaken)
+    if standing[0] not in {'junior', 'senior'}:
+        choices -= ELECTIVES
+        
+    # remove CSCI 4354 (the only course in REQ_SENIOR) if not senior standing
+    if standing[0] != 'senior':
+        choices -= REQ_SENIOR
+        
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
         choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
@@ -851,7 +863,7 @@ def displayChoices(term, choices, coursestaken):
     # display CS electives
     categoryChoices = sorted(list(choices & ELECTIVES))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
-        print("\nComputer Science Major Electives (taken junior or senior year)")
+        print("\nComputer Science Major Electives")
 
     for course in categoryChoices:
         # assuming CS electives aren't going to be prerequisites for anything else
@@ -1034,7 +1046,7 @@ if __name__ == "__main__":
 # good tested incTerm(term)
 # good tested summerTerm(term)
 # good tested prereqFor(course, coursestaken)
-#             classificaiton(coursetaken)
+#             classification(coursetaken)
 # good tested displayChoices(term, choices, coursestaken)
 # good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # good tested printSummary(degreeplan)
