@@ -977,8 +977,6 @@ if __name__ == "__main__":
 # - print a nice intro and explanatory text here and there
 # - verify COURSECATALOG data (prerequisites) against the online course catalog
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
-# - manually test void functions and functions that take user input; and the program as a whole (main)
-#   - create a test worksheet (document)
 
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
 #   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
@@ -994,13 +992,13 @@ if __name__ == "__main__":
 # good tested isRubric(rubric)
 # good tested extractRubrics(lines)
 # good tested add2CoursesTaken(course, coursestaken)
-# good        getCoursesTaken()
-# good        getTerm()
+# good tested getCoursesTaken()
+# good tested getTerm()
 # good tested incTerm(term)
-# good        summerTerm(term)
+# good tested summerTerm(term)
 # good tested prereqFor(course, coursestaken)
 # good tested displayChoices(term, choices, coursestaken)
-# good        chooseCourses(term, courseMenu, degreeplan, coursestaken)
-# good        printSummary(degreeplan)
-# good        saveSummary(degreeplan, filename)
-# good        main()
+# good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# good tested printSummary(degreeplan)
+# good tested saveSummary(degreeplan, filename)
+# good tested main()
