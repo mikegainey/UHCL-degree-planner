@@ -18,3 +18,5 @@ Explain prereq for ...
 After you have chosen all of your courses, the program will display a complete degree plan summary.  If you enter a file name, the summary will be saved as a text file in the same folder as the program.
 
 Note: This program uses course information and degree requirements from the UHCL 2017-2018 undergraduate catalog.  If you started your degree in another school year, then you should follow that year's catalog for your degree requirements.  
+
+Note: Labs are wrapped up with the courses they are taken with.

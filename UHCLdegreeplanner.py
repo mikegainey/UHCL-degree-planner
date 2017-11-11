@@ -324,12 +324,13 @@
 #     - a string describing the full title of the course, "University Physics I"
 #     - a set of prerequisites : str, {"MATH 2413", "MATH 2414"}
 
+# verified against the UHCL Undergraduate Catalog 2017-2018 on (date)
 COURSECATALOG = {
     # Communication (6 hours)
     "WRIT 1301": ("Composition I", set()),
     "WRIT 1302": ("Composition II", {"WRIT 1301"}),
 
-    # Mathematics (3 hours)
+    # Mathematics (4 hours), # this has a prerequisite, but it's not part of the degree requirements
     "MATH 2413": ("Calculus I", set()),
 
     # Life and Physical Sciences (6 hours)
@@ -348,8 +349,8 @@ COURSECATALOG = {
     "ARTS 2379": ("Arts and the Child", set()),
 
     # American History (6 hours)
-    "HIST 1301": ("U.S. History I", set()),
-    "HIST 1302": ("U.S. History II", set()),
+    "HIST 1301": ("United States History I", set()),
+    "HIST 1302": ("United States History II", set()),
 
     # Government/Political Science (6 hours)
     "POLS 2305": ("Federal Government", set()),
@@ -370,13 +371,13 @@ COURSECATALOG = {
 
     # Major Requirements (67 hours)
     "CHEM 1311": ("General Chemistry I and Lab (CHEM 1111)", set()),
-    "MATH 2305": ("Discrete Math", {"MATH 2413"}),
+    "MATH 2305": ("Discrete Mathematics", {"MATH 2413"}),
     "MATH 2318": ("Linear Algebra", {"MATH 2413"}),
     "MATH 2414": ("Calculus II", {"MATH 2413"}),
     "MATH 2320": ("Differential Equations", {"MATH 2414"}),
-    "STAT 3334": ("Probability & Statistics for Scientists and Engineers", {"MATH 2413", "MATH 2414"}),
+    "STAT 3334": ("Probability & Statistics for Scientists & Engineers", {"MATH 2413", "MATH 2414"}),
     "CSCI 1470": ("Computer Science I", set()),
-    "CSCI 1471": ("Computer Science II", {"CSCI 1470", "MATH 2413"}),
+    "CSCI 1471": ("Computer Science II", {"CSCI 1470"}), # MATH 2413 was a prereq in the 2016-17 catalog
     "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414",
                                                                 "PHYS 2325",  "PHYS 2326"}),
     "CSCI 2315": ("Data Structures", {"CSCI 1471"}),
@@ -387,10 +388,10 @@ COURSECATALOG = {
                   {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
 
     "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
-    "CENG 3331": ("Intro to Telecom and Networks & Lab (CENG 3131)",  {"CENG 3312"}),
-    "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3312"}),
+    "CENG 3331": ("Intro to Telecommunications and Networks & Lab (CENG 3131)",  {"CENG 3312"}),
+    "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3331"}), # prereq changed from 2016-17
 
-    "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}),
+    "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}), # CSCI 1470 prereq implied; CSCI 2315 recommended
     "WRIT 3315": ("Technical Writing", {"WRIT 1301", "WRIT 1302"}),
     "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}),
 
@@ -975,8 +976,16 @@ if __name__ == "__main__":
 
 # TODO:
 # - print a nice intro and explanatory text here and there
-# - verify COURSECATALOG data (prerequisites) against the online course catalog
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
+
+# - compute the student's standing where ...
+#   - freshmen   == 1-29  hours complete
+#   - sophomores == 30-59 hours complete
+#   - juniors    == 60-89 hours complete
+#   - seniors    == 90+   hours complete
+#   note: This will be complicated by the fact that I wrap labs with the courses they are taken with.
+#         I do this so I don't have to deal with logic around corequisites.
+#   Consider not showing courses until they have the proper standing when applicable.
 
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
 #   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
