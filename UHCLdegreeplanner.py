@@ -319,7 +319,7 @@
 
 
 # COURSECATALOG is a dictionary where
-#   key:   is a string representing a course rubric, like 'PHYS 2325'
+#   key:   is a string representing a course number, like 'PHYS 2325'
 #   value: is a tuple consisting of
 #     - a string describing the full title of the course, "University Physics I"
 #     - a set of prerequisites : str, {"MATH 2413", "MATH 2414"}
@@ -515,7 +515,7 @@ def isRubric(maybeRubric):
        isRubric(maybeRubric : str) -> bool
        the alpha characters can be uppercase or lowercase
     '''
-    # rubrics are always 9 characters (like 'CSCI 1470')
+    # course numbers are always 9 characters (like 'CSCI 1470')
     if len(maybeRubric) != 9: 
         return False
 
@@ -539,25 +539,25 @@ def isRubric(maybeRubric):
 
 
 def extractRubrics(lines):
-    '''Given a list of lines from a file, return an ordered list of valid rubrics.
+    '''Given a list of lines from a file, return an ordered list of valid course numbers.
        extractRubrics(lines : [str]) -> [str]
-       These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
+       These course numbers might not apply to the CS BS degree (checked in add2CoursesTaken)
     '''
     courses = list()
     for line in lines:
 
-        if len(line) < 9:             # the line is too short to contain a rubric
+        if len(line) < 9:             # the line is too short to contain a course number
             continue
 
         maybeRubric = line[:9]        # the part of the line to check
 
-        if not isRubric(maybeRubric): # if not a rubric, loop back
+        if not isRubric(maybeRubric): # if not a course number, loop back
             continue
 
-        rubric = maybeRubric          # at this point, it's a confirmed rubric (format)
-        rubric = rubric.upper()       # the rubric must be uppercase (used as a key in COURSECATALOG : dict)
+        rubric = maybeRubric          # at this point, it's a confirmed course number (format)
+        rubric = rubric.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
 
-        courses.append(rubric)        # add the rubric to the output list
+        courses.append(rubric)        # add the course number to the output list
 
     return courses
 
@@ -582,31 +582,31 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed and/or load courses from file(s).
        getCoursesTaken() -> NoneType (+ calling add2CoursesTaken mutator function)'''
 
-    print("\nEnter courses by rubric (like CSCI 1470) that you have previously completed and/or the names of files containing course rubrics.\n")
+    print("\nEnter course numbers (like CSCI 1470) that you have previously completed and/or the names of files containing course numbers.\n")
 
     coursestaken = set()
 
     while True:
-        course = input("Enter a course rubric or a file name. Press <Enter> when finished: ")
+        course = input("Enter a course number or a file name. Press <Enter> when finished: ")
 
         # the sentinel
         if course == '':
             return coursestaken
 
-        # the input string is a rubric
+        # the input string is a course number
         if isRubric(course):
             course = course.upper()
 
             # add to coursestaken only if the course applies to the CS BS degree
             add2CoursesTaken(course, coursestaken)
 
-        # the input string is not a rubric; see if it's a file name
+        # the input string is not a course number; see if it's a file name
         else:
             try:
                 with open(course, 'r') as file:
                     lines = list(file) # a list of lines in the file
             except:
-                print("----- That's not a rubric or a file name.\n")
+                print("----- That's not a course number or a file name.\n")
                 continue
 
             # valid filename; lines is populated; get the set of courses
@@ -647,7 +647,7 @@ def getTerm():
         year = input("Enter your starting year (last 2 digits only): ")
 
         if not (year.isdecimal() and len(year) == 2):
-            print("----- Just enter two digits.")
+            print("----- Just 2 digits, please.")
             continue
 
         # year has been validated
@@ -741,7 +741,7 @@ def displayChoices(term, choices, coursestaken):
     print("{} choices:".format(term))
     print('=' * 80)
 
-    courseMenu = {} # a dictionary with key = menu number, value = course rubric
+    courseMenu = {} # a dictionary with key = menu number, value = course number
     index = 1       # the menu numbers
 
     # display Language, Philosophy, Culture courses
@@ -863,11 +863,14 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
 
         termSummary.append("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
 
-    print()
-    for c in termSummary:
-        print(c)
+    # only print a term summary if there is something to print
+    if len(termSummary) > 0:
+        print()
+        for c in termSummary:
+            print(c)
 
-    degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
+        degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
+            
     return degreeplan
 
 
@@ -881,7 +884,7 @@ def printSummary(degreeplan):
     print()
 
     for c in degreeplan:
-        # c[0] = term, c[1] = course rubric, c[2] = course title
+        # c[0] = term, c[1] = course number, c[2] = course title
         print("{:12} {:9} {}".format(c[0], c[1], c[2]))
 
     print('=' * 80)
@@ -909,7 +912,7 @@ def saveSummary(degreeplan):
             file.write('\n')
 
             for c in degreeplan:
-                # c[0] = term, c[1] = course rubric, c[2] = course title
+                # c[0] = term, c[1] = course number, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
             file.write("{}{}".format('=' * 80, '\n'))
 
