@@ -423,6 +423,8 @@ MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'S
 # CS Lower-Level Core; note there is some overlap with UNI_CORE
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
+# needed for hours computation and classification determination
+HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
 # this function definition needs to come before the ULC definition below
 def isULC(course):
@@ -725,6 +727,33 @@ def prereqFor(course, coursestaken):
     return count
 
 
+def classification(coursestaken):
+    '''Given coursestaken, return a tuple with (classification, total hours completed) where classification is ...
+       freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
+       classificaiton(coursestaken : set) -> (str, int)
+    '''
+    totalHours = 0
+    for course in coursestaken:
+        totalHours += int(course[-3]) # "CSCI 1470"[3] = 4
+
+    # add another hour for each course with a lab
+    labs = coursestaken & HASLAB # coursestaken that have labs
+    numlabs = len(labs) # the number of labs taken
+    totalHours += numlabs
+
+    # determine classification from totalHours
+    if totalHours <= 29:
+        standing = 'freshman'
+    elif 30 <= totalHours <= 59:
+        standing = 'sophomore'
+    elif 60 <= totalHours <= 89:
+        standing = 'junior'
+    else:
+        standing = 'senior'
+
+    return (standing, totalHours)
+
+
 def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
@@ -738,8 +767,13 @@ def displayChoices(term, choices, coursestaken):
     global LLC
     global ELECTIVES
 
+    # standing = (classification, totalHours) where classification = freshman | sophomore | ...
+    standing = classification(coursestaken)
+    
     print('=' * 80)
-    print("{} choices:".format(term))
+    left = "{} choices:".format(term)
+    right = "({} with {} hours)".format(standing[0], standing[1])
+    print("{:<30}{:>50}".format(left, right))
     print('=' * 80)
 
     courseMenu = {} # a dictionary with key = menu number, value = course number
@@ -978,14 +1012,8 @@ if __name__ == "__main__":
 # - print a nice intro and explanatory text here and there
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
 
-# - compute the student's standing where ...
-#   - freshmen   == 1-29  hours complete
-#   - sophomores == 30-59 hours complete
-#   - juniors    == 60-89 hours complete
-#   - seniors    == 90+   hours complete
-#   note: This will be complicated by the fact that I wrap labs with the courses they are taken with.
-#         I do this so I don't have to deal with logic around corequisites.
-#   Consider not showing courses until they have the proper standing when applicable.
+#   Don't show courses as choices until they have the proper standing when applicable.
+#   - electives (junior or senior); CSCI 4354 (senior)
 
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
 #   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
@@ -1006,6 +1034,7 @@ if __name__ == "__main__":
 # good tested incTerm(term)
 # good tested summerTerm(term)
 # good tested prereqFor(course, coursestaken)
+#             classificaiton(coursetaken)
 # good tested displayChoices(term, choices, coursestaken)
 # good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # good tested printSummary(degreeplan)
