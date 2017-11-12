@@ -426,6 +426,9 @@ LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 24
 # needed for hours computation and classification determination
 HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
+# requires junior standing
+REQ_JUNIOR = {'WRIT 3315'} # not implemented yet!!!
+
 # requires senior standing
 REQ_SENIOR = {'CSCI 4354'}
 
@@ -501,11 +504,13 @@ def getChoices(coursestaken):
     if not LLCcomplete(coursestaken):
         choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
 
-    # remove electives if not junior or senior standing
+    # standing will be a tuple (classification, total hours) where classification = freshman, sophomore, junior, or senior
     standing = classification(coursestaken)
+    
+    # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
     if standing[0] not in {'junior', 'senior'}:
-        choices -= ELECTIVES
-        
+        choices -= REQ_JUNIOR | ELECTIVES
+    
     # remove CSCI 4354 (the only course in REQ_SENIOR) if not senior standing
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
@@ -1024,20 +1029,17 @@ if __name__ == "__main__":
 # - print a nice intro and explanatory text here and there
 # - see if a global coursesneeded variable is practical; certainly would be more efficient
 
-#   Don't show courses as choices until they have the proper standing when applicable.
-#   - electives (junior or senior); CSCI 4354 (senior)
-
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
 #   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
 
 # - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
-# - remove all un-needed global statements (most or all of them); only needed if the global will be mutated (right?)
+# - remove all un-needed global statements (most or all of them); only needed if the variable will be mutated (right?)
 
 # Functions:
 # good tested isULC(course)
 # good tested prerequisites_met(course, coursestaken)
 # good tested LLCcomplete(coursestaken)
-# good tested getChoices(coursestaken)
+# good        getChoices(coursestaken) --retest after changes
 # good tested isRubric(rubric)
 # good tested extractRubrics(lines)
 # good tested add2CoursesTaken(course, coursestaken)
@@ -1046,7 +1048,7 @@ if __name__ == "__main__":
 # good tested incTerm(term)
 # good tested summerTerm(term)
 # good tested prereqFor(course, coursestaken)
-#             classification(coursetaken)
+#      tested classification(coursetaken)
 # good tested displayChoices(term, choices, coursestaken)
 # good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # good tested printSummary(degreeplan)

@@ -35,8 +35,8 @@ class TestFunctions(unittest.TestCase):
         coursestaken = {'CSCI 1470', 'HIST 1301', 'MATH 2413'} # prereqs are met!
         self.assertTrue(prerequisites_met(course, coursestaken))
 
-        course = 'CSCI 1471' # Comp Sci II, prereqs are CSCI 1470 and MATH 2413
-        coursestaken = {'CSCI 1470', 'HIST 1301', 'MATH 2320'} # prereqs NOT met
+        course = 'CSCI 1471' # Comp Sci II, prereq is CSCI 1470
+        coursestaken = {'HIST 1301', 'MATH 2320'} # prereqs NOT met
         self.assertFalse(prerequisites_met(course, coursestaken))
 
         course = 'WRIT 1301' # Composition I, no prerequisites
@@ -98,12 +98,13 @@ class TestFunctions(unittest.TestCase):
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         self.assertEqual(getChoices(coursestaken), choices)
         
-        # LLC is complete; ULC and electives are now choices
+        # LLC is complete; ULC are now choices (electives requite junior standing; CSCI 4354 requires senior standing)
         coursestaken = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', # LLC is complete
                         'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         choices -= coursestaken # remove courses taken from choices
+        choices -= ELECTIVES
         self.assertEqual(getChoices(coursestaken), choices)
 
         # The next test tests the set comprehension: choices = {course for course in choices if ...}
@@ -194,15 +195,47 @@ class TestFunctions(unittest.TestCase):
            prereqFor(course : str, coursestaken : set) -> int
         '''
         coursestaken = set()
-        self.assertEqual(prereqFor('MATH 2413', coursestaken), 6) # prereq for PHYS 2325, MATH 2305, MATH 2318,
-                                                                  #            MATH 2414, STAT 3334, CSCI 1471
+        self.assertEqual(prereqFor('MATH 2413', coursestaken), 5) # prereq for PHYS 2325, MATH 2305, MATH 2318,
+                                                                  #            MATH 2414, STAT 3334
 
         self.assertEqual(prereqFor('WRIT 1301', coursestaken), 3) # prereq for WRIT 1302, LITR 2341, & WRIT 3315
         coursestaken.add('PHIL 1301') # now LITR 2341 doesn't count as a course for which WRIT 1301 is a prerequisite
         self.assertEqual(prereqFor('WRIT 1301', coursestaken), 2) # prereq for WRIT 1302 & WRIT 3315 (not LITR 2341)
         # note: this is the only case where the prereqFor number will change
-        
 
+
+    def test_classification(self):
+        '''Given coursestaken, return a tuple with (classification, total hours completed) where classification is ...
+           freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
+           classificaiton(coursestaken : set) -> (str, int)
+        '''
+        coursestaken = set()
+        self.assertEqual(classification(coursestaken), ('freshman', 0))
+
+        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302', 'POLS 2305'}
+        self.assertEqual(classification(coursestaken), ('freshman', 27))
+
+        coursestaken.add('POLS 2306')
+        self.assertEqual(classification(coursestaken), ('sophomore', 30))
+
+        coursestaken |= {'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
+                         'CSCI 1470'}
+        self.assertEqual(classification(coursestaken), ('sophomore', 58))
+
+        coursestaken.add('CSCI 1471')
+        self.assertEqual(classification(coursestaken), ('junior', 62))
+
+        coursestaken |= {'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321', 'CSCI 4354', 'CENG 3312', 'CENG 3331'}
+        self.assertEqual(classification(coursestaken), ('junior', 88))
+
+        coursestaken.add('CENG 3351')
+        self.assertEqual(classification(coursestaken), ('senior', 92))
+
+        coursestaken |= {'SWEN 4342', 'WRIT 3315', 'CSCI 4388', 'WGST 1301', 'ARTS 1304', 'SOCI 1301', 'CSCI 33x1', 'CSCI 33x2',
+                         'CSCI 33x3', 'CSCI 32xx'}
+        self.assertEqual(classification(coursestaken), ('senior', 121))
+
+        
     def test_displayChoices(self):
         '''Given a set of course choices, display and return a choice dictionary (menu)
            displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
