@@ -98,15 +98,49 @@ class TestFunctions(unittest.TestCase):
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         self.assertEqual(getChoices(coursestaken), choices)
         
-        # LLC is complete; ULC are now choices (electives requite junior standing; CSCI 4354 requires senior standing)
+        # LLC is complete; ULC are now choices (electives require junior standing; CSCI 4354 requires senior standing)
         coursestaken = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', # LLC is complete
                         'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         choices -= coursestaken # remove courses taken from choices
-        choices -= ELECTIVES
+        choices -= (ELECTIVES | REQ_SENIOR) # remove courses that require junior & senior standing
         self.assertEqual(getChoices(coursestaken), choices)
 
+        # test that junior standing unlocks electives and WRIT 3315
+        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302', # 24
+                        'POLS 2305', 'POLS 2306', 'PSYC 1100', 'PHIL 1301', 'ARTS 1303', 'ECON 2301',              # 16
+                        'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'MATH 2414', 'MATH 2305'} # and LLC complete        # 18
+        self.assertEqual(classification(coursestaken), ('sophomore', 58)) # sophomore with 58 hours
+        self.assertTrue(LLCcomplete(coursestaken))                        # LLC is complete (needed to take electives)
+
+        # choices should not include courses that require junior standing
+        choices = getChoices(coursestaken)
+        self.assertFalse('CSCI 33x1' in choices) # electives are taken in the junior or senior year
+        self.assertFalse('WRIT 3315' in choices) # WRIT 3315 requires junior standing
+
+        # add one course to attain junior standing
+        coursestaken.add('COMM 1315')
+        self.assertEqual(classification(coursestaken), ('junior', 61)) # junior with 61 hours
+        choices = getChoices(coursestaken)
+        self.assertTrue('CSCI 33x1' in choices) # electives are taken in the junior or senior year
+        self.assertTrue('WRIT 3315' in choices) # WRIT 3315 requires junior standing
+
+        # test that senior standing unlocks CSCI 4354
+        coursestaken |= {'CHEM 1311', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3331', 'CSCI 3352', 'CSCI 4333', # 22
+                         'CSCI 3321', 'SWEN 4342'}                                                                  #  6
+        self.assertEqual(classification(coursestaken), ('junior', 89)) # junior with 89 hours
+
+        # choices should not include courses that require senior standing
+        choices = getChoices(coursestaken)
+        self.assertFalse('CSCI 4354' in choices) # can't take CSCI 4354; requires senior standing
+
+        # add one course to attain senior standing
+        coursestaken.add('WRIT 3315')
+        self.assertEqual(classification(coursestaken), ('senior', 92)) # senior with 92 hours
+        choices = getChoices(coursestaken)
+        self.assertTrue('CSCI 4354' in choices) # can now take CSCI 4354 
+        
         # The next test tests the set comprehension: choices = {course for course in choices if ...}
         
         
