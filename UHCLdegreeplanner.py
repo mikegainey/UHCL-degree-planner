@@ -384,7 +384,7 @@ COURSECATALOG = {
     "CSCI 3352": ("Advanced Data Structures", {"CSCI 2315", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
     "CSCI 4333": ("Design of Database Systems", {"CSCI 2315"}),
     "CSCI 3321": ("Numerical Methods", {"MATH 2318", "MATH 2320", "CSCI 1471"}),
-    "CSCI 4354": ("Operating Systems                       (take with CENG 3351)",
+    "CSCI 4354": ("Operating Systems                       (take with CENG 3351)", # requires senior level standing
                   {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
 
     "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
@@ -392,7 +392,7 @@ COURSECATALOG = {
     "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3331"}), # prereq changed from 2016-17
 
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}), # CSCI 1470 prereq implied; CSCI 2315 recommended
-    "WRIT 3315": ("Technical Writing", {"WRIT 1301", "WRIT 1302"}),
+    "WRIT 3315": ("Advanced Technical Writing", {"WRIT 1301", "WRIT 1302"}), # requires junior level standing
     "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}),
 
     # CSCI/CINF Major Electives; taken junior or senior year
@@ -427,7 +427,7 @@ LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 24
 HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
 # requires junior standing
-REQ_JUNIOR = {'WRIT 3315'} # not implemented yet!!!
+REQ_JUNIOR = {'WRIT 3315'}
 
 # requires senior standing
 REQ_SENIOR = {'CSCI 4354'}
@@ -502,14 +502,14 @@ def getChoices(coursestaken):
 
     # remove ULC and ELECTIVES if LLC not complete
     if not LLCcomplete(coursestaken):
-        choices -= ULC | ELECTIVES # remove ULC and ELECTIVES
+        choices -= (ULC | ELECTIVES) # remove ULC and ELECTIVES
 
     # standing will be a tuple (classification, total hours) where classification = freshman, sophomore, junior, or senior
     standing = classification(coursestaken)
     
     # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
     if standing[0] not in {'junior', 'senior'}:
-        choices -= REQ_JUNIOR | ELECTIVES
+        choices -= (REQ_JUNIOR | ELECTIVES)
     
     # remove CSCI 4354 (the only course in REQ_SENIOR) if not senior standing
     if standing[0] != 'senior':
@@ -754,11 +754,11 @@ def classification(coursestaken):
         totalHours += int(course[-3]) # "CSCI 1470"[3] = 4
 
     # add another hour for each course with a lab
-    labs = coursestaken & HASLAB # coursestaken that have labs
-    numlabs = len(labs) # the number of labs taken
+    labs = coursestaken & HASLAB # labs is a set
+    numlabs = len(labs) # numlabs is an int
     totalHours += numlabs
 
-    # determine classification from totalHours
+    # determine the classification from totalHours
     if totalHours <= 29:
         standing = 'freshman'
     elif 30 <= totalHours <= 59:
@@ -926,13 +926,21 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
     return degreeplan
 
 
-def printSummary(degreeplan):
+def printSummary(degreeplan, coursestaken):
     '''Print the degree plan summary, the final output
        printSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
-    print('=' * 80)
-    print("Your degree plan summary:")
-    print('=' * 80)
+    standing = classification(coursestaken) # to get total hours completed
+
+    left = "Your degree plan summary:"
+    right = "({} hours total)".format(standing[1])
+    heading = "{:<30}{:>50}".format(left, right)
+    line = '=' * 80
+    
+    print(line)
+    print(heading)
+    print(line)
+
     print()
 
     for c in degreeplan:
@@ -943,7 +951,7 @@ def printSummary(degreeplan):
     print()
 
 
-def saveSummary(degreeplan):
+def saveSummary(degreeplan, coursestaken):
     '''Save the degree plan summary to a file
        saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
@@ -955,12 +963,19 @@ def saveSummary(degreeplan):
     if filename == '':
         return
 
+    standing = classification(coursestaken) # to get total hours completed
+
+    left = "Your degree plan summary:"
+    right = "({} hours total)".format(standing[1])
+    heading = "{:<30}{:>50}".format(left, right)
+    line = '=' * 80
+    
     # a file name was given; write to the file
     try:
         with open(filename, 'w') as file:
-            file.write("{}{}".format('=' * 80, '\n'))
-            file.write("Your degree plan summary:\n")
-            file.write("{}{}".format('=' * 80, '\n'))
+            file.write(line + '\n')
+            file.write(heading + '\n')
+            file.write(line + '\n')
             file.write('\n')
 
             for c in degreeplan:
@@ -1012,10 +1027,10 @@ def main():
         print()
 
     # prints degree plan summary to the screen
-    printSummary(degreeplan)
+    printSummary(degreeplan, coursestaken)
 
     # saves degree plan summary to a file if the user gives a file name
-    saveSummary(degreeplan)
+    saveSummary(degreeplan, coursestaken)
 
     # THE END
 
@@ -1027,19 +1042,21 @@ if __name__ == "__main__":
 
 # TODO:
 # - print a nice intro and explanatory text here and there
-# - see if a global coursesneeded variable is practical; certainly would be more efficient
+# - redo testing worksheet because of several changes
+
+# - consider if a global coursesneeded variable is practical; certainly would be more efficient
 
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
 #   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
 
 # - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
-# - remove all un-needed global statements (most or all of them); only needed if the variable will be mutated (right?)
+# - remove all unneeded global statements (most or all of them); only needed if the variable will be mutated (right?)
 
 # Functions:
 # good tested isULC(course)
 # good tested prerequisites_met(course, coursestaken)
 # good tested LLCcomplete(coursestaken)
-# good        getChoices(coursestaken) --retest after changes
+# good tested getChoices(coursestaken)
 # good tested isRubric(rubric)
 # good tested extractRubrics(lines)
 # good tested add2CoursesTaken(course, coursestaken)
@@ -1048,7 +1065,7 @@ if __name__ == "__main__":
 # good tested incTerm(term)
 # good tested summerTerm(term)
 # good tested prereqFor(course, coursestaken)
-#      tested classification(coursetaken)
+# good tested classification(coursetaken)
 # good tested displayChoices(term, choices, coursestaken)
 # good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # good tested printSummary(degreeplan)
