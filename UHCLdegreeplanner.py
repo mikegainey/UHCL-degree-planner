@@ -322,9 +322,9 @@
 #   key:   is a string representing a course number, like 'PHYS 2325'
 #   value: is a tuple consisting of
 #     - a string describing the full title of the course, "University Physics I"
-#     - a set of prerequisites : str, {"MATH 2413", "MATH 2414"}
+#     - a set of prerequisites, {"MATH 2413", "MATH 2414"}
 
-# verified against the UHCL Undergraduate Catalog 2017-2018 on (date)
+# verified against the UHCL Undergraduate Catalog 2017-2018 on 11 Nov 2018
 COURSECATALOG = {
     # Communication (6 hours)
     "WRIT 1301": ("Composition I", set()),
@@ -426,7 +426,7 @@ LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 24
 # needed for hours computation and classification determination
 HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
-# requires junior standing
+# requires junior standing; getChoices requires LLC complete and junior or senior standing to allow electives
 REQ_JUNIOR = {'WRIT 3315'}
 
 # requires senior standing
@@ -447,7 +447,7 @@ def isULC(course):
 ULC = {course for course in MAJOR_REQ if isULC(course)}
 
 
-# Major electives; modified the last digit because rubrics must be unique
+# Major electives; modified the last digit because course numbers must be unique
 ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
 
 
@@ -1044,6 +1044,9 @@ if __name__ == "__main__":
 # - print a nice intro and explanatory text here and there
 # - redo testing worksheet because of several changes
 
+# - consider implementing corequisites
+#   - add to COURSECATALOG values; check in a loop in chooseCourses
+
 # - consider if a global coursesneeded variable is practical; certainly would be more efficient
 
 # - replace the term "rubric" with "course number" because I'm not using that term correctly.
@@ -1053,21 +1056,21 @@ if __name__ == "__main__":
 # - remove all unneeded global statements (most or all of them); only needed if the variable will be mutated (right?)
 
 # Functions:
-# good tested isULC(course)
-# good tested prerequisites_met(course, coursestaken)
-# good tested LLCcomplete(coursestaken)
-# good tested getChoices(coursestaken)
-# good tested isRubric(rubric)
-# good tested extractRubrics(lines)
-# good tested add2CoursesTaken(course, coursestaken)
-# good tested getCoursesTaken()
-# good tested getTerm()
-# good tested incTerm(term)
-# good tested summerTerm(term)
-# good tested prereqFor(course, coursestaken)
-# good tested classification(coursetaken)
-# good tested displayChoices(term, choices, coursestaken)
-# good tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
-# good tested printSummary(degreeplan)
-# good tested saveSummary(degreeplan, filename)
-# good tested main()
+# reviewed tested isULC(course)
+# reviewed tested prerequisites_met(course, coursestaken)
+# reviewed tested LLCcomplete(coursestaken)
+# reviewed tested getChoices(coursestaken)
+# reviewed tested isRubric(rubric)
+# reviewed tested extractRubrics(lines)
+# reviewed tested add2CoursesTaken(course, coursestaken)
+# reviewed tested getCoursesTaken()
+# reviewed tested getTerm()
+# reviewed tested incTerm(term)
+# reviewed tested summerTerm(term)
+# reviewed tested prereqFor(course, coursestaken)
+# reviewed tested classification(coursetaken)
+# reviewed tested displayChoices(term, choices, coursestaken)
+# reviewed tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# reviewed tested printSummary(degreeplan)
+# reviewed tested saveSummary(degreeplan, filename)
+# reviewed tested main()
