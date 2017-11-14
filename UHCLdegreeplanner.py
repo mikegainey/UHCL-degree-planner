@@ -38,19 +38,15 @@
 #
 #
 #   Define a function prerequisites_met that takes parameters course and coursestaken:
-#       Declare that COURSECATALOG will refer to the global constant
 #       Set prerequisites to the set of the course's prerequisites found in COURSECATALOG
 #       Return True if prerequisites is a subset of coursestaken
 #
 #
 #   Define a function LLCcomplete that takes a parameter coursestaken:
-#       Declare that LLC will refer to the global constant
 #       Return True if LLC is a subset of coursestaken
 #
 #
 #   Define a function getChoices that takes a parameter coursestaken:
-#       Declare the following global constants that will be used: LANG_PHIL_CULTURE, CREATIVE_ARTS,
-#         SOCIAL_SCIENCE, UNI_CORE, MAJOR_REQ, ULC, and ELECTIVES.
 #       Set choices to the union of UNI_CORE, MAJOR_REQ, LANG_PHIL_CULTURE, CREATIVE_ARTS,
 #         SOCIAL_SCIENCE, and ELECTIVES.
 #       Remove coursestaken from choices.
@@ -89,7 +85,6 @@
 #
 #
 #   Define a function add2CoursesTaken with parameters course and coursestaken:
-#       Declare that COURSECATALOG will refer to the global constant
 #       If course is in COURSECATALOG:
 #           Add course to coursestaken
 #           Print a message that course was added
@@ -164,7 +159,6 @@
 #
 #
 #   Define a function prereqFor with parameters course and coursestaken:
-#       Declare the following global constants that will be used: COURSECATALOG, UNI_CORE, MAJOR_REQ, and ELECTIVES
 #       Set coursesneeded to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
 #           Add LANG_PHIL_CULTURE to coursesneeded
@@ -176,8 +170,6 @@
 #
 #
 #   Define a function displayChoices with parameters term, choices, and coursestaken:
-#       Declare the following global constants that will be used: COURSECATALOG, LANG_PHIL_CULTURE, CREATIVE_ARTS,
-#         SOCIAL_SCIENCE, UNI_CORE, MAJOR_REQ, LLC, and ELECTIVES
 #       Display a header for the term
 #       Set courseMenu to an empty dictionary
 #       Set index to 1
@@ -245,7 +237,6 @@
 #
 #
 #   Define a function chooseCourses with parameters term, courseMenu, degreeplan, and coursestaken:
-#       Declare that COURSECATALOG will refer to the global constant
 #       Set termSummary to the empty list
 #       Begin a loop to get user input:
 #           Set choice from a user prompt to select a course by number, pressing <Enter> when finished
@@ -461,8 +452,6 @@ def prerequisites_met(course, coursestaken):
     '''Given a course and courses taken, return True if the course's prerequisites have been met.
        prerequisites_met(course : str, coursestaken : set) -> bool
     '''
-    # global COURSECATALOG
-
     # get the set of prerequisites for the course
     prerequisites = COURSECATALOG[course][1] 
 
@@ -474,8 +463,6 @@ def LLCcomplete(coursestaken):
     '''Given the set of courses taken, return True if the CS LLC is complete.
        LLCcomplete(coursestaken : set) -> bool
     '''
-    # global LLC
-
     # return True if every element of LLC issubset of coursestaken
     return LLC.issubset(coursestaken) 
 
@@ -484,14 +471,6 @@ def getChoices(coursestaken):
     '''Given the set of courses taken, return the set of courses eligible to be taken (choices)
        getChoices(coursestaken : set) -> set
     '''
-    # global LANG_PHIL_CULTURE
-    # global CREATIVE_ARTS
-    # global SOCIAL_SCIENCE
-    # global UNI_CORE
-    # global MAJOR_REQ
-    # global ULC
-    # global ELECTIVES
-
     # at the end of this function, choices will be the list of courses eligible to be taken
     choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
 
@@ -588,8 +567,6 @@ def add2CoursesTaken(course, coursestaken):
        add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken)
        used twice in getCoursesTaken (so this function prevents code duplication)
     '''
-    # global COURSECATALOG
-
     if course in COURSECATALOG:
 
         coursestaken.add(course)
@@ -723,10 +700,6 @@ def prereqFor(course, coursestaken):
     '''Given a course, return the number of (still needed) courses for which that course is a prerequisite
       prereqFor(course : str, coursestaken : set) -> int
     '''
-    # global COURSECATALOG
-    # global UNI_CORE
-    # global MAJOR_REQ
-
     coursesneeded = UNI_CORE | MAJOR_REQ
     
     # because WRIT 1301 is a prerequisite for LITR 2341 (in LANG_PHIL_CULTURE)
@@ -776,15 +749,6 @@ def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
     '''
-    # global COURSECATALOG
-    # global LANG_PHIL_CULTURE
-    # global CREATIVE_ARTS
-    # global SOCIAL_SCIENCE
-    # global UNI_CORE
-    # global MAJOR_REQ
-    # global LLC
-    # global ELECTIVES
-
     # standing = (classification, totalHours) where classification = freshman | sophomore | ...
     standing = classification(coursestaken)
     
@@ -886,8 +850,6 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
        ... and coursestaken is also updated
     '''
-    # global COURSECATALOG
-
     print()
     termSummary = [] # a list of courses chosen for that term only
 
@@ -1043,6 +1005,9 @@ if __name__ == "__main__":
 
 # TODO:
 # - print a nice intro and explanatory text here and there
+
+# - in chooseCourses if the same course is chosen more than once, it is added more than once! fix it!
+
 # - redo testing worksheet because of several changes
 
 # - consider implementing corequisites
@@ -1051,7 +1016,6 @@ if __name__ == "__main__":
 # - consider if a global coursesneeded variable is practical; certainly would be more efficient
 
 # - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
-# - remove all unneeded global statements (most or all of them); only needed if the variable will be mutated (right?)
 
 # Functions:
 # reviewed tested isULC(course)
