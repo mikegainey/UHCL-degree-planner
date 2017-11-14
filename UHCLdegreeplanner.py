@@ -66,9 +66,9 @@
 #       Return choirs to the calling function/program.
 #
 #
-#   Define a function isRubric that takes a string parameter maybeRubric:
-#       If the length of maybeRubric is not 9, return False.
-#       Set words to a list made from splitting maybeRubric into words
+#   Define a function isCourseNumber that takes a string parameter maybeCourseNumber:
+#       If the length of maybeCourseNumber is not 9, return False.
+#       Set words to a list made from splitting maybeCourseNumber into words
 #       If the length of words is less than 2, return False.
 #       Set part1 to the first word of words.
 #       If part1 is either not all alphabetic or not of length 4, return False.
@@ -77,14 +77,14 @@
 #       Return True
 #
 #
-#   Define a function extractRubrics that takes a parameter lines that is a list of strings
+#   Define a function extractCourseNumbers that takes a parameter lines that is a list of strings
 #       Set courses to an empty list.
 #       Begin a loop iterating through the elements of lines using the lcv line
 #           If the length of line is less than 9, skip the rest of the loop
-#           Set maybeRubric to the first 9 characters of line
-#           If maybeRubric returns False when passed to isRubric, skip the rest of the loop
-#           Set rubric to maybeRubric
-#           Append rubric to courses
+#           Set maybeCourseNumber to the first 9 characters of line
+#           If maybeCourseNumber returns False when passed to isCourseNumber, skip the rest of the loop
+#           Set courseNumber to maybeCourseNumber
+#           Append courseNumber to courses
 #       Return courses to the calling program/function
 #
 #
@@ -102,7 +102,7 @@
 #       Begin a loop to get user input.
 #           Set course to the user's input.
 #           If the user just pressed <Enter>, return coursestaken to the calling program/function.
-#           If isRubric returns True with course as the argument,
+#           If isCourseNumber returns True with course as the argument,
 #               convert course to all uppercase, and
 #               pass course and coursestaken to add2CoursesTaken.
 #           else,
@@ -110,7 +110,7 @@
 #               If successful, set lines to the list of lines in the file
 #               Otherwise, print a message "That's not a course or a file name"
 #
-#               Set courses to the return value of extractRubrics with argument lines.
+#               Set courses to the return value of extractCourseNumbers with argument lines.
 #               Begin a loop iterating over courses:
 #                   Call add2CoursesTaken with arguments course and coursestaken
 #
@@ -530,16 +530,16 @@ def getChoices(coursestaken):
     return choices
 
 
-def isRubric(maybeRubric):
+def isCourseNumber(maybeCourseNumber):
     '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
-       isRubric(maybeRubric : str) -> bool
+       isCourseNumber(maybeCourseNumber : str) -> bool
        the alpha characters can be uppercase or lowercase
     '''
     # course numbers are always 9 characters (like 'CSCI 1470')
-    if len(maybeRubric) != 9: 
+    if len(maybeCourseNumber) != 9: 
         return False
 
-    words = maybeRubric.split()
+    words = maybeCourseNumber.split()
 
     # make sure the line has at least 2 words: CSCI 1470 Computer Science ...
     if len(words) != 2:
@@ -558,9 +558,9 @@ def isRubric(maybeRubric):
     return True # return True if above conditions are met
 
 
-def extractRubrics(lines):
+def extractCourseNumbers(lines):
     '''Given a list of lines from a file, return an ordered list of valid course numbers.
-       extractRubrics(lines : [str]) -> [str]
+       extractCourseNumbers(lines : [str]) -> [str]
        These course numbers might not apply to the CS BS degree (checked in add2CoursesTaken)
     '''
     courses = list()
@@ -569,15 +569,15 @@ def extractRubrics(lines):
         if len(line) < 9:             # the line is too short to contain a course number
             continue
 
-        maybeRubric = line[:9]        # the part of the line to check
+        maybeCourseNumber = line[:9]        # the part of the line to check
 
-        if not isRubric(maybeRubric): # if not a course number, loop back
+        if not isCourseNumber(maybeCourseNumber): # if not a course number, loop back
             continue
 
-        rubric = maybeRubric          # at this point, it's a confirmed course number (format)
-        rubric = rubric.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
+        courseNumber = maybeCourseNumber          # at this point, it's a confirmed course number (format)
+        courseNumber = courseNumber.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
 
-        courses.append(rubric)        # add the course number to the output list
+        courses.append(courseNumber)        # add the course number to the output list
 
     return courses
 
@@ -614,7 +614,7 @@ def getCoursesTaken():
             return coursestaken
 
         # the input string is a course number
-        if isRubric(course):
+        if isCourseNumber(course):
             course = course.upper()
 
             # add to coursestaken only if the course applies to the CS BS degree
@@ -630,7 +630,7 @@ def getCoursesTaken():
                 continue
 
             # valid filename; lines is populated; get the set of courses
-            courses = extractRubrics(lines)
+            courses = extractCourseNumbers(lines)
             print()
 
             # add the list of courses to coursestaken if it applies to the CS BS degree
@@ -1049,9 +1049,6 @@ if __name__ == "__main__":
 
 # - consider if a global coursesneeded variable is practical; certainly would be more efficient
 
-# - replace the term "rubric" with "course number" because I'm not using that term correctly.
-#   I think "CSCI" is a rubric.  "CSCI 1470" will be called a "course number."
-
 # - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
 # - remove all unneeded global statements (most or all of them); only needed if the variable will be mutated (right?)
 
@@ -1060,8 +1057,8 @@ if __name__ == "__main__":
 # reviewed tested prerequisites_met(course, coursestaken)
 # reviewed tested LLCcomplete(coursestaken)
 # reviewed tested getChoices(coursestaken)
-# reviewed tested isRubric(rubric)
-# reviewed tested extractRubrics(lines)
+# reviewed tested isCourseNumber(maybeCourseNumber)
+# reviewed tested extractCourseNumbers(lines)
 # reviewed tested add2CoursesTaken(course, coursestaken)
 # reviewed tested getCoursesTaken()
 # reviewed tested getTerm()

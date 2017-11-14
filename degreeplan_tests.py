@@ -23,7 +23,7 @@ class TestFunctions(unittest.TestCase):
         self.assertFalse(isULC('MATH 1413')) # not CSCI or CENG; not upper-level
         self.assertFalse(isULC('PHYS 3001')) # not CSCI or CENG, but upper-level
         
-        # Rubrics with lower-case characters will never be encountered because this function is only called once
+        # Course numbers with lower-case characters will never be encountered because this function is only called once
         # with input from the set constant MAJOR_REQ (that is all upper-case).
 
 
@@ -160,43 +160,43 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(choices, {'CSCI 1471'}) # only CSCI 1471 should make it through
 
 
-    def test_isRubric(self):
+    def test_isCourseNumber(self):
         '''Given a string, return True if the string consists of 4 alpha + ' ' + 4 decimal characters
-           isRubric(maybeRubric : str) -> bool
+           isCourseNumber(maybeCourseNumber : str) -> bool
            the alpha characters can be uppercase or lowercase
         '''
-        self.assertFalse(isRubric('CompSci 1470')) # length > 9 characters
-        self.assertFalse(isRubric('CSCI 147')) # length < 9 characters
-        self.assertFalse(isRubric('CSCI_1470')) # only 1 word
-        self.assertFalse(isRubric('CS 1 1470')) # 3 words
-        self.assertFalse(isRubric('CSC1 1470')) # first word is not all alphabetic
-        self.assertFalse(isRubric('CSCI 1A70')) # second word is not all decimal
-        self.assertFalse(isRubric('CSC 147  ')) # first and second words not of length 4
+        self.assertFalse(isCourseNumber('CompSci 1470')) # length > 9 characters
+        self.assertFalse(isCourseNumber('CSCI 147')) # length < 9 characters
+        self.assertFalse(isCourseNumber('CSCI_1470')) # only 1 word
+        self.assertFalse(isCourseNumber('CS 1 1470')) # 3 words
+        self.assertFalse(isCourseNumber('CSC1 1470')) # first word is not all alphabetic
+        self.assertFalse(isCourseNumber('CSCI 1A70')) # second word is not all decimal
+        self.assertFalse(isCourseNumber('CSC 147  ')) # first and second words not of length 4
 
         # checking that a course applies to degree requirements is performed in add2CoursesTaken
-        self.assertTrue(isRubric('asdf 1234')) # conforms to the correct format; 
+        self.assertTrue(isCourseNumber('asdf 1234')) # conforms to the correct format; 
 
 
-    def test_extractRubrics(self):
-        '''Given a list of lines from a file, return an ordered list of valid rubrics.
-        extractRubrics(lines : [str]) -> [str]
-        These rubrics might not apply to the CS BS degree (checked in add2CoursesTaken)
+    def test_extractCourseNumbers(self):
+        '''Given a list of lines from a file, return an ordered list of valid course numbers.
+        extractCourseNumbers(lines : [str]) -> [str]
+        These course numbers might not apply to the CS BS degree (checked in add2CoursesTaken)
         '''
         lines = ['CSCI 1470\n',
                  'CSCI 1471 Computer Science II\n',
-                 'phys 2325 lowercase rubrics are ok\n', # lowercase is ok here
+                 'phys 2325 lowercase course numbers are ok\n', # lowercase is ok here
                  'qwer 1234 this is converted to upper but not filtered out yet (not until add2CoursesTaken)',
                  'This is not a course and should be ignored\n',
                  '\n', # a blank line
                  'math 2314']
-        self.assertEqual(extractRubrics(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234', 'MATH 2314'])
+        self.assertEqual(extractCourseNumbers(lines), ['CSCI 1470', 'CSCI 1471', 'PHYS 2325', 'QWER 1234', 'MATH 2314'])
 
 
     def test_add2CoursesTaken(self):
         '''Add a course to coursestaken only if it applies to the CS BS degree
            add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken, screen output)
            used twice in getCoursesTaken (so this function prevents code duplication)
-           the course parameter must be uppercase (done in extractRubrics and getCoursesTaken)
+           the course parameter must be uppercase (done in extractCourseNumbers and getCoursesTaken)
         '''
         coursestaken = set()
 
