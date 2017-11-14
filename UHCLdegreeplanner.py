@@ -323,6 +323,7 @@
 #   value: is a tuple consisting of
 #     - a string describing the full title of the course, "University Physics I"
 #     - a set of prerequisites, {"MATH 2413", "MATH 2414"}
+#     - [future] a set of corequisites
 
 # verified against the UHCL Undergraduate Catalog 2017-2018 on 11 Nov 2018
 COURSECATALOG = {
@@ -460,7 +461,7 @@ def prerequisites_met(course, coursestaken):
     '''Given a course and courses taken, return True if the course's prerequisites have been met.
        prerequisites_met(course : str, coursestaken : set) -> bool
     '''
-    global COURSECATALOG
+    # global COURSECATALOG
 
     # get the set of prerequisites for the course
     prerequisites = COURSECATALOG[course][1] 
@@ -473,7 +474,7 @@ def LLCcomplete(coursestaken):
     '''Given the set of courses taken, return True if the CS LLC is complete.
        LLCcomplete(coursestaken : set) -> bool
     '''
-    global LLC
+    # global LLC
 
     # return True if every element of LLC issubset of coursestaken
     return LLC.issubset(coursestaken) 
@@ -483,13 +484,13 @@ def getChoices(coursestaken):
     '''Given the set of courses taken, return the set of courses eligible to be taken (choices)
        getChoices(coursestaken : set) -> set
     '''
-    global LANG_PHIL_CULTURE
-    global CREATIVE_ARTS
-    global SOCIAL_SCIENCE
-    global UNI_CORE
-    global MAJOR_REQ
-    global ULC
-    global ELECTIVES
+    # global LANG_PHIL_CULTURE
+    # global CREATIVE_ARTS
+    # global SOCIAL_SCIENCE
+    # global UNI_CORE
+    # global MAJOR_REQ
+    # global ULC
+    # global ELECTIVES
 
     # at the end of this function, choices will be the list of courses eligible to be taken
     choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
@@ -587,7 +588,7 @@ def add2CoursesTaken(course, coursestaken):
        add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken)
        used twice in getCoursesTaken (so this function prevents code duplication)
     '''
-    global COURSECATALOG
+    # global COURSECATALOG
 
     if course in COURSECATALOG:
 
@@ -722,9 +723,9 @@ def prereqFor(course, coursestaken):
     '''Given a course, return the number of (still needed) courses for which that course is a prerequisite
       prereqFor(course : str, coursestaken : set) -> int
     '''
-    global COURSECATALOG
-    global UNI_CORE
-    global MAJOR_REQ
+    # global COURSECATALOG
+    # global UNI_CORE
+    # global MAJOR_REQ
 
     coursesneeded = UNI_CORE | MAJOR_REQ
     
@@ -775,14 +776,14 @@ def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
     '''
-    global COURSECATALOG
-    global LANG_PHIL_CULTURE
-    global CREATIVE_ARTS
-    global SOCIAL_SCIENCE
-    global UNI_CORE
-    global MAJOR_REQ
-    global LLC
-    global ELECTIVES
+    # global COURSECATALOG
+    # global LANG_PHIL_CULTURE
+    # global CREATIVE_ARTS
+    # global SOCIAL_SCIENCE
+    # global UNI_CORE
+    # global MAJOR_REQ
+    # global LLC
+    # global ELECTIVES
 
     # standing = (classification, totalHours) where classification = freshman | sophomore | ...
     standing = classification(coursestaken)
@@ -885,7 +886,7 @@ def chooseCourses(term, courseMenu, degreeplan, coursestaken):
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
        ... and coursestaken is also updated
     '''
-    global COURSECATALOG
+    # global COURSECATALOG
 
     print()
     termSummary = [] # a list of courses chosen for that term only
