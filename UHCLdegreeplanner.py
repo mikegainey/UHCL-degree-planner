@@ -323,84 +323,93 @@
 #   value: is a tuple consisting of
 #     - a string describing the full title of the course, "University Physics I"
 #     - a set of prerequisites, {"MATH 2413", "MATH 2414"}
-#     - [future] a set of corequisites
+#     - a set of corequisites
 
 # verified against the UHCL Undergraduate Catalog 2017-2018 on 11 Nov 2018
 COURSECATALOG = {
     # Communication (6 hours)
-    "WRIT 1301": ("Composition I", set()),
-    "WRIT 1302": ("Composition II", {"WRIT 1301"}),
+    "WRIT 1301": ("Composition I", set(), set()),
+    "WRIT 1302": ("Composition II", {"WRIT 1301"}, set()),
 
     # Mathematics (4 hours), # this has a prerequisite, but it's not part of the degree requirements
-    "MATH 2413": ("Calculus I", set()),
+    "MATH 2413": ("Calculus I", set(), set()),
 
     # Life and Physical Sciences (6 hours)
-    "PHYS 2325": ("University Physics I and Lab (PHYS 2125)", {"MATH 2413"}),
-    "PHYS 2326": ("University Physics II and Lab (PHYS 2126)", {"MATH 2414", "PHYS 2325"}),
+    "PHYS 2325": ("University Physics I", {"MATH 2413"}, {"PHYS 2125"}),
+    "PHYS 2125": ("University Physics I Lab", {"MATH 2413"}, {"PHYS 2325"}),
+    "PHYS 2326": ("University Physics II", {"MATH 2414", "PHYS 2325"}, {"PHYS 2126"}),
+    "PHYS 2126": ("University Physics II Lab", {"MATH 2414", "PHYS 2325"}, {"PHYS 2326"}),
 
     # Language, Philosophy and Culture (3 hours)
-    "HUMN 1301": ("Humanities", set()),
-    "LITR 2341": ("Literature and Experience", {"WRIT 1301"}),
-    "PHIL 1301": ("Introduction to Philosophy", set()),
-    "WGST 1301": ("Gender Matters: Introduction to Women's and Gender Studies", set()),
+    "HUMN 1301": ("Humanities", set(), set()),
+    "LITR 2341": ("Literature and Experience", {"WRIT 1301"}, set()),
+    "PHIL 1301": ("Introduction to Philosophy", set(), set()),
+    "WGST 1301": ("Gender Matters: Introduction to Women's and Gender Studies", set(), set()),
 
     # Creative Arts (3 Hours)
-    "ARTS 1303": ("World Art Survey I", set()),
-    "ARTS 1304": ("World Art Survey II", set()),
-    "ARTS 2379": ("Arts and the Child", set()),
+    "ARTS 1303": ("World Art Survey I", set(), set()),
+    "ARTS 1304": ("World Art Survey II", set(), set()),
+    "ARTS 2379": ("Arts and the Child", set(), set()),
 
     # American History (6 hours)
-    "HIST 1301": ("United States History I", set()),
-    "HIST 1302": ("United States History II", set()),
+    "HIST 1301": ("United States History I", set(), set()),
+    "HIST 1302": ("United States History II", set(), set()),
 
     # Government/Political Science (6 hours)
-    "POLS 2305": ("Federal Government", set()),
-    "POLS 2306": ("Texas Government", set()),
+    "POLS 2305": ("Federal Government", set(), set()),
+    "POLS 2306": ("Texas Government", set(), set()),
 
     # Social and Behavioral Sciences (3 hours)
-    "ANTH 2346": ("General Anthropology", set()),
-    "CRIM 1301": ("Introduction to Criminal Justice", set()),
-    "ECON 2301": ("Principles of Macroeconomics", set()),
-    "ECON 2302": ("Principles of Microeconomics", set()),
-    "GEOG 1303": ("World Regional Geography", set()),
-    "PSYC 2301": ("Introduction to Psychology", set()),
-    "SOCI 1301": ("Introduction to Sociology", set()),
+    "ANTH 2346": ("General Anthropology", set(), set()),
+    "CRIM 1301": ("Introduction to Criminal Justice", set(), set()),
+    "ECON 2301": ("Principles of Macroeconomics", set(), set()),
+    "ECON 2302": ("Principles of Microeconomics", set(), set()),
+    "GEOG 1303": ("World Regional Geography", set(), set()),
+    "PSYC 2301": ("Introduction to Psychology", set(), set()),
+    "SOCI 1301": ("Introduction to Sociology", set(), set()),
 
     # Component Area Option (6 hours)
-    "COMM 1315": ("Public Speaking", set()),
-    "PSYC 1100": ("Learning Frameworks", set()),
+    "COMM 1315": ("Public Speaking", set(), set()),
+    "PSYC 1100": ("Learning Frameworks", set(), set()),
 
     # Major Requirements (67 hours)
-    "CHEM 1311": ("General Chemistry I and Lab (CHEM 1111)", set()),
-    "MATH 2305": ("Discrete Mathematics", {"MATH 2413"}),
-    "MATH 2318": ("Linear Algebra", {"MATH 2413"}),
-    "MATH 2414": ("Calculus II", {"MATH 2413"}),
-    "MATH 2320": ("Differential Equations", {"MATH 2414"}),
-    "STAT 3334": ("Probability & Statistics for Scientists & Engineers", {"MATH 2413", "MATH 2414"}),
-    "CSCI 1470": ("Computer Science I", set()),
-    "CSCI 1471": ("Computer Science II", {"CSCI 1470"}), # MATH 2413 was a prereq in the 2016-17 catalog
+    "CHEM 1311": ("General Chemistry I", set(), {"CHEM 1111"}),
+    "CHEM 1111": ("General Chemistry I Lab", set(), {"CHEM 1311"}),
+    "MATH 2305": ("Discrete Mathematics", {"MATH 2413"}, set()),
+    "MATH 2318": ("Linear Algebra", {"MATH 2413"}, set()),
+    "MATH 2414": ("Calculus II", {"MATH 2413"}, set()),
+    "MATH 2320": ("Differential Equations", {"MATH 2414"}, set()),
+    "STAT 3334": ("Probability & Statistics for Scientists & Engineers", {"MATH 2413", "MATH 2414"}, set()),
+    "CSCI 1470": ("Computer Science I", set(), set()),
+    "CSCI 1471": ("Computer Science II", {"CSCI 1470"}, set()), # MATH 2413 was a prereq in the 2016-17 catalog
     "CSCI 3331": ("Computer Organization & Assembly Language", {"CSCI 2315", "MATH 2305", "MATH 2414",
-                                                                "PHYS 2325",  "PHYS 2326"}),
-    "CSCI 2315": ("Data Structures", {"CSCI 1471"}),
-    "CSCI 3352": ("Advanced Data Structures", {"CSCI 2315", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
-    "CSCI 4333": ("Design of Database Systems", {"CSCI 2315"}),
-    "CSCI 3321": ("Numerical Methods", {"MATH 2318", "MATH 2320", "CSCI 1471"}),
-    "CSCI 4354": ("Operating Systems                       (take with CENG 3351)", # requires senior level standing
-                  {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}),
+                                                                "PHYS 2325",  "PHYS 2326"}, set()),
+    "CSCI 2315": ("Data Structures", {"CSCI 1471"}, set()),
+    "CSCI 3352": ("Advanced Data Structures", {"CSCI 2315", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}, set()),
+    "CSCI 4333": ("Design of Database Systems", {"CSCI 2315"}, set()),
+    "CSCI 3321": ("Numerical Methods", {"MATH 2318", "MATH 2320", "CSCI 1471"}, set()),
+    "CSCI 4354": ("Operating Systems         (take with CENG 3351)", # requires senior level standing
+                  {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}, set()),
 
-    "CENG 3312": ("Digital Circuits & Lab (CENG 3112)", {"MATH 2414", "PHYS 2326"}),
-    "CENG 3331": ("Intro to Telecommunications and Networks & Lab (CENG 3131)",  {"CENG 3312"}),
-    "CENG 3351": ("Computer Architecture & Lab (CENG 3151) (take with CSCI 4354)", {"CENG 3331"}), # prereq changed from 2016-17
+    "CENG 3312": ("Digital Circuits", {"MATH 2414", "PHYS 2326"}, {"CENG 3112"}),
+    "CENG 3112": ("Digital Circuits Lab", {"MATH 2414", "PHYS 2326"}, {"CENG 3312"}),
+    
+    "CENG 3331": ("Intro to Telecommunications and Networks",  {"CENG 3312"}, {"CENG 3131"}),
+    "CENG 3131": ("Intro to Telecommunications and Networks Lab",  {"CENG 3312"}, {"CENG 3331"}),
 
-    "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}), # CSCI 1470 prereq implied; CSCI 2315 recommended
-    "WRIT 3315": ("Advanced Technical Writing", {"WRIT 1301", "WRIT 1302"}), # requires junior level standing
-    "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}),
+    # prereq changed from 2016-17
+    "CENG 3351": ("Computer Architecture     (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3151", "CSCI 4354"}), 
+    "CENG 3151": ("Computer Architecture Lab (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3351"}),
+
+    "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}, set()), # CSCI 1470 prereq implied; CSCI 2315 recommended
+    "WRIT 3315": ("Advanced Technical Writing", {"WRIT 1301", "WRIT 1302"}, set()), # requires junior level standing
+    "CSCI 4388": ("Senior Project in Computer Science", {"CSCI 3352", "SWEN 4342"}, set()),
 
     # CSCI/CINF Major Electives; taken junior or senior year
-    "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
-    "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
-    "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set()),
-    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set())
+    "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
+    "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
+    "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
+    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set(), set())
 }
 
 # Language, Philosophy and Culture (3 hours required)
@@ -413,18 +422,20 @@ CREATIVE_ARTS = {"ARTS 1303", "ARTS 1304", "ARTS 2379"}
 SOCIAL_SCIENCE = {"ANTH 2346", "CRIM 1301", "ECON 2301", "ECON 2302", "GEOG 1303", "PSYC 2301", "SOCI 1301"}
 
 # University Core
-UNI_CORE = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302',
-           'POLS 2305', 'POLS 2306', 'COMM 1315', 'PSYC 1100'}
+UNI_CORE = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2125', 'PHYS 2326', 'PHYS 2126',
+            'HIST 1301', 'HIST 1302', 'POLS 2305', 'POLS 2306', 'COMM 1315', 'PSYC 1100'}
 
 # Major Requirements
-MAJOR_REQ = {'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
-            'CSCI 1470', 'CSCI 1471', 'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321',
-            'CSCI 4354', 'CENG 3312', 'CENG 3331', 'CENG 3351', 'SWEN 4342', 'WRIT 3315', 'CSCI 4388'}
+MAJOR_REQ = {'CHEM 1311', 'CHEM 1111', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
+             'CSCI 1470', 'CSCI 1471', 'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321',
+             'CSCI 4354', 'CENG 3312', 'CENG 3112', 'CENG 3331', 'CENG 3131', 'CENG 3351', 'CENG 3151',
+             'SWEN 4342', 'WRIT 3315', 'CSCI 4388'}
 
 # CS Lower-Level Core; note there is some overlap with UNI_CORE
-LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', 'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
+LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2125', 'PHYS 2326', 'PHYS 2126',
+       'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
-# needed for hours computation and classification determination
+# needed for hours computation and classification determination # this is no longer needed
 HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
 
 # requires junior standing; getChoices requires LLC complete and junior or senior standing to allow electives
