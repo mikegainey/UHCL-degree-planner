@@ -389,7 +389,7 @@ COURSECATALOG = {
     "CSCI 4333": ("Design of Database Systems", {"CSCI 2315"}, set()),
     "CSCI 3321": ("Numerical Methods", {"MATH 2318", "MATH 2320", "CSCI 1471"}, set()),
     "CSCI 4354": ("Operating Systems         (take with CENG 3351)", # requires senior level standing
-                  {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}, set()),
+                  {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}, {"CENG 3351"}),
 
     "CENG 3312": ("Digital Circuits", {"MATH 2414", "PHYS 2326"}, {"CENG 3112"}),
     "CENG 3112": ("Digital Circuits Lab", {"MATH 2414", "PHYS 2326"}, {"CENG 3312"}),
