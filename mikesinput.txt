@@ -22,6 +22,7 @@ POLS 2305
 COMM 1315
 PSYC 1100
 CHEM 1311
+chem 1111
 
 -- from San Jacinto College
 MATH 2413 Calculus I
