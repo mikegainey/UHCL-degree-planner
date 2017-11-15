@@ -7,12 +7,10 @@
 # Assignment: CS1 Project
 #
 # Pseudocode:
-#   Define a function isULC with a string parameter course
-#       Set isCSCI to True if the first four characters of course is 'CSCI'
-#       Set isCENG to True if the first four characters of course is 'CENG'
-#       Set isULC to True if the 6th character of course is either 3 or 4
-#       Return True if isCSCI or isCENG is True and isULC is True
 #
+###########################
+# Define Global Constants #
+###########################
 #
 #   Define a dictionary constant COURSECATALOG that contains information about all courses
 #   pertinent to the CS BS degree, where ...
@@ -35,6 +33,17 @@
 #   Define a set constant LLC that contains the CS BS Lower Level Core courses
 #   Set ULC to the set of courses from MAJOR_REQ that satisfy isULC
 #   Define a set constant ELECTIVES to represent Major Elective courses
+#
+#
+########################
+# Function Definitions #
+########################
+#
+#   Define a function isULC with a string parameter course
+#       Set isCSCI to True if the first four characters of course is 'CSCI'
+#       Set isCENG to True if the first four characters of course is 'CENG'
+#       Set isULC to True if the 6th character of course is either 3 or 4
+#       Return True if isCSCI or isCENG is True and isULC is True
 #
 #
 #   Define a function prerequisites_met that takes parameters course and coursestaken:
@@ -304,9 +313,9 @@
 # https://www.uhcl.edu/academics/degrees/documents/cse/wbs-computerscience.pdf
 
 
-####################
-# Global Constants #
-####################
+###########################
+# Define Global Constants #
+###########################
 
 
 # COURSECATALOG is a dictionary where

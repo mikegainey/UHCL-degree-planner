@@ -1,0 +1,307 @@
+###############################################################################
+#
+# Name: Michael Gainey
+#
+# Course: CSCI 1470
+#
+# Assignment: CS1 Project
+#
+# Pseudocode:
+#
+###########################
+# Define Global Constants #
+###########################
+#
+#   Define a dictionary constant COURSECATALOG that contains information about all courses
+#   pertinent to the CS BS degree, where ...
+#       key   = a string representing a course ('CSCI 1471')
+#       value = a tuple consisting of
+#           [0] a string describing the full title of the course ('Computer Science II')
+#           [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
+#
+#   Define a set constant LANG_PHIL_CULTURE that contains courses satisfying the
+#     Language, Philosophy and Culture degree requirement
+#
+#   Define a set constant CREATIVE_ARTS that contains courses satisfying the
+#     Creative Arts degree requirement
+#
+#   Define a set constant SOCIAL_SCIENCE that contains courses satisfying the
+#     Social/Behavioral Science degree requirement
+#
+#   Define a set constant UNI_CORE that contains the University Core Requirements
+#   Define a set constant MAJOR_REQ that contains the CS BS Major Requirements
+#   Define a set constant LLC that contains the CS BS Lower Level Core courses
+#   Set ULC to the set of courses from MAJOR_REQ that satisfy isULC
+#   Define a set constant ELECTIVES to represent Major Elective courses
+#
+#
+########################
+# Function Definitions #
+########################
+#
+#   Define a function isULC with a string parameter course
+#       Set isCSCI to True if the first four characters of course is 'CSCI'
+#       Set isCENG to True if the first four characters of course is 'CENG'
+#       Set isULC to True if the 6th character of course is either 3 or 4
+#       Return True if isCSCI or isCENG is True and isULC is True
+#
+#
+#   Define a function prerequisites_met that takes parameters course and coursestaken:
+#       Set prerequisites to the set of the course's prerequisites found in COURSECATALOG
+#       Return True if prerequisites is a subset of coursestaken
+#
+#
+#   Define a function LLCcomplete that takes a parameter coursestaken:
+#       Return True if LLC is a subset of coursestaken
+#
+#
+#   Define a function getChoices that takes a parameter coursestaken:
+#       Set choices to the union of UNI_CORE, MAJOR_REQ, LANG_PHIL_CULTURE, CREATIVE_ARTS,
+#         SOCIAL_SCIENCE, and ELECTIVES.
+#       Remove coursestaken from choices.
+#       Remove courses with unmet prerequisites from choices.
+#       If LLC is not complete:
+#           remove ULC and ELECTIVES from choices.
+#       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is greater than zero:
+#           remove LANG_PHIL_CULTURE from choices.
+#       If the length of the intersection of CREATIVE_ARTS and coursestaken is greater than zero:
+#           remove CREATIVE_ARTS from choices.
+#       If the length of the intersection of SOCIAL_SCIENCE and coursestaken is greater than zero:
+#           remove SOCIAL_SCIENCE from choices.
+#       Return choirs to the calling function/program.
+#
+#
+#   Define a function isCourseNumber that takes a string parameter maybeCourseNumber:
+#       If the length of maybeCourseNumber is not 9, return False.
+#       Set words to a list made from splitting maybeCourseNumber into words
+#       If the length of words is less than 2, return False.
+#       Set part1 to the first word of words.
+#       If part1 is either not all alphabetic or not of length 4, return False.
+#       Set part2 to the second word of words.
+#       If part2 is either not all decimal or not of length 4, return False.
+#       Return True
+#
+#
+#   Define a function extractCourseNumbers that takes a parameter lines that is a list of strings
+#       Set courses to an empty list.
+#       Begin a loop iterating through the elements of lines using the lcv line
+#           If the length of line is less than 9, skip the rest of the loop
+#           Set maybeCourseNumber to the first 9 characters of line
+#           If maybeCourseNumber returns False when passed to isCourseNumber, skip the rest of the loop
+#           Set courseNumber to maybeCourseNumber
+#           Append courseNumber to courses
+#       Return courses to the calling program/function
+#
+#
+#   Define a function add2CoursesTaken with parameters course and coursestaken:
+#       If course is in COURSECATALOG:
+#           Add course to coursestaken
+#           Print a message that course was added
+#       Else, print a message saying the course is not recognized as a requirement for the CS BS degree
+#
+#
+#   Define a function getCoursesTaken:
+#       Prompt the user to enter courses (like CSCI 1470) previously completed or a file with a list of courses completed
+#       Set coursestaken to the empty set.
+#       Begin a loop to get user input.
+#           Set course to the user's input.
+#           If the user just pressed <Enter>, return coursestaken to the calling program/function.
+#           If isCourseNumber returns True with course as the argument,
+#               convert course to all uppercase, and
+#               pass course and coursestaken to add2CoursesTaken.
+#           else,
+#               Try to open a file for reading named course
+#               If successful, set lines to the list of lines in the file
+#               Otherwise, print a message "That's not a course or a file name"
+#
+#               Set courses to the return value of extractCourseNumbers with argument lines.
+#               Begin a loop iterating over courses:
+#                   Call add2CoursesTaken with arguments course and coursestaken
+#
+#
+#   define a function getTerm:
+#       Set seasons to the list ["placeholder", "Fall", Spring", "Summer"]
+#       Begin a loop to get user input:
+#           Set season by prompting the user to enter the starting term (1=Fall, 2=Spring, and 3=Summer)
+#           If season is not a decimal character,
+#               print an error message, "Just the number, please" and
+#               go back to the beginning of the loop.
+#           Cast season to an integer
+#           If season is not 1, 2, or 3,
+#               print an error message, "1, 2, or 3, please" and
+#               go back to the beginning of the loop.
+#           Set season to the element of seasons with index season and exit the loop
+#
+#       Begin a loop to get user input:
+#           Set year by prompting the user to enter the starting year (last 2 digits).
+#           If year is not decimal or year is not of length 2,
+#               Print an error message, "Just enter two digits" and
+#               go back to the beginning of the loop
+#           Exit the loop.
+#
+#       Set term to season + '20' + year
+#       Return term to the calling program/function
+#
+#
+#   Define a function incTerm with parameter currentTerm:
+#       Set seasons to the list ['Fall', Spring', 'Summer']
+#       Set season and year to the two words in currentTerm
+#       If season is Fall,
+#           Cast year to an int, add 1, and cast back to a string
+#
+#       Set seasonx to the index of season in seasons
+#       Set nextSeasonx to (seasonx + 1) mod 3
+#       Set nextSeason to the index of nextSeason in seasons
+#
+#       Set nextTerm to nextSeason, a space, and year
+#       Return nextTerm
+#
+#
+#   Define a function summerTerm with parameter term:
+#       If term starts with 'summer' ...
+#           Set summer by prompting the user "Do you want to take courses this summer?"
+#           If the user just pressed <Enter>, set summer to 'no'
+#           Convert summer to lowercase
+#           If summer is not 'y'
+#               Set term to the return value of incTerm with the argument term
+#           Return term to the calling program/function
+#
+#
+#   Define a function prereqFor with parameters course and coursestaken:
+#       Set coursesneeded to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
+#       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
+#           Add LANG_PHIL_CULTURE to coursesneeded
+#       Set count to zero
+#       Begin a loop iterating over coursesneeded with lcv c
+#           Set prerequisites to the set of prerequisites for c
+#           If the parameter course is in prerequisites, increment count
+#       Return count
+#
+#
+#   Define a function displayChoices with parameters term, choices, and coursestaken:
+#       Display a header for the term
+#       Set courseMenu to an empty dictionary
+#       Set index to 1
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and LANG_PHIL_CULTURE
+#       If the length of categoryChoices is greater than zero, display a LANG_PHIL_CULTURE heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove LANG_PHIL_CULTURE from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and CREATIVE_ARTS
+#       If the length of categoryChoices is greater than zero, display a CREATIVE_ARTS heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove CREATIVE_ARTS from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and SOCIAL_SCIENCE
+#       If the length of categoryChoices is greater than zero, display a SOCIAL_SCIENCE heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove SOCIAL_SCIENCE from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and UNI_CORE minus LLC
+#       If the length of categoryChoices is greater than zero, display a University Core heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove UNI_CORE from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and LLC
+#       If the length of categoryChoices is greater than zero, display a CS Lower-Level Core heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove LLC from choices
+#
+#       Set categoryChoices to a sorted list of the intersection of choices and MAJOR_REQ
+#       If the length of categoryChoices is greater than zero, display a CS Major Requirements heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
+#           Display index, isPrereqFor, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove MAJOR_REQ from choices
+#       
+#       Set categoryChoices to a sorted list of the intersection of choices and ELECTIVES
+#       If the length of categoryChoices is greater than zero, display a CS Major Electives heading
+#       Begin a loop over categoryChoices with lcv course:
+#           Display index, course, and the name of the course
+#           Add course to courseMenu with key index
+#           Add 1 to index
+#       Remove ELECTIVES from choices
+#
+#       Return courseMenu to the calling program/function
+#
+#
+#   Define a function chooseCourses with parameters term, courseMenu, degreeplan, and coursestaken:
+#       Set termSummary to the empty list
+#       Begin a loop to get user input:
+#           Set choice from a user prompt to select a course by number, pressing <Enter> when finished
+#           If the user just presses <Enter>, exit the loop
+#           If choice is not a decimal character,
+#               print an error message and go to the beginning of the loop
+#           Cast choice to an integer
+#           If choice is not in courseMenu,
+#               display an error message and go to the beginning of the loop
+#           Set course to courseMenu with index choice
+#           Add course to coursestaken
+#           Set entry to a tuple consisting of term, course, and the name of the course
+#           Append entry to degreeplan
+#           Append to termSummary: the term, course, and course name
+#
+#       Begin a loop of termSummary with lcv c
+#           Display c
+#       Append to degreeplan a tuple with three blanks to signal a blank line
+#       Return degreeplan to the calling program/function
+#
+#
+#   Define a function printSummary with parameter degreeplan:
+#       Display a heading: "Your degree plan summary"
+#
+#       Begin a loop of degreeplan with lcv c:
+#           Display all three elements of c
+#
+#
+#   Define a function saveSummary with parameter degreeplan:
+#       Prompt the user to save the degree plan summary to a file
+#       Set filename to the user's input
+#       If the user just pressed <Enter>, return to the calling program/function
+#       Try to open filename for writing
+#           Write a heading, "Your degree plan summary"
+#           Begin a loop over degreeplan with lcv c:
+#               Write all three elements of c
+#           Display a message, filename "contains your degree plan summary"
+#       If unsuccessful, print a message, "couldn't write to the file"
+#
+#
+#   Define a function main:
+#       Set degreeplan to the empty list
+#       Set coursestaken to the return value of getCoursesTaken
+#       Set term to the return value of getTerm
+#       Begin a loop:
+#           Set choices to the return value of getChoices with argument coursestaken
+#           If the length of choices is zero, exit the loop
+#           Set term to the return value of summerTerm with argument term
+#           Set courseMenu to the return value of displayChoices with arguments term, choices, and coursestaken
+#           Set degreeplan to the return value of chooseCourses with arguments term, courseMenu, degreeplan, and coursestaken
+#           Set term to the return value of incTerm with argument term
+#       Call the printSummary function with argument degreeplan
+#       Call the saveSummary function with argument degreeplan
+#
+#
+#   If the name of the running module is '__main__' then call the main function
+#
+#
+###############################################################################
