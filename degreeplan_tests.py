@@ -55,11 +55,13 @@ class TestFunctions(unittest.TestCase):
                   'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
         '''
         coursestaken = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', # LLC is all there
-                        'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301', 'POLS 2305'} # + 1 other course
+                        'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301', 'POLS 2305', # + 1 other course
+                        'PHYS 2125', 'PHYS 2126'} # labs were added to LLC
         self.assertTrue(LLCcomplete(coursestaken))
 
         coursestaken = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', # LLC is missing 'WRIT 1301'
-                        'MATH 2413', 'MATH 2414', 'HIST 1302', 'MATH 2305', 'POLS 2305'} # HIST and POLS also included
+                        'MATH 2413', 'MATH 2414', 'HIST 1302', 'MATH 2305', 'POLS 2305', # HIST and POLS also included
+                        'PHYS 2125', 'PHYS 2126'} 
         self.assertFalse(LLCcomplete(coursestaken))
 
 
@@ -100,7 +102,7 @@ class TestFunctions(unittest.TestCase):
         
         # LLC is complete; ULC are now choices (electives require junior standing; CSCI 4354 requires senior standing)
         coursestaken = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2326', # LLC is complete
-                        'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
+                        'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301', 'PHYS 2125', 'PHYS 2126'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         choices -= coursestaken # remove courses taken from choices
@@ -108,9 +110,10 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(getChoices(coursestaken), choices)
 
         # test that junior standing unlocks electives and WRIT 3315
-        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302', # 24
+        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302', # 22
                         'POLS 2305', 'POLS 2306', 'PSYC 1100', 'PHIL 1301', 'ARTS 1303', 'ECON 2301',              # 16
-                        'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'MATH 2414', 'MATH 2305'} # and LLC complete        # 18
+                        'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'MATH 2414', 'MATH 2305',                           # 18
+                        'PHYS 2125', 'PHYS 2126'} # and LLC complete                                               #  2
         self.assertEqual(classification(coursestaken), ('sophomore', 58)) # sophomore with 58 hours
         self.assertTrue(LLCcomplete(coursestaken))                        # LLC is complete (needed to take electives)
 
@@ -127,8 +130,8 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue('WRIT 3315' in choices) # WRIT 3315 requires junior standing
 
         # test that senior standing unlocks CSCI 4354
-        coursestaken |= {'CHEM 1311', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3331', 'CSCI 3352', 'CSCI 4333', # 22
-                         'CSCI 3321', 'SWEN 4342'}                                                                  #  6
+        coursestaken |= {'CHEM 1311', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3331', 'CSCI 3352', 'CSCI 4333', # 21
+                         'CSCI 3321', 'SWEN 4342', 'CHEM 1111'}                                                     #  7
         self.assertEqual(classification(coursestaken), ('junior', 89)) # junior with 89 hours
 
         # choices should not include courses that require senior standing
@@ -229,7 +232,7 @@ class TestFunctions(unittest.TestCase):
            prereqFor(course : str, coursestaken : set) -> int
         '''
         coursestaken = set()
-        self.assertEqual(prereqFor('MATH 2413', coursestaken), 5) # prereq for PHYS 2325, MATH 2305, MATH 2318,
+        self.assertEqual(prereqFor('MATH 2413', coursestaken), 6) # prereq for PHYS 2325, PHYS 2125, MATH 2305, MATH 2318,
                                                                   #            MATH 2414, STAT 3334
 
         self.assertEqual(prereqFor('WRIT 1301', coursestaken), 3) # prereq for WRIT 1302, LITR 2341, & WRIT 3315
@@ -246,23 +249,25 @@ class TestFunctions(unittest.TestCase):
         coursestaken = set()
         self.assertEqual(classification(coursestaken), ('freshman', 0))
 
-        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2326', 'HIST 1301', 'HIST 1302', 'POLS 2305'}
+        coursestaken = {'WRIT 1301', 'WRIT 1302', 'MATH 2413', 'PHYS 2325', 'PHYS 2125',
+                        'PHYS 2326', 'PHYS 2126', 'HIST 1301', 'HIST 1302', 'POLS 2305'}
         self.assertEqual(classification(coursestaken), ('freshman', 27))
 
         coursestaken.add('POLS 2306')
         self.assertEqual(classification(coursestaken), ('sophomore', 30))
 
-        coursestaken |= {'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334',
-                         'CSCI 1470'}
+        coursestaken |= {'COMM 1315', 'PSYC 1100', 'CHEM 1311', 'CHEM 1111', 'MATH 2305',
+                         'MATH 2318', 'MATH 2414', 'MATH 2320', 'STAT 3334', 'CSCI 1470'}
         self.assertEqual(classification(coursestaken), ('sophomore', 58))
 
         coursestaken.add('CSCI 1471')
         self.assertEqual(classification(coursestaken), ('junior', 62))
 
-        coursestaken |= {'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321', 'CSCI 4354', 'CENG 3312', 'CENG 3331'}
+        coursestaken |= {'CSCI 3331', 'CSCI 2315', 'CSCI 3352', 'CSCI 4333', 'CSCI 3321', 'CSCI 4354',
+                         'CENG 3312', 'CENG 3112', 'CENG 3331', 'CENG 3131'}
         self.assertEqual(classification(coursestaken), ('junior', 88))
 
-        coursestaken.add('CENG 3351')
+        coursestaken |= {'CENG 3351', 'CENG 3151'}
         self.assertEqual(classification(coursestaken), ('senior', 92))
 
         coursestaken |= {'SWEN 4342', 'WRIT 3315', 'CSCI 4388', 'WGST 1301', 'ARTS 1304', 'SOCI 1301', 'CSCI 33x1', 'CSCI 33x2',
@@ -289,4 +294,19 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(displayChoices(term, choices, coursestaken), menu)
 
 
+    def test_checkCorequisites(self):
+        '''Given a list of courses chosen for a term, return a list of tuples: (course, {set of unselected corequisite(s)} )
+           representing courses and their unselected corequisites; The course is listed only if there are unselected corequisites.
+           checkCorequisites(courses : [str]) -> [(str, {set of str})]
+        '''
+        courses = ['CSCI 1470', 'PHYS 2325', 'PHYS 2125'] # corequisite requirements met
+        self.assertEqual(checkCorequisites(courses), [])
+
+        courses = ['CSCI 1470', 'PHYS 2325'] # PHYS 2325 needs the lab, PHYS 2125 
+        self.assertEqual(checkCorequisites(courses), [('PHYS 2325', {'PHYS 2125'})])
+
+        courses = ['CENG 3351', 'CSCI 1470'] # CENG 3351 needs the lab (CENG 3151) and CSCI 4354
+        self.assertEqual(checkCorequisites(courses), [('CENG 3351', {'CENG 3151', 'CSCI 4354'})])
+
+        
 unittest.main(buffer=True) # buffer=True suppresses output of print statements in functions
