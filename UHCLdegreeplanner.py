@@ -769,6 +769,9 @@ def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
     '''
+    # set up a variable that can mutate (so choices can be preserved)
+    runningChoices = choices.copy() # make a copy of choices!
+    
     # standing = (classification, totalHours) where classification = freshman | sophomore | ...
     standing = classification(coursestaken)
     
@@ -782,7 +785,7 @@ def displayChoices(term, choices, coursestaken):
     index = 1       # the menu numbers
 
     # display Language, Philosophy, Culture courses
-    categoryChoices = sorted(list(choices & LANG_PHIL_CULTURE))
+    categoryChoices = sorted(list(runningChoices & LANG_PHIL_CULTURE))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nLanguage, Philosophy, and Culture (3 hours, choose one course)")
 
@@ -790,10 +793,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= LANG_PHIL_CULTURE
+    runningChoices -= LANG_PHIL_CULTURE
 
     # display Creative Arts courses
-    categoryChoices = sorted(list(choices & CREATIVE_ARTS))
+    categoryChoices = sorted(list(runningChoices & CREATIVE_ARTS))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nCreative Arts (3 hours, choose one course)")
 
@@ -801,10 +804,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= CREATIVE_ARTS
+    runningChoices -= CREATIVE_ARTS
 
     # display Social Science courses
-    categoryChoices = sorted(list(choices & SOCIAL_SCIENCE))
+    categoryChoices = sorted(list(runningChoices & SOCIAL_SCIENCE))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nSocial/Behavioral Science (3 hours, choose one course)")
 
@@ -812,10 +815,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= SOCIAL_SCIENCE
+    runningChoices -= SOCIAL_SCIENCE
 
     # display UCore UNI_CORE choices (LLC in UNI_CORE is listed in CS LLC)
-    categoryChoices = sorted(list(choices & UNI_CORE - LLC))
+    categoryChoices = sorted(list(runningChoices & UNI_CORE - LLC))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nOther University Core Requirements")
 
@@ -824,10 +827,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= UNI_CORE - LLC # check this for correctness! I think it's right.
+    runningChoices -= UNI_CORE - LLC # check this for correctness! I think it's right.
 
     # display CS LLC choices
-    categoryChoices = sorted(list(choices & LLC))
+    categoryChoices = sorted(list(runningChoices & LLC))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Lower-Level Core (LLC)")
 
@@ -836,10 +839,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= LLC
+    runningChoices -= LLC
 
     # display CS other major requirements choices
-    categoryChoices = sorted(list(choices & MAJOR_REQ))
+    categoryChoices = sorted(list(runningChoices & MAJOR_REQ))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nOther Computer Science Major Requirements")
 
@@ -848,10 +851,10 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= MAJOR_REQ
+    runningChoices -= MAJOR_REQ
 
     # display CS electives
-    categoryChoices = sorted(list(choices & ELECTIVES))
+    categoryChoices = sorted(list(runningChoices & ELECTIVES))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Major Electives")
 
@@ -860,9 +863,9 @@ def displayChoices(term, choices, coursestaken):
         print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
-    choices -= ELECTIVES
+    runningChoices -= ELECTIVES
 
-    assert choices == set() # choices should be empty at this point
+    assert runningChoices == set() # runningChoices should be empty at this point
 
     return courseMenu
 
@@ -890,10 +893,10 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
     '''
     while True: # the loop to verify that corequisite requirements are met
 
-        print(term, choices, coursestaken)
-        print()
-        # display a menu of course choices for the term
+        # create and display a menu of course choices for the term
+        # print()
         courseMenu = displayChoices(term, choices, coursestaken)
+        print()
 
         courses = [] # a list of courses chosen for that term only
 
@@ -927,17 +930,17 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
         for course in courses:
             print("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
 
-        # a list of tuples: [(course, set of unselected corequisite courses)]
+        # unselectedCorequisites is a list of tuples: [(course, set of unselected corequisite courses)]
         unselectedCorequisites = checkCorequisites(courses)
 
-        if unselectedCorequisites == []:
+        if not unselectedCorequisites:
             break # corequisite requirements are met; break out of the loop
         else:
             # print a warning about unselected corequisites
             print()
             print("You have selected a course without selecting its corequisite!")
             for c, uc in unselectedCorequisites:
-                unselCoreq = ', '.join(uc)
+                unselCoreq = ' & '.join(uc)
                 print("  {} requires {}".format(c, unselCoreq))
                 
             # print(unselectedCorequisites) # make this output nicer
