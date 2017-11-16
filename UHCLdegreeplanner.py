@@ -862,6 +862,8 @@ def displayChoices(term, choices, coursestaken):
         index += 1
     choices -= ELECTIVES
 
+    assert choices == set() # choices should be empty at this point
+
     return courseMenu
 
 
@@ -881,14 +883,17 @@ def checkCorequisites(courses):
     return unselectedCorequisiteList
 
 
-def chooseCourses(term, courseMenu, degreeplan, coursestaken):
+def chooseCourses(term, choices, coursestaken, degreeplan):
     '''Let the user choose courses to take for the listed term; update coursestaken
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
        ... and coursestaken is also updated
     '''
-    print()
-
     while True: # the loop to verify that corequisite requirements are met
+
+        print(term, choices, coursestaken)
+        print()
+        # display a menu of course choices for the term
+        courseMenu = displayChoices(term, choices, coursestaken)
 
         courses = [] # a list of courses chosen for that term only
 
@@ -1049,10 +1054,10 @@ def main():
         term = summerTerm(term)
 
         # display a menu of course choices for the term
-        courseMenu = displayChoices(term, choices, coursestaken) # move this within chooseCourses
+        # courseMenu = displayChoices(term, choices, coursestaken) # move this within chooseCourses
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
-        degreeplan = chooseCourses(term, courseMenu, degreeplan, coursestaken)
+        degreeplan = chooseCourses(term, choices, coursestaken, degreeplan)
 
         term = incTerm(term)
 
