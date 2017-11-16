@@ -321,9 +321,9 @@
 # COURSECATALOG is a dictionary where
 #   key:   is a string representing a course number, like 'PHYS 2325'
 #   value: is a tuple consisting of
-#     - a string describing the full title of the course, "University Physics I"
-#     - a set of prerequisites, {"MATH 2413", "MATH 2414"}
-#     - a set of corequisites
+#     [0] a string describing the full title of the course, "University Physics I"
+#     [1] a set of prerequisites, {"MATH 2413", "MATH 2414"}
+#     [2] a set of corequisites, {"PHYS 2125"}
 
 # verified against the UHCL Undergraduate Catalog 2017-2018 on 11 Nov 2018
 COURSECATALOG = {
@@ -336,7 +336,7 @@ COURSECATALOG = {
 
     # Life and Physical Sciences (6 hours)
     "PHYS 2325": ("University Physics I", {"MATH 2413"}, {"PHYS 2125"}),
-    "PHYS 2125": ("University Physics I Lab", {"MATH 2413"}, {"PHYS 2325"}),
+    "PHYS 2125": ("University Physics I Lab", {"MATH 2413"}, {"PHYS 2325"}), # shouldn't show until MATH 2413 complete
     "PHYS 2326": ("University Physics II", {"MATH 2414", "PHYS 2325"}, {"PHYS 2126"}),
     "PHYS 2126": ("University Physics II Lab", {"MATH 2414", "PHYS 2325"}, {"PHYS 2326"}),
 
@@ -399,7 +399,7 @@ COURSECATALOG = {
 
     # prereq changed from 2016-17
     "CENG 3351": ("Computer Architecture     (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3151", "CSCI 4354"}), 
-    "CENG 3151": ("Computer Architecture Lab (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3351"}),
+    "CENG 3151": ("Computer Architecture Lab", {"CENG 3331"}, {"CENG 3351"}),
 
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}, set()), # CSCI 1470 prereq implied; CSCI 2315 recommended
     "WRIT 3315": ("Advanced Technical Writing", {"WRIT 1301", "WRIT 1302"}, set()), # requires junior level standing
@@ -747,10 +747,10 @@ def classification(coursestaken):
     for course in coursestaken:
         totalHours += int(course[-3]) # "CSCI 1470"[3] = 4
 
-    # add another hour for each course with a lab
-    labs = coursestaken & HASLAB # labs is a set
-    numlabs = len(labs) # numlabs is an int
-    totalHours += numlabs
+    # add another hour for each course with a lab   --- not needed if counting corequisites as regular courses
+    # labs = coursestaken & HASLAB # labs is a set
+    # numlabs = len(labs) # numlabs is an int
+    # totalHours += numlabs
 
     # determine the classification from totalHours
     if totalHours <= 29:
@@ -865,47 +865,96 @@ def displayChoices(term, choices, coursestaken):
     return courseMenu
 
 
+def checkCorequisites(courses):
+    '''Given a list of courses chosen for a term, return a list of tuples: (course, { set of unselected corequisite(s)})
+       representing courses and their unselected corequisites; The course is listed only if there are unselected corequisites.
+       checkCorequisites(courses : [str]) -> [(str, {set of str})]
+    '''
+    unselectedCorequisiteList = []
+
+    for course in courses:
+        corequisites = COURSECATALOG[course][2]
+        unselectedCorequisites = corequisites - set(courses) # the unselected corequisite courses
+        if len(unselectedCorequisites) > 0:
+            unselectedCorequisiteList.append((course, unselectedCorequisites))
+
+    return unselectedCorequisiteList
+
+
 def chooseCourses(term, courseMenu, degreeplan, coursestaken):
     '''Let the user choose courses to take for the listed term; update coursestaken
        chooseCourses(courseMenu : dict, coursestaken : set) -> coursesChosen : [course: str]
        ... and coursestaken is also updated
     '''
     print()
-    termSummary = [] # a list of courses chosen for that term only
 
-    while True: # the loop to collect chosen courses
+    while True: # the loop to verify that corequisite requirements are met
 
-        choice = input("Select a course by number.  Press <Enter> when finished: ")
-        if choice == '':
-            break
+        courses = [] # a list of courses chosen for that term only
 
-        # check for non-decimal characters
-        if not choice.isdecimal():
-            print("----- Enter the number only.")
-            continue
+        while True: # the loop to collect chosen courses
 
-        # verify the choice is in the courseMenu
-        choice = int(choice)
-        if choice not in courseMenu:
-            print("----- Invalid entry.")
-            continue
+            choice = input("Select a course by number.  Press <Enter> when finished: ")
+            if choice == '':
+                break
 
-        course = courseMenu[choice]
-        coursestaken.add(course) # this mutates coursestaken globally!
+            # check for non-decimal characters
+            if not choice.isdecimal():
+                print("----- Enter the number only.")
+                continue
 
+            # verify the choice is in the courseMenu
+            choice = int(choice)
+            if choice not in courseMenu:
+                print("----- Invalid entry.")
+                continue
+
+            # the chosen couse
+            course = courseMenu[choice] # course is a course number
+            courses.append(course) # the tentative list of courses for this term
+
+        # if no courses were chosen, just return
+        if len(courses) == 0:
+            return degreeplan
+    
+        # Print the term summary
+        print()
+        for course in courses:
+            print("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
+
+        # a list of tuples: [(course, set of unselected corequisite courses)]
+        unselectedCorequisites = checkCorequisites(courses)
+
+        if unselectedCorequisites == []:
+            break # corequisite requirements are met; break out of the loop
+        else:
+            # print a warning about unselected corequisites
+            print()
+            print("You have selected a course without selecting its corequisite!")
+            for c, uc in unselectedCorequisites:
+                unselCoreq = ', '.join(uc)
+                print("  {} requires {}".format(c, unselCoreq))
+                
+            # print(unselectedCorequisites) # make this output nicer
+
+            # ask the user to reselect courses that meet corequisite requirements
+            accept = input("\nDo you want to reselect courses for this term? (Y/n): ")
+            accept = accept or 'y'
+            accept = accept[0].lower()
+            if accept == 'n': # user wants to accept courses in spite of not meeting corequisite requirement
+                break
+            else:
+                print()
+                continue # re-select courses
+            
+
+    # add the selected courses to coursestaken and degreeplan
+    for course in courses:
+        coursestaken.add(course) # this mutates coursestaken
         entry = (term, course, COURSECATALOG[course][0])
         degreeplan.append(entry)
 
-        termSummary.append("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
-
-    # only print a term summary if there is something to print
-    if len(termSummary) > 0:
-        print()
-        for c in termSummary:
-            print(c)
-
-        degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
-            
+    degreeplan.append(('', '', '')) # a separator between terms to make output formatting easier
     return degreeplan
 
 
@@ -1000,7 +1049,7 @@ def main():
         term = summerTerm(term)
 
         # display a menu of course choices for the term
-        courseMenu = displayChoices(term, choices, coursestaken)
+        courseMenu = displayChoices(term, choices, coursestaken) # move this within chooseCourses
 
         # choose courses for the term; update degreeplan; mutates coursestaken!
         degreeplan = chooseCourses(term, courseMenu, degreeplan, coursestaken)
@@ -1052,6 +1101,7 @@ if __name__ == "__main__":
 # reviewed tested prereqFor(course, coursestaken)
 # reviewed tested classification(coursetaken)
 # reviewed tested displayChoices(term, choices, coursestaken)
+#                 checkCorequisites(courses)
 # reviewed tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # reviewed tested printSummary(degreeplan)
 # reviewed tested saveSummary(degreeplan, filename)
