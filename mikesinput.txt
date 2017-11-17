@@ -9,6 +9,7 @@ Michael Gainey's completed courses list
 -- from UHCL
 econ 2301 Macroeconomics # lowercase rubrics should still be valid
 POLS 2306 Texas Government
+POLS 2306 what will happen here?
 abcd 1234 this is a test
 
 -- from Houston Baptist University

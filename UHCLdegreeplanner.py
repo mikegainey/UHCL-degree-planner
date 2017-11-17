@@ -317,6 +317,45 @@
 # Define Global Constants #
 ###########################
 
+welcome = '''================================================================================
+                             UHCL Degree Planner
+================================================================================
+
+Are you a UHCL Computer Science B.S. student and don't know what courses to take
+next term?  Then run this program!  It will help you choose courses to take next
+term and each successive term until graduation.
+
+First, tell the program what courses you have already completed.  You can enter
+them one-at-a-time at the keyboard and/or you can enter a file name with a list
+of courses.
+
+In the file, list courses numbers (like CSCI 1470) one-per-line.  Anything after
+the course number on the line will be ignored and lines that don't start with
+course numbers will be ignored.  Courses that don't apply to the Computer
+Science B.S. degree will also be ignored.  The program will acknowledge the
+courses that are recognized so you will know what courses the program will start
+with.
+
+Afer entering your starting term, you will see a menu of courses that you are
+eligible to take.  Courses with unmet prerequisites will not be shown.
+Upper-level CSCI and CENG courses and electives will not be shown until your CS
+Lower-level core is complete.  Some courses won't be shown until you have junior
+or senior standing.  Choose courses by menu number and press <Enter> again after
+your last course.  The program will restate your choices before moving to the
+next term.  If you selected a course with a corequisite and didn't select the
+corequisite, you will have the option of reselecting courses for that term or
+continuing with your original selection.
+
+Next to most courses in the list, there will be something that looks like
+"(prereq for # courses)."  It shows that the listed course is a prerequisite for
+the given number of other courses.  Since you can't take those other courses
+until this course is completed, its a good idea to prioritize taking courses
+that are prerequisites for others.  Calculus I is a good example.
+
+After you have chosen all of your courses, the program will display a complete
+degree plan summary.  If you enter a file name, the summary will be saved as a
+text file in the same folder as the program.
+================================================================================'''
 
 # COURSECATALOG is a dictionary where
 #   key:   is a string representing a course number, like 'PHYS 2325'
@@ -606,7 +645,8 @@ def getCoursesTaken():
     '''Prompt the user to enter courses previously completed and/or load courses from file(s).
        getCoursesTaken() -> NoneType (+ calling add2CoursesTaken mutator function)'''
 
-    print("\nEnter course numbers (like CSCI 1470) that you have previously completed and/or the names of files containing course numbers.\n")
+    print("\nEnter course numbers (like CSCI 1470) that you have previously completed and/or")
+    print("the names of files containing course numbers.\n")
 
     coursestaken = set()
 
@@ -1003,8 +1043,8 @@ def saveSummary(degreeplan, coursestaken):
        saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
     # ask user if he/she wants to save degreeplan summary to a file
-    print("If you want to save this summary to a file, ", end="")
-    filename = input("enter a filename, otherwise just press <Enter> to quit: ")
+    print("If you want to save this summary to a file, enter a filename, ")
+    filename = input("otherwise just press <Enter> to quit: ")
 
     # just return if user presses <Enter>
     if filename == '':
@@ -1040,7 +1080,7 @@ def saveSummary(degreeplan, coursestaken):
 def main():
 
     # print a welcome message
-    # print("blah, blah, blah, ...")
+    print(welcome)
     
     # this will eventually hold the completed degree plan
     degreeplan = []
@@ -1088,17 +1128,8 @@ if __name__ == "__main__":
 
 
 # TODO:
-
-# print a nice intro and explanatory text here and there
-
-# don't display a course if its corequisite is not a choice
-# - implemented -- test in test document
-
-# redo testing worksheet because of several changes
-
-# consider if a global coursesneeded variable is practical; certainly would be more efficient
-
-# check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
+#   print a nice intro and explanatory text here and there
+#   redo testing worksheet because of several changes
 
 # Functions:
 # reviewed tested isULC(course)
