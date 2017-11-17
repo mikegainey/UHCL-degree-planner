@@ -74,11 +74,13 @@ class TestFunctions(unittest.TestCase):
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC
         # the next line removes courses for which prerequisites are not met
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
         self.assertEqual(getChoices(coursestaken), choices)
 
         coursestaken = {'PSYC 1100'} # just took one course
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
         choices -= {'PSYC 1100'} # this is no longer a choice
         self.assertEqual(getChoices(coursestaken), choices)
         
@@ -86,18 +88,21 @@ class TestFunctions(unittest.TestCase):
         coursestaken = {'PHIL 1301'}
         choices = UNI_CORE | MAJOR_REQ | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
         self.assertEqual(getChoices(coursestaken), choices)
 
         # verify that taking Arts and the Child removes all creative arts courses from choices
         coursestaken = {'ARTS 2379'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | SOCIAL_SCIENCE - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
         self.assertEqual(getChoices(coursestaken), choices)
 
         # verify that taking Macroeconomics removes all social/behavioral science courses from choices
         coursestaken = {'ECON 2301'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
         self.assertEqual(getChoices(coursestaken), choices)
         
         # LLC is complete; ULC are now choices (electives require junior standing; CSCI 4354 requires senior standing)
@@ -107,6 +112,7 @@ class TestFunctions(unittest.TestCase):
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         choices -= coursestaken # remove courses taken from choices
         choices -= (ELECTIVES | REQ_SENIOR) # remove courses that require junior & senior standing
+        choices -= {'CENG 3131'} # labs don't have prereqs, but still can't be taken unless the main course can
         self.assertEqual(getChoices(coursestaken), choices)
 
         # test that junior standing unlocks electives and WRIT 3315
@@ -129,7 +135,7 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue('CSCI 33x1' in choices) # electives are taken in the junior or senior year
         self.assertTrue('WRIT 3315' in choices) # WRIT 3315 requires junior standing
 
-        # test that senior standing unlocks CSCI 4354
+        # test that senior standing unlocks CSCI 4354; corequisites (CENG ...) also need to be choices
         coursestaken |= {'CHEM 1311', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3331', 'CSCI 3352', 'CSCI 4333', # 21
                          'CSCI 3321', 'SWEN 4342', 'CHEM 1111'}                                                     #  7
         self.assertEqual(classification(coursestaken), ('junior', 89)) # junior with 89 hours
@@ -232,7 +238,7 @@ class TestFunctions(unittest.TestCase):
            prereqFor(course : str, coursestaken : set) -> int
         '''
         coursestaken = set()
-        self.assertEqual(prereqFor('MATH 2413', coursestaken), 6) # prereq for PHYS 2325, PHYS 2125, MATH 2305, MATH 2318,
+        self.assertEqual(prereqFor('MATH 2413', coursestaken), 5) # prereq for PHYS 2325, MATH 2305, MATH 2318,
                                                                   #            MATH 2414, STAT 3334
 
         self.assertEqual(prereqFor('WRIT 1301', coursestaken), 3) # prereq for WRIT 1302, LITR 2341, & WRIT 3315

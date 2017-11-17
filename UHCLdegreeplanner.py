@@ -375,9 +375,9 @@ COURSECATALOG = {
 
     # Life and Physical Sciences (6 hours)
     "PHYS 2325": ("University Physics I", {"MATH 2413"}, {"PHYS 2125"}),
-    "PHYS 2125": ("University Physics I Lab", {"MATH 2413"}, {"PHYS 2325"}), # shouldn't show until MATH 2413 complete
+    "PHYS 2125": ("University Physics I Lab", set(), {"PHYS 2325"}),
     "PHYS 2326": ("University Physics II", {"MATH 2414", "PHYS 2325"}, {"PHYS 2126"}),
-    "PHYS 2126": ("University Physics II Lab", {"MATH 2414", "PHYS 2325"}, {"PHYS 2326"}),
+    "PHYS 2126": ("University Physics II Lab", set(), {"PHYS 2326"}),
 
     # Language, Philosophy and Culture (3 hours)
     "HUMN 1301": ("Humanities", set(), set()),
@@ -431,14 +431,14 @@ COURSECATALOG = {
                   {"CSCI 2315", "CSCI 3331", "MATH 2305", "MATH 2414", "PHYS 2325", "PHYS 2326"}, {"CENG 3351"}),
 
     "CENG 3312": ("Digital Circuits", {"MATH 2414", "PHYS 2326"}, {"CENG 3112"}),
-    "CENG 3112": ("Digital Circuits Lab", {"MATH 2414", "PHYS 2326"}, {"CENG 3312"}),
+    "CENG 3112": ("Digital Circuits Lab", set(), {"CENG 3312"}),
     
     "CENG 3331": ("Intro to Telecommunications and Networks",  {"CENG 3312"}, {"CENG 3131"}),
-    "CENG 3131": ("Intro to Telecommunications and Networks Lab",  {"CENG 3312"}, {"CENG 3331"}),
+    "CENG 3131": ("Intro to Telecommunications and Networks Lab",  set(), {"CENG 3331"}),
 
     # prereq changed from 2016-17
     "CENG 3351": ("Computer Architecture     (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3151", "CSCI 4354"}), 
-    "CENG 3151": ("Computer Architecture Lab", {"CENG 3331"}, {"CENG 3351"}),
+    "CENG 3151": ("Computer Architecture Lab", {"CENG 3312", "CENG 3112"}, {"CENG 3351"}),
 
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}, set()), # CSCI 1470 prereq implied; CSCI 2315 recommended
     "WRIT 3315": ("Advanced Technical Writing", {"WRIT 1301", "WRIT 1302"}, set()), # requires junior level standing
@@ -481,7 +481,7 @@ HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG
 REQ_JUNIOR = {'WRIT 3315'}
 
 # requires senior standing
-REQ_SENIOR = {'CSCI 4354'}
+REQ_SENIOR = {'CSCI 4354', 'CSCI 4388'} # CSCI 4388 should be taken in the final semester before graduation
 
 # this function definition needs to come before the ULC definition below
 def isULC(course):
@@ -622,6 +622,10 @@ def extractCourseNumbers(lines):
         courseNumber = maybeCourseNumber          # at this point, it's a confirmed course number (format)
         courseNumber = courseNumber.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
 
+        # if the course is already in the list, continue
+        if courseNumber in courses:
+            continue
+        
         courses.append(courseNumber)        # add the course number to the output list
 
     return courses
@@ -899,6 +903,10 @@ def displayChoices(term, choices, coursestaken):
         index += 1
     runningChoices -= MAJOR_REQ
 
+    # if CSCI 4388 is a choice, print  "CSCI 4388 may be taken only during the final semester before graduation."
+    if 'CSCI 4388' in categoryChoices:
+        print("\n   Note: CSCI 4388 may be taken only during the final semester before graduation.")
+
     # display CS electives
     categoryChoices = sorted(list(runningChoices & ELECTIVES))
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
@@ -990,8 +998,6 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
                 unselCoreq = ' & '.join(uc)
                 print("  {} requires {}".format(c, unselCoreq))
                 
-            # print(unselectedCorequisites) # make this output nicer
-
             # ask the user to reselect courses that meet corequisite requirements
             accept = input("\nDo you want to reselect courses for this term? (Y/n): ")
             accept = accept or 'y'
@@ -1130,6 +1136,7 @@ if __name__ == "__main__":
 # TODO:
 #   print a nice intro and explanatory text here and there
 #   redo testing worksheet because of several changes
+#   (future) don't allow CSCI 4388 until the last semester
 
 # Functions:
 # reviewed tested isULC(course)

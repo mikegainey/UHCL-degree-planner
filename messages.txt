@@ -1,5 +1,5 @@
 ================================================================================
-                             UHCL Degree Planner
+                   UHCL Computer Science B.S. Degree Planner                   
 ================================================================================
 
 Are you a UHCL Computer Science B.S. student and don't know what courses to take
