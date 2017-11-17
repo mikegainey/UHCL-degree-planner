@@ -514,6 +514,12 @@ def getChoices(coursestaken):
     # remove CSCI 4354 (the only course in REQ_SENIOR) if not senior standing
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
+
+    # remove a course if its corequisites are not choices -- seems to work; add to test document
+    for course in choices.copy():
+        corequisites = COURSECATALOG[course][2] # this is a set
+        if not corequisites.issubset(choices): # if the set of corequisites are not in choices ...
+            choices.remove(course)             # remove the course from choices
         
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
@@ -919,7 +925,8 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
 
             # the chosen couse
             course = courseMenu[choice] # course is a course number
-            courses.append(course) # the tentative list of courses for this term
+            if course not in courses:
+                courses.append(course) # the tentative list of courses for this term
 
         # if no courses were chosen, just return
         if len(courses) == 0:
@@ -1081,18 +1088,17 @@ if __name__ == "__main__":
 
 
 # TODO:
-# - print a nice intro and explanatory text here and there
 
-# - in chooseCourses if the same course is chosen more than once, it is added more than once! fix it!
+# print a nice intro and explanatory text here and there
 
-# - redo testing worksheet because of several changes
+# don't display a course if its corequisite is not a choice
+# - implemented -- test in test document
 
-# - consider implementing corequisites
-#   - add to COURSECATALOG values; check in a loop in chooseCourses
+# redo testing worksheet because of several changes
 
-# - consider if a global coursesneeded variable is practical; certainly would be more efficient
+# consider if a global coursesneeded variable is practical; certainly would be more efficient
 
-# - check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
+# check and correct all course numbers in constants; they must be uppercase to correctly match keys in COURSECATALOG
 
 # Functions:
 # reviewed tested isULC(course)
@@ -1108,9 +1114,9 @@ if __name__ == "__main__":
 # reviewed tested summerTerm(term)
 # reviewed tested prereqFor(course, coursestaken)
 # reviewed tested classification(coursetaken)
-# reviewed tested displayChoices(term, choices, coursestaken)
+#                 displayChoices(term, choices, coursestaken)
 #                 checkCorequisites(courses)
-# reviewed tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
+#                 chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # reviewed tested printSummary(degreeplan)
 # reviewed tested saveSummary(degreeplan, filename)
 # reviewed tested main()
