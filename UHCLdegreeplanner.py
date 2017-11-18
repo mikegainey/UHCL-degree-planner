@@ -554,11 +554,13 @@ def getChoices(coursestaken):
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
 
+    # This causes a bug! If you take a course without it's corequisite, you will never be able to take the corequisite in the future.
     # remove a course if its corequisites are not choices -- seems to work; add to test document
-    for course in choices.copy():
-        corequisites = COURSECATALOG[course][2] # this is a set
-        if not corequisites.issubset(choices): # if the set of corequisites are not in choices ...
-            choices.remove(course)             # remove the course from choices
+    # for course in choices.copy():
+    #     corequisites = COURSECATALOG[course][2] # this is a set
+    #     # don't show a courses if the set of corequisites are not in choices ... unless the corequisites have already been taken
+    #     if (not corequisites.issubset(choices)) and (corequisites not in coursestaken): 
+    #         choices.remove(course)             # remove the course from choices
         
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
@@ -650,7 +652,7 @@ def getCoursesTaken():
        getCoursesTaken() -> NoneType (+ calling add2CoursesTaken mutator function)'''
 
     print("\nEnter course numbers (like CSCI 1470) that you have previously completed and/or")
-    print("the names of files containing course numbers.\n")
+    print("the names of files containing course numbers (or just press <Enter>).\n")
 
     coursestaken = set()
 
@@ -796,11 +798,6 @@ def classification(coursestaken):
     totalHours = 0
     for course in coursestaken:
         totalHours += int(course[-3]) # "CSCI 1470"[3] = 4
-
-    # add another hour for each course with a lab   --- not needed if counting corequisites as regular courses
-    # labs = coursestaken & HASLAB # labs is a set
-    # numlabs = len(labs) # numlabs is an int
-    # totalHours += numlabs
 
     # determine the classification from totalHours
     if totalHours <= 29:
@@ -1134,9 +1131,12 @@ if __name__ == "__main__":
 
 
 # TODO:
-#   print a nice intro and explanatory text here and there
+#   print "the fine print" before the summary
 #   redo testing worksheet because of several changes
 #   (future) don't allow CSCI 4388 until the last semester
+
+# Bug: A course should not be a choice if its corequisite is not a choice UNLESS that corequisite is in coursestaken!
+#      If Physics I was taken without the lab; then the lab will never be a choice because Physic I will never be a choice again!
 
 # Functions:
 # reviewed tested isULC(course)
