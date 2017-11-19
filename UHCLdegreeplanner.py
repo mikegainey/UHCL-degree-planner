@@ -556,33 +556,20 @@ def getChoices(coursestaken):
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
 
-    # This causes a bug! If you take a course without it's corequisite, you will never be able to take the corequisite in the future.
-    # remove a course if its corequisites are not choices -- seems to work; add to test document
+    # remove a course if its corequisites are not choices, UNLESS a corequisite has already been taken
     for course in choices.copy():
         corequisites = COURSECATALOG[course][2] # this is a set
         if len(corequisites) == 0:
             continue
 
-        # print("\ncourse =  {}, coreqs =  {}".format(course, corequisites))
-        # print("coursestaken = {}".format(coursestaken))
-        # print("choices = {}".format(choices))
-
         # if at least one of the coreqs is in coursestaken, continue
         if len(corequisites & coursestaken) > 0:
             continue
-            # print("At least one corequisite is in coursestaken!")
-            # input()
 
         # if corequisite(s) are not in choices ...
         if not corequisites.issubset(choices):
-            # print("removing {} because corequisites are not (all) in choices!".format(course))
-            # input()
             choices.remove(course)
             
-        # don't show a courses if the set of corequisites are not in choices ... unless the corequisites have already been taken
-        # if (not corequisites.issubset(choices)) and (corequisites not in coursestaken): 
-        #     choices.remove(course)             # remove the course from choices
-        
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
         choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
@@ -821,7 +808,7 @@ def classification(coursestaken):
     '''
     totalHours = 0
     for course in coursestaken:
-        totalHours += int(course[-3]) # "CSCI 1470"[3] = 4
+        totalHours += int(course[-3]) # "CSCI 1470"[-3] = 4
 
     # determine the classification from totalHours
     if totalHours <= 29:
@@ -905,6 +892,8 @@ def displayChoices(term, choices, coursestaken):
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Lower-Level Core (LLC)")
 
+    # flip the order of courses and labs (so the course comes before its lab)
+
     for course in categoryChoices:
         isPrereqFor = prereqFor(course, coursestaken)
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
@@ -969,7 +958,6 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
     while True: # the loop to verify that corequisite requirements are met
 
         # create and display a menu of course choices for the term
-        # print()
         courseMenu = displayChoices(term, choices, coursestaken)
         print()
 
@@ -992,7 +980,7 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
                 print("----- Invalid entry.")
                 continue
 
-            # the chosen couse
+            # the chosen course
             course = courseMenu[choice] # course is a course number
             if course not in courses:
                 courses.append(course) # the tentative list of courses for this term
@@ -1010,7 +998,15 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
         unselectedCorequisites = checkCorequisites(courses)
 
         if not unselectedCorequisites:
-            break # corequisite requirements are met; break out of the loop
+            # corequisite requirements are met
+            accept = input("\nDo you want to accept these courses and continue to the next term? (Y/n): ")
+            accept = accept or 'y'
+            accept = accept[0].lower()
+            if accept == 'y': 
+                break    # accept courses selections
+            else:
+                print()
+                continue # re-select courses
         else:
             # print a warning about unselected corequisites
             print()
@@ -1157,7 +1153,9 @@ if __name__ == "__main__":
 # TODO:
 #   print "the fine print" before the summary
 #   redo testing worksheet because of several changes
-#   (future) don't allow CSCI 4388 until the last semester
+
+# - (future) don't allow CSCI 4388 until the last semester
+# - flip the display order of labs and their main courses
 
 # Functions:
 # reviewed tested isULC(course)
