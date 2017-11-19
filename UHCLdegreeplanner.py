@@ -543,7 +543,9 @@ def getChoices(coursestaken):
     if not LLCcomplete(coursestaken):
         choices -= (ULC | ELECTIVES) # remove ULC and ELECTIVES
 
-    # standing will be a tuple (classification, total hours) where classification = freshman, sophomore, junior, or senior
+    # determine standing, a tuple: (classification, total hours) where ...
+    # - classification is one of: freshman, sophomore, junior, or senior
+    # - total hours is an int
     standing = classification(coursestaken)
     
     # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
@@ -556,11 +558,30 @@ def getChoices(coursestaken):
 
     # This causes a bug! If you take a course without it's corequisite, you will never be able to take the corequisite in the future.
     # remove a course if its corequisites are not choices -- seems to work; add to test document
-    # for course in choices.copy():
-    #     corequisites = COURSECATALOG[course][2] # this is a set
-    #     # don't show a courses if the set of corequisites are not in choices ... unless the corequisites have already been taken
-    #     if (not corequisites.issubset(choices)) and (corequisites not in coursestaken): 
-    #         choices.remove(course)             # remove the course from choices
+    for course in choices.copy():
+        corequisites = COURSECATALOG[course][2] # this is a set
+        if len(corequisites) == 0:
+            continue
+
+        # print("\ncourse =  {}, coreqs =  {}".format(course, corequisites))
+        # print("coursestaken = {}".format(coursestaken))
+        # print("choices = {}".format(choices))
+
+        # if at least one of the coreqs is in coursestaken, continue
+        if len(corequisites & coursestaken) > 0:
+            continue
+            # print("At least one corequisite is in coursestaken!")
+            # input()
+
+        # if corequisite(s) are not in choices ...
+        if not corequisites.issubset(choices):
+            # print("removing {} because corequisites are not (all) in choices!".format(course))
+            # input()
+            choices.remove(course)
+            
+        # don't show a courses if the set of corequisites are not in choices ... unless the corequisites have already been taken
+        # if (not corequisites.issubset(choices)) and (corequisites not in coursestaken): 
+        #     choices.remove(course)             # remove the course from choices
         
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
@@ -625,8 +646,8 @@ def extractCourseNumbers(lines):
         courseNumber = courseNumber.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
 
         # if the course is already in the list, continue
-        if courseNumber in courses:
-            continue
+        # if courseNumber in courses:
+        #     continue
         
         courses.append(courseNumber)        # add the course number to the output list
 
@@ -638,13 +659,16 @@ def add2CoursesTaken(course, coursestaken):
        add2CoursesTaken(course : str, coursestaken : set) -> NoneType (+ mutating coursestaken)
        used twice in getCoursesTaken (so this function prevents code duplication)
     '''
-    if course in COURSECATALOG:
+    if course in coursestaken:
+        print("----- {} was already added".format(course))
+        return
 
-        coursestaken.add(course)
-        print("added {} {}".format(course, COURSECATALOG[course][0]))
-
-    else:
+    if course not in COURSECATALOG:
         print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
+        return
+    
+    coursestaken.add(course)
+    print("added {} {}".format(course, COURSECATALOG[course][0]))
 
 
 def getCoursesTaken():
@@ -1134,9 +1158,6 @@ if __name__ == "__main__":
 #   print "the fine print" before the summary
 #   redo testing worksheet because of several changes
 #   (future) don't allow CSCI 4388 until the last semester
-
-# Bug: A course should not be a choice if its corequisite is not a choice UNLESS that corequisite is in coursestaken!
-#      If Physics I was taken without the lab; then the lab will never be a choice because Physic I will never be a choice again!
 
 # Functions:
 # reviewed tested isULC(course)
