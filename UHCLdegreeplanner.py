@@ -823,6 +823,29 @@ def classification(coursestaken):
     return (standing, totalHours)
 
 
+def flipLabOrder(choices):
+    '''Given a list of courses sorted by course number, move labs from before to after their main course in the list.
+       flipLabOrder(choices : [str]) -> [str]
+       Otherwise, labs would always precede their main course in the course menu: (e.g. 2125 comes before 2325).
+    '''
+    for c in range(len(choices) -1):
+        c1 = choices[c]
+        c2 = choices[c+1]
+
+        # check if course numbers are the same except for the 2nd number; if not, continue
+        if (c1[:6] + c1[-2:]) != (c2[:6] + c2[-2:]):
+            continue
+
+        # check if a 1 hour course followed by a 3 hour course; if not, continue
+        if not (c1[6] == '1' and c2[6] == '3'):
+            continue
+
+        # if a lab precedes its main course, swap their order
+        choices[c], choices[c+1] = choices[c+1], choices[c]
+
+    return choices
+    
+
 def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
        displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
@@ -893,6 +916,7 @@ def displayChoices(term, choices, coursestaken):
         print("\nComputer Science Lower-Level Core (LLC)")
 
     # flip the order of courses and labs (so the course comes before its lab)
+    categoryChoices = flipLabOrder(categoryChoices)
 
     for course in categoryChoices:
         isPrereqFor = prereqFor(course, coursestaken)
@@ -906,6 +930,9 @@ def displayChoices(term, choices, coursestaken):
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nOther Computer Science Major Requirements")
 
+    # flip the order of courses and labs (so the course comes before its lab)
+    categoryChoices = flipLabOrder(categoryChoices)
+        
     for course in categoryChoices:
         isPrereqFor = prereqFor(course, coursestaken)
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
@@ -1171,6 +1198,7 @@ if __name__ == "__main__":
 # reviewed tested summerTerm(term)
 # reviewed tested prereqFor(course, coursestaken)
 # reviewed tested classification(coursetaken)
+#                 flipLabOrder(choices)
 #                 displayChoices(term, choices, coursestaken)
 #                 checkCorequisites(courses)
 #                 chooseCourses(term, courseMenu, degreeplan, coursestaken)
