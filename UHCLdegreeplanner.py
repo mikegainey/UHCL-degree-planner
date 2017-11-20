@@ -801,15 +801,30 @@ def prereqFor(course, coursestaken):
     return count
 
 
+def countHours(courses):
+    '''Given a list or set of courses, return the total number of semester credit hours.
+       countHours(courses : set or list) -> int
+       classification gives this function a set; chooseCourses gives it a list; Python can handle it!
+    '''
+    totalHours = 0
+    for course in courses:
+        totalHours += int(course[-3]) # "CSCI 1470"[-3] = 4
+
+    return totalHours
+
+
 def classification(coursestaken):
     '''Given coursestaken, return a tuple with (classification, total hours completed) where classification is ...
        freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
        classificaiton(coursestaken : set) -> (str, int)
     '''
-    totalHours = 0
-    for course in coursestaken:
-        totalHours += int(course[-3]) # "CSCI 1470"[-3] = 4
+    # totalHours = 0
+    # for course in coursestaken:
+    #     totalHours += int(course[-3]) # "CSCI 1470"[-3] = 4
 
+    # count the semester credit hour total in coursestaken
+    totalHours = countHours(coursestaken)
+    
     # determine the classification from totalHours
     if totalHours <= 29:
         standing = 'freshman'
@@ -1021,6 +1036,10 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
         for course in courses:
             print("{} --> {} {}".format(term, course, COURSECATALOG[course][0]))
 
+        # display the semester credit hour total for the term
+        print('=' * 80)
+        print("{} --> {} semester hours".format(term, countHours(courses)))
+        
         # unselectedCorequisites is a list of tuples: [(course, set of unselected corequisite courses)]
         unselectedCorequisites = checkCorequisites(courses)
 
@@ -1180,9 +1199,7 @@ if __name__ == "__main__":
 # TODO:
 #   print "the fine print" before the summary
 #   redo testing worksheet because of several changes
-
 # - (future) don't allow CSCI 4388 until the last semester
-# - flip the display order of labs and their main courses
 
 # Functions:
 # reviewed tested isULC(course)
@@ -1197,6 +1214,7 @@ if __name__ == "__main__":
 # reviewed tested incTerm(term)
 # reviewed tested summerTerm(term)
 # reviewed tested prereqFor(course, coursestaken)
+#                 countHours(courses)
 # reviewed tested classification(coursetaken)
 #                 flipLabOrder(choices)
 #                 displayChoices(term, choices, coursestaken)
