@@ -70,17 +70,21 @@ class TestFunctions(unittest.TestCase):
         getChoices(coursestaken : set) -> 
         I don't know how to exhaustively test this function!
         '''
-        coursestaken = set() # a new student
+        # verify choice for a student with no prior semester credit hours
+        coursestaken = set()
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC
         # the next line removes courses for which prerequisites are not met
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'}
         self.assertEqual(getChoices(coursestaken), choices)
 
+        # verify that if one "random" course was taken, it will no longer be a choice
         coursestaken = {'PSYC 1100'} # just took one course
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'}
         choices -= {'PSYC 1100'} # this is no longer a choice
         self.assertEqual(getChoices(coursestaken), choices)
         
@@ -88,21 +92,24 @@ class TestFunctions(unittest.TestCase):
         coursestaken = {'PHIL 1301'}
         choices = UNI_CORE | MAJOR_REQ | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'}
         self.assertEqual(getChoices(coursestaken), choices)
 
         # verify that taking Arts and the Child removes all creative arts courses from choices
         coursestaken = {'ARTS 2379'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | SOCIAL_SCIENCE - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'}
         self.assertEqual(getChoices(coursestaken), choices)
 
         # verify that taking Macroeconomics removes all social/behavioral science courses from choices
         coursestaken = {'ECON 2301'}
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS - ULC 
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
-        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'} # labs don't have prereqs, but still can't be taken
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'PHYS 2125', 'PHYS 2126', 'CENG 3112', 'CENG 3131'}
         self.assertEqual(getChoices(coursestaken), choices)
         
         # LLC is complete; ULC are now choices (electives require junior standing; CSCI 4354 requires senior standing)
@@ -111,8 +118,9 @@ class TestFunctions(unittest.TestCase):
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE | ELECTIVES
         choices = {course for course in choices if prerequisites_met(course, coursestaken)}
         choices -= coursestaken # remove courses taken from choices
-        choices -= (ELECTIVES | REQ_SENIOR) # remove courses that require junior & senior standing
-        choices -= {'CENG 3131'} # labs don't have prereqs, but still can't be taken unless the main course can
+        choices -= (ELECTIVES | REQ_JUNIOR | REQ_SENIOR) # remove courses that require junior & senior standing
+        # remove labs when the main course can't be taken (because of unmet prerequisites)
+        choices -= {'CENG 3131'} # because CENG 3312/3112 Digital Circuits hasn't been taken yet
         self.assertEqual(getChoices(coursestaken), choices)
 
         # test that junior standing unlocks electives and WRIT 3315
@@ -136,9 +144,9 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue('WRIT 3315' in choices) # WRIT 3315 requires junior standing
 
         # test that senior standing unlocks CSCI 4354; corequisites (CENG ...) also need to be choices
-        coursestaken |= {'CHEM 1311', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3331', 'CSCI 3352', 'CSCI 4333', # 21
-                         'CSCI 3321', 'SWEN 4342', 'CHEM 1111'}                                                     #  7
-        self.assertEqual(classification(coursestaken), ('junior', 89)) # junior with 89 hours
+        coursestaken |= {'CSCI 3331', 'MATH 2318', 'MATH 2320', 'STAT 3334', 'CSCI 3321', # 15
+                         'SWEN 4342', 'CENG 3312', 'CENG 3112', 'CENG 3331', 'CENG 3131'} # 11
+        self.assertEqual(classification(coursestaken), ('junior', 87)) # junior with 87 hours
 
         # choices should not include courses that require senior standing
         choices = getChoices(coursestaken)
@@ -146,10 +154,16 @@ class TestFunctions(unittest.TestCase):
 
         # add one course to attain senior standing
         coursestaken.add('WRIT 3315')
-        self.assertEqual(classification(coursestaken), ('senior', 92)) # senior with 92 hours
+        self.assertEqual(classification(coursestaken), ('senior', 90)) # senior with 92 hours
         choices = getChoices(coursestaken)
         self.assertTrue('CSCI 4354' in choices) # can now take CSCI 4354 
-        
+
+        # print("\nclassification = {}".format(classification(coursestaken)))
+        # print("coursestaken = {}".format(sorted(list(coursestaken))))
+        # print("choices = {}".format(sorted(list(choices))))
+        # print("getChoices(coursestaken) = {}".format(sorted(list(getChoices(coursestaken)))))
+        # input()
+
         # The next test tests the set comprehension: choices = {course for course in choices if ...}
         
         
