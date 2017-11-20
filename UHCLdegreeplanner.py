@@ -192,7 +192,7 @@
 #
 #
 #   Define a function prereqFor with parameters course and coursestaken:
-#       Set coursesneeded to the union of UNI_CORE adn MAJOR_REQ
+#       Set coursesneeded to the union of UNI_CORE and MAJOR_REQ
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
 #           Add LANG_PHIL_CULTURE to coursesneeded
 #       Set count to zero
@@ -279,7 +279,7 @@
 #           Add 1 to index
 #       Remove LLC from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of runningchoices and MAJOR_REQ
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and MAJOR_REQ
 #       If the length of categoryChoices is greater than zero, display a CS Major Requirements heading
 #       Set categoryChoices to the return value of flipLabOrder with argument categoryChoices
 #       Begin a loop over categoryChoices with lcv course:
@@ -314,29 +314,61 @@
 #           Return unselectedCorequisiteList
 #
 #
-#   Define a function chooseCourses with parameters term, courseMenu, degreeplan, and coursestaken:
-#       Set termSummary to the empty list
-#       Begin a loop to get user input:
-#           Set choice from a user prompt to select a course by number, pressing <Enter> when finished
-#           If the user just presses <Enter>, exit the loop
-#           If choice is not a decimal character,
-#               print an error message and go to the beginning of the loop
-#           Cast choice to an integer
-#           If choice is not in courseMenu,
-#               display an error message and go to the beginning of the loop
-#           Set course to courseMenu with index choice
-#           Add course to coursestaken
-#           Set entry to a tuple consisting of term, course, and the name of the course
-#           Append entry to degreeplan
-#           Append to termSummary: the term, course, and course name
+#   Define a function chooseCourses with parameters term, choices, coursestaken, and degreeplan:
+#       Begin a loop to verify that corequisite requirements are met:
+#           Set courseMenu to the return value of displayChoices with arguments term, choices, and coursestaken
+#           Set courses to the empty list
+#               Begin a loop to get user input:
+#                   Set choice from a user prompt to select a course by number, pressing <Enter> when finished
+#                   If the user just presses <Enter>, exit the loop
+#                   If choice is not a decimal character,
+#                       print an error message and go to the beginning of the loop
+#                   Cast choice to an integer
+#                   If choice is not in courseMenu,
+#                       display an error message and go to the beginning of the loop
+#                   Set course to courseMenu with index choice
+#                   If course is not in courses,
+#                       append course to courses
 #
-#       Begin a loop of termSummary with lcv c
-#           Display c
-#       Append to degreeplan a tuple with three blanks to signal a blank line
-#       Return degreeplan to the calling program/function
+#               If courses is empty,
+#                   return degree plan to the calling function
+#               Begin a loop over courses with lcv course:
+#                   Print term, course, and the course title from COURSECATALOG
+#               Print the term and total semester hours in courses using the countHours function
+#
+#               Set unselectedCorequisites to the return value of checkCorequisites with argument courses
+#               If unselectedCorequisites is empty,
+#                   Set accept to user input with prompt "Do you want to accept these courses?"
+#                   If the user just presses <Enter>, set accept to 'y'
+#                   Make accept lowercase
+#                   If accept is 'y'
+#                       break out of the loop
+#                   else,
+#                       continue the loop so the user can reselect courses for this term
+#               else,
+#                   print a message, "You have selected a course without selecting its corequisite!"
+#                   Begin a loop over unselectedCorequisites with lcvs c and uc
+#                       Set unselCoreq to values in uc joined with '&'
+#                       Print c requires unselCoreq
+#
+#                   Set accept to user input with prompt, "Do you want to reselect courses for this term?"
+#                   If the user just presses <Enter>, set accept to 'y'
+#                   Make accept lowercase
+#                   If accept is 'n'
+#                       break out of the loop accepting the selected courses
+#                   else,
+#                       continue the loop and reselect courses
+#
+#           Begin a loop over courses with lcv course:
+#               Add course to coursestaken
+#               Set entry to a tuple consisting of term, course, and course title from COURSECATALOG
+#               Append entry to degreeplan
+#           Append a blank tuple to degreeplan
+#           Return degreeplan to the calling function
 #
 #
 #   Define a function printSummary with parameter degreeplan:
+#       Set standing to the return value of classification with argument coursestaken
 #       Display a heading: "Your degree plan summary"
 #
 #       Begin a loop of degreeplan with lcv c:
@@ -347,6 +379,7 @@
 #       Prompt the user to save the degree plan summary to a file
 #       Set filename to the user's input
 #       If the user just pressed <Enter>, return to the calling program/function
+#       Set standing to the return value of classification with argument coursestaken
 #       Try to open filename for writing
 #           Write a heading, "Your degree plan summary"
 #           Begin a loop over degreeplan with lcv c:
@@ -356,6 +389,7 @@
 #
 #
 #   Define a function main:
+#       Print the contents of welcome
 #       Set degreeplan to the empty list
 #       Set coursestaken to the return value of getCoursesTaken
 #       Set term to the return value of getTerm
@@ -363,11 +397,10 @@
 #           Set choices to the return value of getChoices with argument coursestaken
 #           If the length of choices is zero, exit the loop
 #           Set term to the return value of summerTerm with argument term
-#           Set courseMenu to the return value of displayChoices with arguments term, choices, and coursestaken
-#           Set degreeplan to the return value of chooseCourses with arguments term, courseMenu, degreeplan, and coursestaken
+#           Set degreeplan to the return value of chooseCourses with arguments term, choices, coursestaken, and degreeplan
 #           Set term to the return value of incTerm with argument term
-#       Call the printSummary function with argument degreeplan
-#       Call the saveSummary function with argument degreeplan
+#       Call the printSummary function with arguments degreeplan and coursestaken
+#       Call the saveSummary function with arguments degreeplan and coursestaken
 #
 #
 #   If the name of the running module is '__main__' then call the main function
@@ -405,7 +438,7 @@ Science B.S. degree will also be ignored.  The program will acknowledge the
 courses that are recognized so you will know what courses the program will start
 with.
 
-Afer entering your starting term, you will see a menu of courses that you are
+After entering your starting term, you will see a menu of courses that you are
 eligible to take.  Courses with unmet prerequisites will not be shown.
 Upper-level CSCI and CENG courses and electives will not be shown until your CS
 Lower-level core is complete.  Some courses won't be shown until you have junior
@@ -622,21 +655,26 @@ def getChoices(coursestaken):
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
 
-    # TODO: find a better way to do this:
-    for i in range(2): # do this twice -- because the order of processing causes some courses to survive unintentionally
-        # remove a course if its corequisites are not choices, UNLESS a corequisite has already been taken
-        for course in choices.copy():
-            corequisites = COURSECATALOG[course][2] # this is a set
-            if len(corequisites) == 0:
-                continue
+    # remove a course if its corequisites are not choices, UNLESS a corequisite has already been taken
+    for course in choices.copy():
 
-            # if at least one of the coreqs is in coursestaken, continue
-            if len(corequisites & coursestaken) > 0:
-                continue
+        # this can happen because elements of choices are being removed while the copy stays the same
+        if course not in choices:
+            continue
 
-            # if corequisite(s) are not in choices ...
-            if not corequisites.issubset(choices):
-                choices.remove(course)
+        # if the course doesn't have corequisites, there is nothing to do
+        corequisites = COURSECATALOG[course][2] # this is a set
+        if len(corequisites) == 0:
+            continue
+
+        # if at least one of the corequisites is in coursestaken, show the lone corequisite; continue the loop
+        if len(corequisites & coursestaken) > 0:
+            continue
+
+        # if corequisite(s) are not in choices, remove the course and any other corequisites
+        if not corequisites.issubset(choices):
+            choices.remove(course) # key error
+            choices -= corequisites
             
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
@@ -880,7 +918,7 @@ def countHours(courses):
 def classification(coursestaken):
     '''Given coursestaken, return a tuple with (classification, total hours completed) where classification is ...
        freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
-       classificaiton(coursestaken : set) -> (str, int)
+       classification(coursestaken : set) -> (str, int)
     '''
     # count the semester credit hour total in coursestaken
     totalHours = countHours(coursestaken)
@@ -1232,9 +1270,6 @@ def main():
         # if term is summer, ask if user wants to take classes in the summer; if not, do incTerm
         term = summerTerm(term)
 
-        # display a menu of course choices for the term
-        # courseMenu = displayChoices(term, choices, coursestaken) # move this within chooseCourses
-
         # choose courses for the term; update degreeplan; mutates coursestaken!
         degreeplan = chooseCourses(term, choices, coursestaken, degreeplan)
 
@@ -1275,7 +1310,7 @@ if __name__ == "__main__":
 # reviewed tested summerTerm(term)
 # reviewed tested prereqFor(course, coursestaken)
 # reviewed tested countHours(courses)
-# reviewed tested classification(coursetaken)
+# reviewed tested classification(coursestaken)
 # reviewed tested flipLabOrder(choices)
 #                 displayChoices(term, choices, coursestaken)
 #          tested checkCorequisites(courses)
