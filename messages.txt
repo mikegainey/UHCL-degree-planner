@@ -2,19 +2,18 @@
                    UHCL Computer Science B.S. Degree Planner
 ================================================================================
 
-Are you a UHCL Computer Science B.S. student and don't know what courses to take
-next term?  Then run this program!  It will help you choose courses to take next
-term and each successive term until graduation.
+If you are a UHCL Computer Science B.S. student, this program will help you
+choose courses to take next term and each successive term until graduation.
 
-First, tell the program what courses you have already completed.  You can enter
+First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
 In the file, list course numbers (like CSCI 1470) one-per-line.  Anything after
 the course number on the line will be ignored and lines that don't start with
 course numbers will be ignored.  Courses that don't apply to the Computer
-Science B.S. degree will also be ignored.  The program will acknowledge the
-courses that are recognized so you will know what courses the program will start
+Science B.S. degree will also be ignored.  The program will tell you which
+courses are recognized so you will know what courses the program will start
 with.
 
 After entering your starting term, you will see a menu of courses that you are

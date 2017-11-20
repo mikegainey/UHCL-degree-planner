@@ -12,12 +12,15 @@
 # Define Global Constants #
 ###########################
 #
+#   Define a string constant welcome that has a welcome message with instructions for the user
+#
 #   Define a dictionary constant COURSECATALOG that contains information about all courses
 #   pertinent to the CS BS degree, where ...
-#       key   = a string representing a course ('CSCI 1471')
-#       value = a tuple consisting of
-#           [0] a string describing the full title of the course ('Computer Science II')
-#           [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
+#       key:   is a string representing a course number, like 'PHYS 2325'
+#       value: is a tuple consisting of
+#          [0] a string describing the full title of the course ('Computer Science II')
+#          [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
+#          [2] a set of corequisites, {"PHYS 2125"}
 #
 #   Define a set constant LANG_PHIL_CULTURE that contains courses satisfying the
 #     Language, Philosophy and Culture degree requirement
@@ -31,7 +34,18 @@
 #   Define a set constant UNI_CORE that contains the University Core Requirements
 #   Define a set constant MAJOR_REQ that contains the CS BS Major Requirements
 #   Define a set constant LLC that contains the CS BS Lower Level Core courses
-#   Set ULC to the set of courses from MAJOR_REQ that satisfy isULC
+#   Define a set constant REQ_JUNIOR with courses that require junior standing
+#   Define a set constant REQ_SENIOR with courses that require senior standing
+#
+#
+#   Define a function isULC with a string parameter course
+#       Set isCSCI to True if the first four characters of course is 'CSCI'
+#       Set isCENG to True if the first four characters of course is 'CENG'
+#       Set isULC to True if the 6th character of course is either 3 or 4
+#       Return True if isCSCI or isCENG is True and isULC is True
+#
+# 
+#   Using isULC, set ULC to the set of courses from MAJOR_REQ that satisfy isULC
 #   Define a set constant ELECTIVES to represent Major Elective courses
 #
 #
@@ -39,11 +53,6 @@
 # Function Definitions #
 ########################
 #
-#   Define a function isULC with a string parameter course
-#       Set isCSCI to True if the first four characters of course is 'CSCI'
-#       Set isCENG to True if the first four characters of course is 'CENG'
-#       Set isULC to True if the 6th character of course is either 3 or 4
-#       Return True if isCSCI or isCENG is True and isULC is True
 #
 #
 #   Define a function prerequisites_met that takes parameters course and coursestaken:
@@ -474,9 +483,6 @@ MAJOR_REQ = {'CHEM 1311', 'CHEM 1111', 'MATH 2305', 'MATH 2318', 'MATH 2414', 'M
 LLC = {'CSCI 1470', 'CSCI 1471', 'CSCI 2315', 'PHYS 2325', 'PHYS 2125', 'PHYS 2326', 'PHYS 2126',
        'MATH 2413', 'MATH 2414', 'MATH 2305', 'WRIT 1301'}
 
-# needed for hours computation and classification determination # this is no longer needed
-HASLAB = {'PHYS 2325', 'PHYS 2326', 'CHEM 1311', 'CENG 3312', 'CENG 3331', 'CENG 3351'}
-
 # requires junior standing; getChoices requires LLC complete and junior or senior standing to allow electives
 REQ_JUNIOR = {'WRIT 3315'}
 
@@ -556,19 +562,21 @@ def getChoices(coursestaken):
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
 
-    # remove a course if its corequisites are not choices, UNLESS a corequisite has already been taken
-    for course in choices.copy():
-        corequisites = COURSECATALOG[course][2] # this is a set
-        if len(corequisites) == 0:
-            continue
+    # TODO: find a better way to do this:
+    for i in range(2): # do this twice -- because the order of processing causes some courses to survive unintentionally
+        # remove a course if its corequisites are not choices, UNLESS a corequisite has already been taken
+        for course in choices.copy():
+            corequisites = COURSECATALOG[course][2] # this is a set
+            if len(corequisites) == 0:
+                continue
 
-        # if at least one of the coreqs is in coursestaken, continue
-        if len(corequisites & coursestaken) > 0:
-            continue
+            # if at least one of the coreqs is in coursestaken, continue
+            if len(corequisites & coursestaken) > 0:
+                continue
 
-        # if corequisite(s) are not in choices ...
-        if not corequisites.issubset(choices):
-            choices.remove(course)
+            # if corequisite(s) are not in choices ...
+            if not corequisites.issubset(choices):
+                choices.remove(course)
             
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
@@ -803,7 +811,7 @@ def prereqFor(course, coursestaken):
 
 def countHours(courses):
     '''Given a list or set of courses, return the total number of semester credit hours.
-       countHours(courses : set or list) -> int
+       countHours(courses : [str] or {str} ) -> int
        classification gives this function a set; chooseCourses gives it a list; Python can handle it!
     '''
     totalHours = 0
@@ -847,15 +855,15 @@ def flipLabOrder(choices):
         c1 = choices[c]
         c2 = choices[c+1]
 
-        # check if course numbers are the same except for the 2nd number; if not, continue
+        # check if course numbers are the same except for the "hours" digit; if not, continue
         if (c1[:6] + c1[-2:]) != (c2[:6] + c2[-2:]):
             continue
 
-        # check if a 1 hour course followed by a 3 hour course; if not, continue
+        # check for a 1 hour course followed by a 3 hour course; if not, continue
         if not (c1[6] == '1' and c2[6] == '3'):
             continue
 
-        # if a lab precedes its main course, swap their order
+        # a lab precedes its main course; swap their order
         choices[c], choices[c+1] = choices[c+1], choices[c]
 
     return choices
@@ -1199,7 +1207,7 @@ if __name__ == "__main__":
 # TODO:
 #   print "the fine print" before the summary
 #   redo testing worksheet because of several changes
-# - (future) don't allow CSCI 4388 until the last semester
+#   (future) don't allow CSCI 4388 until the last semester
 
 # Functions:
 # reviewed tested isULC(course)
@@ -1214,11 +1222,11 @@ if __name__ == "__main__":
 # reviewed tested incTerm(term)
 # reviewed tested summerTerm(term)
 # reviewed tested prereqFor(course, coursestaken)
-#                 countHours(courses)
+# reviewed tested countHours(courses)
 # reviewed tested classification(coursetaken)
-#                 flipLabOrder(choices)
+# reviewed tested flipLabOrder(choices)
 #                 displayChoices(term, choices, coursestaken)
-#                 checkCorequisites(courses)
+#          tested checkCorequisites(courses)
 #                 chooseCourses(term, courseMenu, degreeplan, coursestaken)
 # reviewed tested printSummary(degreeplan)
 # reviewed tested saveSummary(degreeplan, filename)
