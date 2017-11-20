@@ -71,6 +71,17 @@
 #       Remove courses with unmet prerequisites from choices.
 #       If LLC is not complete:
 #           remove ULC and ELECTIVES from choices.
+#       Set standing to the student's standing and total semester hours using the classification function.
+#       If standing is not junior or senior, remove courses in the REQ_JUNIOR and ELECTIVES sets
+#       If standing is not senior, remove courses in the REQ-SENIOR set
+#
+#       Begin a loop that executes twice:
+#           Begin a loop over a copy of choices with the lcv course:
+#               Set corequisites to course's corequisites
+#               If course doesn't have any corequisites, continue the loop
+#               If at least one of the corequisites is in coursestaken, continue the loop
+#               If the course's corequisites are not in choices, remove the course from choices
+#
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is greater than zero:
 #           remove LANG_PHIL_CULTURE from choices.
 #       If the length of the intersection of CREATIVE_ARTS and coursestaken is greater than zero:
@@ -97,16 +108,19 @@
 #           If the length of line is less than 9, skip the rest of the loop
 #           Set maybeCourseNumber to the first 9 characters of line
 #           If maybeCourseNumber returns False when passed to isCourseNumber, skip the rest of the loop
-#           Set courseNumber to maybeCourseNumber
+#           Set courseNumber to maybeCourseNumber and ensure all uppercase
 #           Append courseNumber to courses
 #       Return courses to the calling program/function
 #
 #
 #   Define a function add2CoursesTaken with parameters course and coursestaken:
-#       If course is in COURSECATALOG:
-#           Add course to coursestaken
-#           Print a message that course was added
-#       Else, print a message saying the course is not recognized as a requirement for the CS BS degree
+#       If course is in coursestaken ...
+#           print a message that it was already added and return to the calling function
+#       If course is not in COURSECATALOG:
+#           print a message saying the course is not recognized as a requirement for the CS BS degree
+#           and return to the calling function
+#       Add course to coursestaken
+#       Print a message that course was added
 #
 #
 #   Define a function getCoursesTaken:
@@ -122,9 +136,10 @@
 #               Try to open a file for reading named course
 #               If successful, set lines to the list of lines in the file
 #               Otherwise, print a message "That's not a course or a file name"
+#               and continue the loop
 #
 #               Set courses to the return value of extractCourseNumbers with argument lines.
-#               Begin a loop iterating over courses:
+#               Begin a loop iterating over courses with lcv course:
 #                   Call add2CoursesTaken with arguments course and coursestaken
 #
 #
@@ -177,7 +192,7 @@
 #
 #
 #   Define a function prereqFor with parameters course and coursestaken:
-#       Set coursesneeded to the union of UNI_CORE, MAJOR_REQ, and ELECTIVES, minus coursestaken
+#       Set coursesneeded to the union of UNI_CORE adn MAJOR_REQ
 #       If the length of the intersection of LANG_PHIL_CULTURE and coursestaken is zero,
 #           Add LANG_PHIL_CULTURE to coursesneeded
 #       Set count to zero
@@ -187,71 +202,116 @@
 #       Return count
 #
 #
+#   Define a function countHours that takes a parameter courses:
+#       Set totalHours to zero
+#       Begin a loop iterating over courses with lcv course:
+#           Increment totalHours by the number of semester hours of the current course
+#       Return totalHours to the calling function
+#
+#
+#   Define a function classification that takes a parameter coursestaken:
+#       Set totalHours using the countHours function with coursestaken as the argument
+#       If totalHours is less than or equal to 29, then set standing to 'freshman'
+#       else if totalHours is between 30 and 59, then set standing to 'sophomore'
+#       else if totalHours is between 60 and 89, then set standing to 'junior'
+#       else, set standing to 'senior'
+#       Return a tuple with standing and totalHours to the calling function
+#
+#
+#   Define a function flipLabOrder with a parameter choices:
+#       Begin a loop from zero to the length of choices minus one with lcv c:
+#           Set c1 to the cth element of choices
+#           Set c2 to the (c+1)th element of choices
+#           If c1 and c2 are not the same except for the "hours" digit, continue the loop
+#           If not the hours digit of c1 is '1' and the hours digit of c2 is '3', continue the loop
+#           Swap c1 and c2 in choices
+#       Return choices to the calling function
+#
+#
 #   Define a function displayChoices with parameters term, choices, and coursestaken:
+#       Set runningChoices to a copy of choices
+#       Set standing to the return value of classification given the argument coursestaken
+#
 #       Display a header for the term
 #       Set courseMenu to an empty dictionary
 #       Set index to 1
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and LANG_PHIL_CULTURE
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and LANG_PHIL_CULTURE
 #       If the length of categoryChoices is greater than zero, display a LANG_PHIL_CULTURE heading
 #       Begin a loop over categoryChoices with lcv course:
 #           Display index, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove LANG_PHIL_CULTURE from choices
+#       Remove LANG_PHIL_CULTURE from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and CREATIVE_ARTS
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and CREATIVE_ARTS
 #       If the length of categoryChoices is greater than zero, display a CREATIVE_ARTS heading
 #       Begin a loop over categoryChoices with lcv course:
 #           Display index, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove CREATIVE_ARTS from choices
+#       Remove CREATIVE_ARTS from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and SOCIAL_SCIENCE
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and SOCIAL_SCIENCE
 #       If the length of categoryChoices is greater than zero, display a SOCIAL_SCIENCE heading
 #       Begin a loop over categoryChoices with lcv course:
 #           Display index, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove SOCIAL_SCIENCE from choices
+#       Remove SOCIAL_SCIENCE from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and UNI_CORE minus LLC
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and UNI_CORE minus LLC
 #       If the length of categoryChoices is greater than zero, display a University Core heading
 #       Begin a loop over categoryChoices with lcv course:
 #           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
 #           Display index, isPrereqFor, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove UNI_CORE from choices
+#       Remove UNI_CORE from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and LLC
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and LLC
 #       If the length of categoryChoices is greater than zero, display a CS Lower-Level Core heading
+#       Set categoryChoices to the return value of flipLabOrder with argument categoryChoices
 #       Begin a loop over categoryChoices with lcv course:
 #           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
 #           Display index, isPrereqFor, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove LLC from choices
+#       Remove LLC from runningChoices
 #
-#       Set categoryChoices to a sorted list of the intersection of choices and MAJOR_REQ
+#       Set categoryChoices to a sorted list of the intersection of runningchoices and MAJOR_REQ
 #       If the length of categoryChoices is greater than zero, display a CS Major Requirements heading
+#       Set categoryChoices to the return value of flipLabOrder with argument categoryChoices
 #       Begin a loop over categoryChoices with lcv course:
 #           Set isPrereqFor to the return value of prereqFor with arguments course and coursestaken
 #           Display index, isPrereqFor, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove MAJOR_REQ from choices
+#       Remove MAJOR_REQ from runningChoices
+#
+#       If 'CSCI 4388' is in categoryChoices, ...
+#           print a message that CSCI 4388 may be taken only during the final semester before graduation
 #       
-#       Set categoryChoices to a sorted list of the intersection of choices and ELECTIVES
+#       Set categoryChoices to a sorted list of the intersection of runningChoices and ELECTIVES
 #       If the length of categoryChoices is greater than zero, display a CS Major Electives heading
 #       Begin a loop over categoryChoices with lcv course:
 #           Display index, course, and the name of the course
 #           Add course to courseMenu with key index
 #           Add 1 to index
-#       Remove ELECTIVES from choices
+#       Remove ELECTIVES from runningChoices
+#       Verify that runningChoices is empty
 #
 #       Return courseMenu to the calling program/function
+#
+#
+#   Define a function checkCorequisites with a parameter courses:
+#       Set unselectedCorequisiteList to the empty list
+#       Begin a loop over courses with lcv course:
+#           Set corequisites to course's corequisites
+#           Set unselectedCorequisites to corequisites minus courses
+#           If the length of unselectedCorequisites is greater than zero, ...
+#               Append to unselectedCorequisiteList a tuple with course and unselectedCorequisites
+#           Return unselectedCorequisiteList
 #
 #
 #   Define a function chooseCourses with parameters term, courseMenu, degreeplan, and coursestaken:
@@ -640,10 +700,6 @@ def extractCourseNumbers(lines):
         courseNumber = maybeCourseNumber          # at this point, it's a confirmed course number (format)
         courseNumber = courseNumber.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
 
-        # if the course is already in the list, continue
-        # if courseNumber in courses:
-        #     continue
-        
         courses.append(courseNumber)        # add the course number to the output list
 
     return courses
@@ -826,10 +882,6 @@ def classification(coursestaken):
        freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
        classificaiton(coursestaken : set) -> (str, int)
     '''
-    # totalHours = 0
-    # for course in coursestaken:
-    #     totalHours += int(course[-3]) # "CSCI 1470"[-3] = 4
-
     # count the semester credit hour total in coursestaken
     totalHours = countHours(coursestaken)
     
