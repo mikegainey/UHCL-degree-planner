@@ -158,6 +158,7 @@ class TestFunctions(unittest.TestCase):
         choices = getChoices(coursestaken)
         self.assertTrue('CSCI 4354' in choices) # can now take CSCI 4354 
 
+        # to diagnose failing tests ...
         # print("\nclassification = {}".format(classification(coursestaken)))
         # print("coursestaken = {}".format(sorted(list(coursestaken))))
         # print("choices = {}".format(sorted(list(choices))))
@@ -261,6 +262,24 @@ class TestFunctions(unittest.TestCase):
         # note: this is the only case where the prereqFor number will change
 
 
+    def test_countHours(self):
+        '''Given a list or set of courses, return the total number of semester credit hours.
+           countHours(courses : set or list) -> int
+           classification gives this function a set; chooseCourses gives it a list; Python can handle it!
+        '''
+        courses = [] # empty list
+        self.assertEqual(countHours(courses), 0)
+
+        courses = set() # empty set
+        self.assertEqual(countHours(courses), 0)
+
+        courses = ['CSCI 1470', 'PHYS 2325', 'PHYS 2125'] # list with 8 hours
+        self.assertEqual(countHours(courses), 8)
+
+        courses = {'CSCI 1470', 'PHYS 2325', 'PHYS 2125'} # set with 8 hours
+        self.assertEqual(countHours(courses), 8)
+
+
     def test_classification(self):
         '''Given coursestaken, return a tuple with (classification, total hours completed) where classification is ...
            freshman for 1-29 hours, sophomore for 30-59 hours, junior for 60-89 hours, and senior for 90+ hours
@@ -294,7 +313,22 @@ class TestFunctions(unittest.TestCase):
                          'CSCI 33x3', 'CSCI 32xx'}
         self.assertEqual(classification(coursestaken), ('senior', 121))
 
+
+    def test_flipLabOrder(self):
+        '''Given a list of courses sorted by course number, move labs from before to after their main course in the list.
+           flipLabOrder(choices : [str]) -> [str]
+           Otherwise, labs would always precede their main course in the course menu: (e.g. 2125 comes before 2325).
+        '''
+        courses = ['CSCI 1470', 'SOCI 1301', 'SWEN 4342', 'WRIT 1301'] # no labs; nothing to flip
+        self.assertEqual(flipLabOrder(courses), courses)
+
+        courses = ['CSCI 1470', 'PHYS 2125', 'WRIT 1301'] # a lab without its main course; still nothing to flip
+        self.assertEqual(flipLabOrder(courses), courses)
+
+        courses = ['CSCI 1470', 'PHYS 2125', 'PHYS 2325', 'WRIT 1301'] # Physics I and its lab should flip
+        self.assertEqual(flipLabOrder(courses), ['CSCI 1470', 'PHYS 2325', 'PHYS 2125', 'WRIT 1301'])
         
+
     def test_displayChoices(self):
         '''Given a set of course choices, display and return a choice dictionary (menu)
            displayChoices(term : str, choices : set, coursestaken : set) -> {index: course}
