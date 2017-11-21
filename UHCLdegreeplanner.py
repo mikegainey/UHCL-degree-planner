@@ -16,12 +16,12 @@
 #   Define a string constant caveat with caveat(s) for the user
 #
 #   Define a dictionary constant COURSECATALOG that contains information about all courses
-#   pertinent to the CS BS degree, where ...
+#   applicable to the CS BS degree, where ...
 #       key:   is a string representing a course number, like 'PHYS 2325'
 #       value: is a tuple consisting of
 #          [0] a string describing the full title of the course ('Computer Science II')
 #          [1] a set of the course's prerequisites {'CSCI 1470', 'MATH 2413'}
-#          [2] a set of corequisites, {"PHYS 2125"}
+#          [2] a set of corequisites, {'PHYS 2125'}
 #
 #   Define a set constant LANG_PHIL_CULTURE that contains courses satisfying the
 #     Language, Philosophy and Culture degree requirement
@@ -639,8 +639,6 @@ def getChoices(coursestaken):
         choices -= (ULC | ELECTIVES) # remove ULC and ELECTIVES
 
     # determine standing, a tuple: (classification, total hours) where ...
-    # - classification is one of: freshman, sophomore, junior, or senior
-    # - total hours is an int
     standing = classification(coursestaken)
     
     # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
@@ -723,18 +721,23 @@ def extractCourseNumbers(lines):
     courses = list()
     for line in lines:
 
-        if len(line) < 9:             # the line is too short to contain a course number
+        # the line is too short to contain a course number
+        if len(line) < 9:             
             continue
 
-        maybeCourseNumber = line[:9]        # the part of the line to check
+        # the part of the line to check
+        maybeCourseNumber = line[:9]        
 
-        if not isCourseNumber(maybeCourseNumber): # if not a course number, loop back
+        # if not a course number, loop back
+        if not isCourseNumber(maybeCourseNumber): 
             continue
 
-        courseNumber = maybeCourseNumber          # at this point, it's a confirmed course number (format)
-        courseNumber = courseNumber.upper()       # the course number must be uppercase (used as a key in COURSECATALOG : dict)
+        # at this point, it's a confirmed course number (format)
+        courseNumber = maybeCourseNumber          
+        courseNumber = courseNumber.upper()
 
-        courses.append(courseNumber)        # add the course number to the output list
+        # add the course number to the output list
+        courses.append(courseNumber)        
 
     return courses
 
