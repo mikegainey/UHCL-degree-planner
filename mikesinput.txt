@@ -1,18 +1,18 @@
 Note on the format of input files:
-- list rubrics one-on-a-line, at the beginning of the line
-- anything on the line after a rubric is ignored
-- any line starting with a non-rubric is ignored
+- list course numbers one-on-a-line, at the beginning of the line
+- anything on the line after a course number is ignored
+- any line not starting with a course number is ignored
 
 
 Michael Gainey's completed courses list
 
 -- from UHCL
-econ 2301 Macroeconomics # lowercase rubrics should still be valid
+econ 2301 Macroeconomics; lowercase rubrics are accepted
 POLS 2306 Texas Government
-POLS 2306 what will happen here?
-abcd 1234 this is a test
+POLS 2306 duplicate courses will be ignored
+abcd 1234 this will be ignored
 
--- from Houston Baptist University
+-- from Houston Baptist University, Bachelor of Music Education, 1992
 WRIT 1301
 WRIT 1302
 LITR 2341
@@ -28,5 +28,5 @@ chem 1111
 -- from San Jacinto College
 MATH 2413 Calculus I
 MATH 2414 Calculus II
-MATH 2320 Differential equations; I took it in the early 1990s and don't remember anything
+MATH 2320 Differential equations; I took this in the early 1990s and don't remember anything
 
