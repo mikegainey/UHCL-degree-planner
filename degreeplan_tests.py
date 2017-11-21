@@ -70,6 +70,9 @@ class TestFunctions(unittest.TestCase):
         getChoices(coursestaken : set) -> 
         I don't know how to exhaustively test this function!
         '''
+
+        # test that CENG 3151 doesn't show up when CENG 3351 prereqs met but not senior (and CSCI 4354 not avail)
+        
         # verify choice for a student with no prior semester credit hours
         coursestaken = set()
         choices = UNI_CORE | MAJOR_REQ | LANG_PHIL_CULTURE | CREATIVE_ARTS | SOCIAL_SCIENCE - ULC
@@ -341,9 +344,9 @@ class TestFunctions(unittest.TestCase):
         choices |= {'PSYC 1100', 'WRIT 1302'} # uni_core
         choices |= {'CSCI 1470', 'WRIT 1301'} # LLC
         choices |= {'CHEM 1311', 'CSCI 4388'} # major_req
-        choices |= {'CSCI 32xx', 'CSCI 33x1'} # electives
+        choices |= {'CSCI 33x1', 'CSCI 33x2'} # electives
         menu = {1 : 'PHIL 1301', 2 : 'ARTS 1303', 3 : 'ECON 2301', 4 : 'PSYC 1100', 5 : 'WRIT 1302',
-                6 : 'CSCI 1470', 7 : 'WRIT 1301', 8 : 'CHEM 1311', 9 : 'CSCI 4388', 10 : 'CSCI 32xx', 11 : 'CSCI 33x1'}
+                6 : 'CSCI 1470', 7 : 'WRIT 1301', 8 : 'CHEM 1311', 9 : 'CSCI 4388', 10 : 'CSCI 33x1', 11 : 'CSCI 33x2'}
 
         self.assertEqual(displayChoices(term, choices, coursestaken), menu)
 

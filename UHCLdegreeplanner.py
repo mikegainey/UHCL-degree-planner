@@ -13,6 +13,7 @@
 ###########################
 #
 #   Define a string constant welcome that has a welcome message with instructions for the user
+#   Define a string constant caveat with caveat(s) for the user
 #
 #   Define a dictionary constant COURSECATALOG that contains information about all courses
 #   pertinent to the CS BS degree, where ...
@@ -52,7 +53,6 @@
 ########################
 # Function Definitions #
 ########################
-#
 #
 #
 #   Define a function prerequisites_met that takes parameters course and coursestaken:
@@ -405,7 +405,6 @@
 #
 #   If the name of the running module is '__main__' then call the main function
 #
-#
 ###############################################################################
 
 # UNDERGRADUATE Catalog 2017-2018, Computer Science B.S.
@@ -420,44 +419,41 @@
 ###########################
 
 welcome = '''================================================================================
-                             UHCL Degree Planner
+                   UHCL Computer Science B.S. Degree Planner
 ================================================================================
 
-Are you a UHCL Computer Science B.S. student and don't know what courses to take
-next term?  Then run this program!  It will help you choose courses to take next
-term and each successive term until graduation.
+If you are a UHCL Computer Science B.S. student, this program will help you
+choose courses to take next term and each successive term until graduation.
 
-First, tell the program what courses you have already completed.  You can enter
+First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
-In the file, list courses numbers (like CSCI 1470) one-per-line.  Anything after
-the course number on the line will be ignored and lines that don't start with
-course numbers will be ignored.  Courses that don't apply to the Computer
-Science B.S. degree will also be ignored.  The program will acknowledge the
-courses that are recognized so you will know what courses the program will start
-with.
+In the file, list course numbers (like CSCI 1470) one-per-line.  Anything on the
+line after the course number will be ignored so you can include notes after
+course numbers or on separate lines.
 
 After entering your starting term, you will see a menu of courses that you are
-eligible to take.  Courses with unmet prerequisites will not be shown.
-Upper-level CSCI and CENG courses and electives will not be shown until your CS
-Lower-level core is complete.  Some courses won't be shown until you have junior
-or senior standing.  Choose courses by menu number and press <Enter> again after
-your last course.  The program will restate your choices before moving to the
-next term.  If you selected a course with a corequisite and didn't select the
-corequisite, you will have the option of reselecting courses for that term or
-continuing with your original selection.
+eligible to take.  Choose courses for the term by menu number.  The program will
+then restate your choices and ask you to verify them before moving to the next
+term.
 
-Next to most courses in the list, there will be something that looks like
+Next to many courses in the list, there will be something that looks like
 "(prereq for # courses)."  It shows that the listed course is a prerequisite for
 the given number of other courses.  Since you can't take those other courses
 until this course is completed, its a good idea to prioritize taking courses
-that are prerequisites for others.  Calculus I is a good example.
+that are prerequisites for others.  Calculus I is a good example.  You should
+also prioritize courses in the Lower-Level Core since upper-level CSCI and CENG
+courses can't be taken until the LLC is complete.
 
-After you have chosen all of your courses, the program will display a complete
-degree plan summary.  If you enter a file name, the summary will be saved as a
-text file in the same folder as the program.
+After you have chosen all of your courses, the program will display your
+complete degree plan summary.  If you enter a file name, the summary will be
+saved as a text file in the same folder as the program.
 ================================================================================'''
+
+caveat = '''Note: This program uses course information and degree requirements from the UHCL
+2017-2018 undergraduate catalog.  If you started your degree in another school
+year, then you should follow that year's catalog for your degree requirements.'''
 
 # COURSECATALOG is a dictionary where
 #   key:   is a string representing a course number, like 'PHYS 2325'
@@ -550,7 +546,7 @@ COURSECATALOG = {
     "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
     "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
     "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
-    "CSCI 32xx": ("CSCI/CINF 32xx or 42xx upper level elective", set(), set())
+    "CSCI 33x4": ("CSCI/CINF 32xx or 42xx upper level elective", set(), set())
 }
 
 # Language, Philosophy and Culture (3 hours required)
@@ -598,7 +594,7 @@ ULC = {course for course in MAJOR_REQ if isULC(course)}
 
 
 # Major electives; modified the last digit because course numbers must be unique
-ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 32xx"}
+ELECTIVES = {"CSCI 33x1", "CSCI 33x2", "CSCI 33x3", "CSCI 33x4"}
 
 
 ########################
@@ -765,7 +761,7 @@ def getCoursesTaken():
        getCoursesTaken() -> NoneType (+ calling add2CoursesTaken mutator function)'''
 
     print("\nEnter course numbers (like CSCI 1470) that you have previously completed and/or")
-    print("the names of files containing course numbers (or just press <Enter>).\n")
+    print("the name of a file containing course numbers (or just press <Enter>).\n")
 
     coursestaken = set()
 
@@ -1201,9 +1197,9 @@ def printSummary(degreeplan, coursestaken):
         # c[0] = term, c[1] = course number, c[2] = course title
         print("{:12} {:9} {}".format(c[0], c[1], c[2]))
 
-    print('=' * 80)
+    print(line)
+    print(caveat)
     print()
-
 
 def saveSummary(degreeplan, coursestaken):
     '''Save the degree plan summary to a file
@@ -1277,10 +1273,10 @@ def main():
 
         print()
 
-    # prints degree plan summary to the screen
+    # print the degree plan summary to the screen
     printSummary(degreeplan, coursestaken)
 
-    # saves degree plan summary to a file if the user gives a file name
+    # save the degree plan summary to a file if the user gives a file name
     saveSummary(degreeplan, coursestaken)
 
     # THE END

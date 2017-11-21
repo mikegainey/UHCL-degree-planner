@@ -9,24 +9,16 @@ First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
-In the file, list course numbers (like CSCI 1470) one-per-line.  Anything after
-the course number on the line will be ignored and lines that don't start with
-course numbers will be ignored.  Courses that don't apply to the Computer
-Science B.S. degree will also be ignored.  The program will tell you which
-courses are recognized so you will know what courses the program will start
-with.
+In the file, list course numbers (like CSCI 1470) one-per-line.  Anything on the
+line after the course number will be ignored so you can include notes after
+course numbers or on separate lines.
 
 After entering your starting term, you will see a menu of courses that you are
-eligible to take.  Courses with unmet prerequisites will not be shown.
-Upper-level CSCI and CENG courses and electives will not be shown until your CS
-Lower-level core is complete.  A few courses won't be shown until you have
-junior or senior standing.  Choose courses by menu number and press <Enter>
-again after your last course.  The program will restate your choices before
-moving to the next term.  If you selected a course with a corequisite and didn't
-select the corequisite, you will have the option of reselecting courses for that
-term or continuing with your original selection.
+eligible to take.  Choose courses for the term by menu number.  The program will
+then restate your choices and ask you to verify them before moving to the next
+term.
 
-Next to most courses in the list, there will be something that looks like
+Next to many courses in the list, there will be something that looks like
 "(prereq for # courses)."  It shows that the listed course is a prerequisite for
 the given number of other courses.  Since you can't take those other courses
 until this course is completed, its a good idea to prioritize taking courses
