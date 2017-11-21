@@ -1211,6 +1211,7 @@ def saveSummary(degreeplan, coursestaken):
     # ask user if he/she wants to save degreeplan summary to a file
     print("If you want to save this summary to a file, enter a filename, ")
     filename = input("otherwise just press <Enter> to quit: ")
+    print()
 
     # just return if user presses <Enter>
     if filename == '':
@@ -1246,6 +1247,7 @@ def saveSummary(degreeplan, coursestaken):
 def main():
 
     # print a welcome message
+    print()
     print(welcome)
     
     # this will eventually hold the completed degree plan
