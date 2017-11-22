@@ -26,10 +26,9 @@ First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
-Put the file in the same folder as the program.  In the file, list course
-numbers (like CSCI 1470) one-per-line.  Anything on the line after the course
-number will be ignored so you can include notes after course numbers or on
-separate lines.
+In the file, list course numbers (like CSCI 1470) one-per-line.  Anything on the
+line after the course number will be ignored so you can include notes after
+course numbers or on separate lines.
 
 After entering your starting term, you will see a menu of courses that you are
 eligible to take.  Choose courses for the term by menu number.  The program will
@@ -39,7 +38,7 @@ term.
 Next to many courses in the list, there will be something that looks like
 "(prereq for # courses)."  It shows that the listed course is a prerequisite for
 the given number of other courses.  Since you can't take those other courses
-until this course is completed, it's a good idea to prioritize taking courses
+until this course is completed, its a good idea to prioritize taking courses
 that are prerequisites for others.  Calculus I is a good example.  You should
 also prioritize courses in the Lower-Level Core since upper-level CSCI and CENG
 courses can't be taken until the LLC is complete.
