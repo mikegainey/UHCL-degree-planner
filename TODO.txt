@@ -1,0 +1,26 @@
+# TODO:
+# - don't allow CSCI 4388 until the last semester
+# - run .upper through all course numbers in constants (in case anyone else updates them in lowercase)
+
+# Functions:
+# reviewed tested isULC(course)
+# reviewed tested prerequisites_met(course, coursestaken)
+# reviewed tested LLCcomplete(coursestaken)
+# reviewed tested getChoices(coursestaken)
+# reviewed tested isCourseNumber(maybeCourseNumber)
+# reviewed tested extractCourseNumbers(lines)
+# reviewed tested add2CoursesTaken(course, coursestaken)
+# reviewed tested getCoursesTaken()
+# reviewed tested getTerm()
+# reviewed tested incTerm(term)
+# reviewed tested summerTerm(term)
+# reviewed tested prereqFor(course, coursestaken)
+# reviewed tested countHours(courses)
+# reviewed tested classification(coursestaken)
+# reviewed tested flipLabOrder(choices)
+# reviewed tested displayChoices(term, choices, coursestaken)
+# reviewed tested checkCorequisites(courses)
+# reviewed tested chooseCourses(term, courseMenu, degreeplan, coursestaken)
+# reviewed tested printSummary(degreeplan)
+# reviewed tested saveSummary(degreeplan, filename)
+# reviewed tested main()

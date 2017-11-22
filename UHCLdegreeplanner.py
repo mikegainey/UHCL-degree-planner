@@ -6,6 +6,8 @@
 #
 # Assignment: CS1 Project
 #
+# GitHub repo: https://github.com/mikegainey/UHCL-degree-planner
+#
 # Pseudocode:
 #
 ###########################
@@ -45,7 +47,7 @@
 #       Set isULC to True if the 6th character of course is either 3 or 4
 #       Return True if isCSCI or isCENG is True and isULC is True
 #
-# 
+#
 #   Using isULC, set ULC to the set of courses from MAJOR_REQ that satisfy isULC
 #   Define a set constant ELECTIVES to represent Major Elective courses
 #
@@ -291,7 +293,7 @@
 #
 #       If 'CSCI 4388' is in categoryChoices, ...
 #           print a message that CSCI 4388 may be taken only during the final semester before graduation
-#       
+#
 #       Set categoryChoices to a sorted list of the intersection of runningChoices and ELECTIVES
 #       If the length of categoryChoices is greater than zero, display a CS Major Electives heading
 #       Begin a loop over categoryChoices with lcv course:
@@ -530,12 +532,12 @@ COURSECATALOG = {
 
     "CENG 3312": ("Digital Circuits", {"MATH 2414", "PHYS 2326"}, {"CENG 3112"}),
     "CENG 3112": ("Digital Circuits Lab", set(), {"CENG 3312"}),
-    
+
     "CENG 3331": ("Intro to Telecommunications and Networks",  {"CENG 3312"}, {"CENG 3131"}),
     "CENG 3131": ("Intro to Telecommunications and Networks Lab",  set(), {"CENG 3331"}),
 
     # prereq changed from 2016-17
-    "CENG 3351": ("Computer Architecture     (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3151", "CSCI 4354"}), 
+    "CENG 3351": ("Computer Architecture     (take with CSCI 4354)", {"CENG 3331"}, {"CENG 3151", "CSCI 4354"}),
     "CENG 3151": ("Computer Architecture Lab", {"CENG 3312", "CENG 3112"}, {"CENG 3351"}),
 
     "SWEN 4342": ("Software Engineering", {"CSCI 1470", "CSCI 2315"}, set()), # CSCI 1470 prereq implied; CSCI 2315 recommended
@@ -606,10 +608,10 @@ def prerequisites_met(course, coursestaken):
        prerequisites_met(course : str, coursestaken : set) -> bool
     '''
     # get the set of prerequisites for the course
-    prerequisites = COURSECATALOG[course][1] 
+    prerequisites = COURSECATALOG[course][1]
 
     # return True if every element of prerequisites is in coursestaken
-    return prerequisites.issubset(coursestaken) 
+    return prerequisites.issubset(coursestaken)
 
 
 def LLCcomplete(coursestaken):
@@ -617,7 +619,7 @@ def LLCcomplete(coursestaken):
        LLCcomplete(coursestaken : set) -> bool
     '''
     # return True if every element of LLC issubset of coursestaken
-    return LLC.issubset(coursestaken) 
+    return LLC.issubset(coursestaken)
 
 
 def getChoices(coursestaken):
@@ -639,11 +641,11 @@ def getChoices(coursestaken):
 
     # determine standing, a tuple: (classification, total hours)
     standing = classification(coursestaken)
-    
+
     # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
     if standing[0] not in {'junior', 'senior'}:
         choices -= (REQ_JUNIOR | ELECTIVES)
-    
+
     # remove CSCI 4354 (the only course in REQ_SENIOR) if not senior standing
     if standing[0] != 'senior':
         choices -= REQ_SENIOR
@@ -668,7 +670,7 @@ def getChoices(coursestaken):
         if not corequisites.issubset(choices):
             choices.remove(course)
             choices -= corequisites
-            
+
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
     if len(LANG_PHIL_CULTURE & coursestaken) > 0: # if a LANG_PHIL_CULTURE course has already been taken
         choices -= LANG_PHIL_CULTURE              # remove all LANG_PHIL_CULTURE courses from the choices list
@@ -690,7 +692,7 @@ def isCourseNumber(maybeCourseNumber):
        the alpha characters can be uppercase or lowercase
     '''
     # course numbers are always 9 characters (like 'CSCI 1470')
-    if len(maybeCourseNumber) != 9: 
+    if len(maybeCourseNumber) != 9:
         return False
 
     words = maybeCourseNumber.split()
@@ -701,12 +703,12 @@ def isCourseNumber(maybeCourseNumber):
 
     # first word should be 4 alphabetic characters: CSCI
     part1 = words[0]
-    if not (part1.isalpha() and len(part1) == 4): 
+    if not (part1.isalpha() and len(part1) == 4):
         return False
 
     # second word should be 4 decimal characters: 1470
     part2 = words[1]
-    if not (part2.isdecimal() and len(part2) == 4): 
+    if not (part2.isdecimal() and len(part2) == 4):
         return False
 
     return True # return True if above conditions are met
@@ -721,22 +723,22 @@ def extractCourseNumbers(lines):
     for line in lines:
 
         # the line is too short to contain a course number
-        if len(line) < 9:             
+        if len(line) < 9:
             continue
 
         # the part of the line to check
-        maybeCourseNumber = line[:9]        
+        maybeCourseNumber = line[:9]
 
         # if not a course number, loop back
-        if not isCourseNumber(maybeCourseNumber): 
+        if not isCourseNumber(maybeCourseNumber):
             continue
 
         # at this point, it's a confirmed course number (format)
-        courseNumber = maybeCourseNumber          
+        courseNumber = maybeCourseNumber
         courseNumber = courseNumber.upper()
 
         # add the course number to the output list
-        courses.append(courseNumber)        
+        courses.append(courseNumber)
 
     return courses
 
@@ -753,7 +755,7 @@ def add2CoursesTaken(course, coursestaken):
     if course not in COURSECATALOG:
         print("----- {} not recognized as a requirement for the Computer Science B.S. degree".format(course))
         return
-    
+
     coursestaken.add(course)
     print("added {} {}".format(course, COURSECATALOG[course][0]))
 
@@ -794,7 +796,7 @@ def getCoursesTaken():
             courses = extractCourseNumbers(lines)
             print()
 
-            # add the list of courses to coursestaken if it applies to the CS BS degree
+            # add the list of courses to coursestaken
             for course in courses:
                 add2CoursesTaken(course, coursestaken)
 
@@ -811,22 +813,25 @@ def getTerm():
         # print("\nEnter your starting term: 1=Fall, 2=Spring, 3=Summer")
         season = input("\nEnter your starting term (1=Fall, 2=Spring, 3=Summer): ")
 
-        if not season.isdecimal(): # season has non-decimal characters
+        # season has non-decimal characters
+        if not season.isdecimal():
             print("----- Just the number, please.")
             continue
 
+        # season is out of range
         season = int(season)
-        if season not in [1, 2, 3]: # season is out of range
+        if season not in [1, 2, 3]:
             print("----- 1, 2, or 3, please.")
             continue
 
         # season has been validated
-        season = seasons[season] # season = Fall, Spring, or Summer
+        season = seasons[season] # season is now Fall, Spring, or Summer
         break
 
     while True:
         year = input("Enter your starting year (last 2 digits only): ")
 
+        # if the year is not a 2-digit string representation of a number
         if not (year.isdecimal() and len(year) == 2):
             print("----- Just 2 digits, please.")
             continue
@@ -848,23 +853,27 @@ def incTerm(currentTerm):
     '''
     seasons = ["Fall", "Spring", "Summer"]
 
+    # separate the season and the year
     season, year = currentTerm.split()
 
+    # the year increments between fall and spring
     if season == 'Fall':
         year = int(year) + 1
         year = str(year)
 
+    # cycle through fall, spring, & summer
     seasonx = seasons.index(season)
     nextSeasonx = (seasonx + 1) % 3
     nextSeason = seasons[nextSeasonx]
 
+    # put the season and year back together
     nextTerm = nextSeason + ' ' + year
 
     return nextTerm
 
 
 def summerTerm(term):
-    '''If current term is summer, ask if user wants to take summer courses; return next term
+    '''If current term is summer, ask if user wants to take summer courses; if no, incTerm again
        summerTerm(term : str) -> str
        (default = no)
     '''
@@ -880,11 +889,11 @@ def summerTerm(term):
 
 
 def prereqFor(course, coursestaken):
-    '''Given a course, return the number of (still needed) courses for which that course is a prerequisite
+    '''Given a course, return the number of courses for which that course is a prerequisite
       prereqFor(course : str, coursestaken : set) -> int
     '''
     coursesneeded = UNI_CORE | MAJOR_REQ
-    
+
     # because WRIT 1301 is a prerequisite for LITR 2341 (in LANG_PHIL_CULTURE)
     if len(LANG_PHIL_CULTURE & coursestaken) == 0: # if the lang/phil/culture requirement is not complete
         coursesneeded |= LANG_PHIL_CULTURE         # add it to courses needed
@@ -920,7 +929,7 @@ def classification(coursestaken):
     '''
     # count the semester credit hour total in coursestaken
     totalHours = countHours(coursestaken)
-    
+
     # determine the classification from totalHours
     if totalHours <= 29:
         standing = 'freshman'
@@ -955,7 +964,7 @@ def flipLabOrder(choices):
         choices[c], choices[c+1] = choices[c+1], choices[c]
 
     return choices
-    
+
 
 def displayChoices(term, choices, coursestaken):
     '''Given a set of course choices, display and return a choice dictionary (menu)
@@ -963,16 +972,18 @@ def displayChoices(term, choices, coursestaken):
     '''
     # set up a variable that can mutate (so choices can be preserved)
     runningChoices = choices.copy() # make a copy of choices!
-    
+
     # standing = (classification, totalHours) where classification = freshman | sophomore | ...
     standing = classification(coursestaken)
-    
+
+    # print a heading with term on the left and standing on the right
     print('=' * 80)
     left = "{} choices:".format(term)
     right = "({} with {} hours)".format(standing[0], standing[1])
     print("{:<30}{:>50}".format(left, right))
     print('=' * 80)
 
+    # the output variable (dictionary)
     courseMenu = {} # a dictionary with key = menu number, value = course number
     index = 1       # the menu numbers
 
@@ -1026,7 +1037,7 @@ def displayChoices(term, choices, coursestaken):
     if len(categoryChoices) > 0: # don't display the heading if this requirement has been met
         print("\nComputer Science Lower-Level Core (LLC)")
 
-    # flip the order of courses and labs (so the course comes before its lab)
+    # flip the order of courses and labs (so a course comes before its lab)
     categoryChoices = flipLabOrder(categoryChoices)
 
     for course in categoryChoices:
@@ -1043,7 +1054,7 @@ def displayChoices(term, choices, coursestaken):
 
     # flip the order of courses and labs (so the course comes before its lab)
     categoryChoices = flipLabOrder(categoryChoices)
-        
+
     for course in categoryChoices:
         isPrereqFor = prereqFor(course, coursestaken)
         print("{:4}) (prereq for {} courses) {} {}".format(index, isPrereqFor, course, COURSECATALOG[course][0]))
@@ -1061,19 +1072,20 @@ def displayChoices(term, choices, coursestaken):
         print("\nComputer Science Major Electives")
 
     for course in categoryChoices:
-        # assuming CS electives aren't going to be prerequisites for anything else
+        # I'm assuming CS electives aren't going to be prerequisites for anything else
         print("{:4}) {} {}".format(index, course, COURSECATALOG[course][0]))
         courseMenu[index] = course # build the course menu
         index += 1
     runningChoices -= ELECTIVES
 
-    assert runningChoices == set() # runningChoices should be empty at this point
+    # runningChoices should be empty at this point
+    assert runningChoices == set()
 
     return courseMenu
 
 
 def checkCorequisites(courses):
-    '''Given a list of courses chosen for a term, return a list of tuples: (course, { set of unselected corequisite(s)})
+    '''Given a list of courses chosen for a term, return a list of tuples: (course, {set of unselected corequisite(s)})
        representing courses and their unselected corequisites; The course is listed only if there are unselected corequisites.
        checkCorequisites(courses : [str]) -> [(str, {set of str})]
     '''
@@ -1099,11 +1111,14 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
         courseMenu = displayChoices(term, choices, coursestaken)
         print()
 
-        courses = [] # a list of courses chosen for that term only
+        courses = [] # the list of courses chosen for this term only
 
         while True: # the loop to collect chosen courses
 
+            # choice is the menu number
             choice = input("Select a course by number.  Press <Enter> when finished: ")
+
+            # check for the sentinel
             if choice == '':
                 break
 
@@ -1112,21 +1127,23 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
                 print("----- Enter the number only.")
                 continue
 
-            # verify the choice is in the courseMenu
+            # reject the choice if not in the courseMenu
             choice = int(choice)
             if choice not in courseMenu:
                 print("----- Invalid entry.")
                 continue
 
-            # the chosen course
-            course = courseMenu[choice] # course is a course number
+            # the chosen course; course is a course number
+            course = courseMenu[choice]
+
+            # add to courses, the tentative list of courses for this term
             if course not in courses:
-                courses.append(course) # the tentative list of courses for this term
+                courses.append(course)
 
         # if no courses were chosen, just return
         if len(courses) == 0:
             return degreeplan
-    
+
         # Print the term summary
         print()
         for course in courses:
@@ -1135,42 +1152,46 @@ def chooseCourses(term, choices, coursestaken, degreeplan):
         # display the semester credit hour total for the term
         print('=' * 80)
         print("{} --> {} semester hours".format(term, countHours(courses)))
-        
+
         # unselectedCorequisites is a list of tuples: [(course, set of unselected corequisite courses)]
         unselectedCorequisites = checkCorequisites(courses)
 
+        # corequisite requirements are met
         if not unselectedCorequisites:
-            # corequisite requirements are met
             accept = input("\nDo you want to accept these courses and continue to the next term? (Y/n): ")
             accept = accept or 'y'
             accept = accept[0].lower()
-            if accept == 'y': 
-                break    # accept courses selections
+            if accept == 'y':
+                break    # accept course selections
             else:
                 print()
                 continue # re-select courses
+
+        # corequisite requirements are NOT met
         else:
-            # print a warning about unselected corequisites
             print()
             print("You have selected a course without selecting its corequisite!")
+
+            # print the course and its unselected corequisite
             for c, uc in unselectedCorequisites:
                 unselCoreq = ' & '.join(uc)
                 print("  {} requires {}".format(c, unselCoreq))
-                
-            # ask the user to reselect courses that meet corequisite requirements
+
+            # give the opportunity to reselect courses for this term
             accept = input("\nDo you want to reselect courses for this term? (Y/n): ")
             accept = accept or 'y'
             accept = accept[0].lower()
-            if accept == 'n': # user wants to accept courses in spite of not meeting corequisite requirement
-                break
+            if accept == 'n':
+                break    # accept course selections (in spite of not meeting corequisite requirements)
             else:
                 print()
                 continue # re-select courses
-            
+
 
     # add the selected courses to coursestaken and degreeplan
     for course in courses:
         coursestaken.add(course) # this mutates coursestaken
+
         entry = (term, course, COURSECATALOG[course][0])
         degreeplan.append(entry)
 
@@ -1184,15 +1205,14 @@ def printSummary(degreeplan, coursestaken):
     '''
     standing = classification(coursestaken) # to get total hours completed
 
+    line = '=' * 80
     left = "Your degree plan summary:"
     right = "({} hours total)".format(standing[1])
     heading = "{:<30}{:>50}".format(left, right)
-    line = '=' * 80
-    
+
     print(line)
     print(heading)
     print(line)
-
     print()
 
     for c in degreeplan:
@@ -1203,11 +1223,12 @@ def printSummary(degreeplan, coursestaken):
     print(caveat)
     print()
 
+
 def saveSummary(degreeplan, coursestaken):
     '''Save the degree plan summary to a file
        saveSummary(degreeplan : [(str, str, str)]) -> NoneType (+ desired side effects)
     '''
-    # ask user if he/she wants to save degreeplan summary to a file
+    # ask user to save degreeplan summary to a file
     print("If you want to save this summary to a file, enter a filename, ")
     filename = input("otherwise just press <Enter> to quit: ")
     print()
@@ -1218,11 +1239,11 @@ def saveSummary(degreeplan, coursestaken):
 
     standing = classification(coursestaken) # to get total hours completed
 
+    line = '=' * 80
     left = "Your degree plan summary:"
     right = "({} hours total)".format(standing[1])
     heading = "{:<30}{:>50}".format(left, right)
-    line = '=' * 80
-    
+
     # a file name was given; write to the file
     try:
         with open(filename, 'w') as file:
@@ -1234,16 +1255,16 @@ def saveSummary(degreeplan, coursestaken):
             for c in degreeplan:
                 # c[0] = term, c[1] = course number, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
+
             file.write(line + '\n')
             file.write(caveat)
             file.write('\n\n')
-            
 
         print("{} contains your degree plan summary!\n".format(filename))
 
     except:
-        print("Couldn't write to the file!")
         # return without doing anything
+        print("Error!  Couldn't write to the file!")
 
 
 def main():
@@ -1251,7 +1272,7 @@ def main():
     # print a welcome message
     print()
     print(welcome)
-    
+
     # this will eventually hold the completed degree plan
     degreeplan = []
 
@@ -1261,19 +1282,20 @@ def main():
     # let the user enter the starting term (like Fall 2017)
     term = getTerm()
 
+    # loop through each term in the degree
     while True:
 
-        # a set of courses eligible to be taken
+        # the set of courses eligible to be taken
         choices = getChoices(coursestaken)
 
         # are all courses completed? If so, print the final degree plan summary
         if len(choices) == 0:
             break
 
-        # if term is summer, ask if user wants to take classes in the summer; if not, do incTerm
+        # if term is summer, ask if user wants to take classes in the summer; if not, incTerm
         term = summerTerm(term)
 
-        # choose courses for the term; update degreeplan; mutates coursestaken!
+        # choose courses for the term; update degreeplan; mutates coursestaken
         degreeplan = chooseCourses(term, choices, coursestaken, degreeplan)
 
         term = incTerm(term)
@@ -1289,35 +1311,6 @@ def main():
     # THE END
 
 
-# this allows this program to be imported (without executing) into a unittest script for testing
+# this allows this program to be imported (without executing) into the unittest script for testing
 if __name__ == "__main__":
     main()
-
-
-# TODO:
-#   print "the fine print" before the summary
-#   redo testing worksheet because of several changes
-#   (future) don't allow CSCI 4388 until the last semester
-
-# Functions:
-# reviewed tested isULC(course)
-# reviewed tested prerequisites_met(course, coursestaken)
-# reviewed tested LLCcomplete(coursestaken)
-# reviewed tested getChoices(coursestaken)
-# reviewed tested isCourseNumber(maybeCourseNumber)
-# reviewed tested extractCourseNumbers(lines)
-# reviewed tested add2CoursesTaken(course, coursestaken)
-# reviewed tested getCoursesTaken()
-# reviewed tested getTerm()
-# reviewed tested incTerm(term)
-# reviewed tested summerTerm(term)
-# reviewed tested prereqFor(course, coursestaken)
-# reviewed tested countHours(courses)
-# reviewed tested classification(coursestaken)
-# reviewed tested flipLabOrder(choices)
-#                 displayChoices(term, choices, coursestaken)
-#          tested checkCorequisites(courses)
-#                 chooseCourses(term, courseMenu, degreeplan, coursestaken)
-# reviewed tested printSummary(degreeplan)
-# reviewed tested saveSummary(degreeplan, filename)
-# reviewed tested main()
