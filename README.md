@@ -19,10 +19,6 @@ This program will help UHCL Computer Science B.S. students select courses for th
 - [A 4-year CS BS degree map from www.uhcl.edu](https://www.uhcl.edu/academics/degrees/documents/cse/maps/wbs-computerscience.pdf)
 
 ## User Instructions
-================================================================================
-                   UHCL Computer Science B.S. Degree Planner
-================================================================================
-
 If you are a UHCL Computer Science B.S. student, this program will help you
 choose courses to take next term and each successive term until graduation.
 
