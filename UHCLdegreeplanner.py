@@ -431,7 +431,7 @@ First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
-Put the file in the same folder as the program.  In the file, list course
+If you have a file, put it in the same folder as the program.  List course
 numbers (like CSCI 1470) one-per-line.  Anything on the line after the course
 number will be ignored so you can include notes after course numbers or on
 separate lines.
@@ -441,17 +441,16 @@ eligible to take.  Choose courses for the term by menu number.  The program will
 then restate your choices and ask you to verify them before moving to the next
 term.
 
-Next to many courses in the list, there will be something that looks like
-"(prereq for # courses)."  It shows that the listed course is a prerequisite for
-the given number of other courses.  Since you can't take those other courses
-until this course is completed, it's a good idea to prioritize taking courses
-that are prerequisites for others.  Calculus I is a good example.  You should
-also prioritize courses in the Lower-Level Core since upper-level CSCI and CENG
-courses can't be taken until the LLC is complete.
+Next to many courses in the menu, there will be something that looks like
+"(prereq for # courses)" that shows the listed course is a prerequisite for
+other courses.  Since prerequisites "unlock" your ability to take other courses,
+it's a good idea to prioritize taking them.  Calculus I is a good example.  You
+should also prioritize courses in the Lower-Level Core since upper-level CSCI
+and CENG courses can't be taken until the LLC is complete.
 
-After you have chosen all of your courses, the program will display your
-complete degree plan summary.  If you enter a file name, the summary will be
-saved as a text file in the same folder as the program.
+After you have chosen all courses in the degree program, the program will
+display your complete degree plan summary.  If you enter a file name, the
+summary will be saved as a text file in the same folder as the program.
 ================================================================================'''
 
 caveat = '''Note: This program uses course information and degree requirements from the
