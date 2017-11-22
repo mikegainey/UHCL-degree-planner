@@ -1,5 +1,5 @@
 ================================================================================
-Your degree plan summary:                                      (121 hours total)
+Your degree plan summary:                                      (122 hours total)
 ================================================================================
 
 Fall 2017    CSCI 1470 Computer Science I
@@ -17,11 +17,11 @@ Spring 2019  CENG 3312 Digital Circuits
 Spring 2019  CENG 3112 Digital Circuits Lab
 Spring 2019  CSCI 3331 Computer Organization & Assembly Language
                        
-Fall 2019    CSCI 3352 Advanced Data Structures
-Fall 2019    SWEN 4342 Software Engineering
+Fall 2019    MATH 2318 Linear Algebra
+Fall 2019    STAT 3334 Probability & Statistics for Scientists & Engineers
                        
-Spring 2020  MATH 2318 Linear Algebra
-Spring 2020  STAT 3334 Probability & Statistics for Scientists & Engineers
+Spring 2020  CSCI 3352 Advanced Data Structures
+Spring 2020  SWEN 4342 Software Engineering
                        
 Fall 2020    CSCI 3321 Numerical Methods
 Fall 2020    WRIT 3315 Advanced Technical Writing
@@ -34,12 +34,16 @@ Fall 2021    CENG 3351 Computer Architecture     (take with CSCI 4354)
 Fall 2021    CENG 3151 Computer Architecture Lab
 Fall 2021    CSCI 4354 Operating Systems         (take with CENG 3351)
                        
-Spring 2022  CSCI 32xx CSCI/CINF 32xx or 42xx upper level elective
 Spring 2022  CSCI 33x1 CSCI/CINF 33xx or 43xx upper level elective
+Spring 2022  CSCI 33x2 CSCI/CINF 33xx or 43xx upper level elective
                        
-Fall 2022    CSCI 33x2 CSCI/CINF 33xx or 43xx upper level elective
 Fall 2022    CSCI 33x3 CSCI/CINF 33xx or 43xx upper level elective
+Fall 2022    CSCI 33x4 CSCI/CINF 32xx or 42xx upper level elective
                        
 Spring 2023  CSCI 4388 Senior Project in Computer Science
                        
 ================================================================================
+Note: This program uses course information and degree requirements from the
+UHCL 2017-2018 undergraduate catalog.  Refer to your personal CPS for the
+requirements that apply to you.
+

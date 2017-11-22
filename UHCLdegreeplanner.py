@@ -429,9 +429,10 @@ First, tell the program the courses you have already completed.  You can enter
 them one-at-a-time at the keyboard and/or you can enter a file name with a list
 of courses.
 
-In the file, list course numbers (like CSCI 1470) one-per-line.  Anything on the
-line after the course number will be ignored so you can include notes after
-course numbers or on separate lines.
+Put the file in the same folder as the program.  In the file, list course
+numbers (like CSCI 1470) one-per-line.  Anything on the line after the course
+number will be ignored so you can include notes after course numbers or on
+separate lines.
 
 After entering your starting term, you will see a menu of courses that you are
 eligible to take.  Choose courses for the term by menu number.  The program will
@@ -441,7 +442,7 @@ term.
 Next to many courses in the list, there will be something that looks like
 "(prereq for # courses)."  It shows that the listed course is a prerequisite for
 the given number of other courses.  Since you can't take those other courses
-until this course is completed, its a good idea to prioritize taking courses
+until this course is completed, it's a good idea to prioritize taking courses
 that are prerequisites for others.  Calculus I is a good example.  You should
 also prioritize courses in the Lower-Level Core since upper-level CSCI and CENG
 courses can't be taken until the LLC is complete.
@@ -451,9 +452,9 @@ complete degree plan summary.  If you enter a file name, the summary will be
 saved as a text file in the same folder as the program.
 ================================================================================'''
 
-caveat = '''Note: This program uses course information and degree requirements from the UHCL
-2017-2018 undergraduate catalog.  If you started your degree in another school
-year, then you should follow that year's catalog for your degree requirements.'''
+caveat = '''Note: This program uses course information and degree requirements from the
+UHCL 2017-2018 undergraduate catalog.  Refer to your personal CPS for the
+requirements that apply to you.'''
 
 # COURSECATALOG is a dictionary where
 #   key:   is a string representing a course number, like 'PHYS 2325'
@@ -462,7 +463,6 @@ year, then you should follow that year's catalog for your degree requirements.''
 #     [1] a set of prerequisites, {"MATH 2413", "MATH 2414"}
 #     [2] a set of corequisites, {"PHYS 2125"}
 
-# verified against the UHCL Undergraduate Catalog 2017-2018 on 11 Nov 2018
 COURSECATALOG = {
     # Communication (6 hours)
     "WRIT 1301": ("Composition I", set(), set()),
@@ -546,8 +546,7 @@ COURSECATALOG = {
     "CSCI 33x1": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
     "CSCI 33x2": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
     "CSCI 33x3": ("CSCI/CINF 33xx or 43xx upper level elective", set(), set()),
-    "CSCI 33x4": ("CSCI/CINF 32xx or 42xx upper level elective", set(), set())
-}
+    "CSCI 33x4": ("CSCI/CINF 32xx or 42xx upper level elective", set(), set())}
 
 # Language, Philosophy and Culture (3 hours required)
 LANG_PHIL_CULTURE = {"HUMN 1301", "LITR 2341", "PHIL 1301", "WGST 1301"}
@@ -638,7 +637,7 @@ def getChoices(coursestaken):
     if not LLCcomplete(coursestaken):
         choices -= (ULC | ELECTIVES) # remove ULC and ELECTIVES
 
-    # determine standing, a tuple: (classification, total hours) where ...
+    # determine standing, a tuple: (classification, total hours)
     standing = classification(coursestaken)
     
     # remove REQ_JUNIOR if not junior or senior standing (removes electives and WRIT 3315)
@@ -657,7 +656,7 @@ def getChoices(coursestaken):
             continue
 
         # if the course doesn't have corequisites, there is nothing to do
-        corequisites = COURSECATALOG[course][2] # this is a set
+        corequisites = COURSECATALOG[course][2]
         if len(corequisites) == 0:
             continue
 
@@ -665,9 +664,9 @@ def getChoices(coursestaken):
         if len(corequisites & coursestaken) > 0:
             continue
 
-        # if corequisite(s) are not in choices, remove the course and any other corequisites
+        # finally, if corequisite(s) are not in choices, remove the course and any other corequisites
         if not corequisites.issubset(choices):
-            choices.remove(course) # key error
+            choices.remove(course)
             choices -= corequisites
             
     # if LANG_PHIL_CULTURE requirement met (1 course), remove all LANG_PHIL_CULTURE courses from choices
@@ -1235,13 +1234,16 @@ def saveSummary(degreeplan, coursestaken):
             for c in degreeplan:
                 # c[0] = term, c[1] = course number, c[2] = course title
                 file.write("{:12} {:9} {}\n".format(c[0], c[1], c[2]))
-            file.write("{}{}".format('=' * 80, '\n'))
+            file.write(line + '\n')
+            file.write(caveat)
+            file.write('\n\n')
+            
 
         print("{} contains your degree plan summary!\n".format(filename))
 
     except:
         print("Couldn't write to the file!")
-    # return without doing anything
+        # return without doing anything
 
 
 def main():
